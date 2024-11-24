@@ -21,7 +21,7 @@ class Process extends Model
     public Material $material;
 
     #[OA\Property]
-    public Direction $direction;
+    public Direction $type;
     #[OA\Property]
     public int $quantity;
 
