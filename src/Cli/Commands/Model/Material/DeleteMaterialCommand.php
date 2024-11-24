@@ -13,19 +13,19 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class DeleteMaterialCommand extends Command
 {
-    public static function getDefaultName() : ?string {
+    public static function getDefaultName(): ?string {
         return 'model:material:delete';
     }
 
-    public static function getDefaultDescription() : ?string {
+    public static function getDefaultDescription(): ?string {
         return 'Delete an existing material';
     }
 
-    protected function configure() : void {
+    protected function configure(): void {
         $this->addArgument('id', InputArgument::REQUIRED, 'Material ID');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output) : int {
+    protected function execute(InputInterface $input, OutputInterface $output): int {
         $id = (int) $input->getArgument('id');
 
         try {

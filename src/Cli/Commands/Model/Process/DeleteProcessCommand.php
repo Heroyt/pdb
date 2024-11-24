@@ -14,20 +14,20 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class DeleteProcessCommand extends Command
 {
-    public static function getDefaultName() : ?string {
+    public static function getDefaultName(): ?string {
         return 'model:process:delete';
     }
 
-    public static function getDefaultDescription() : ?string {
+    public static function getDefaultDescription(): ?string {
         return 'Delete an existing process';
     }
 
-    protected function configure() : void {
+    protected function configure(): void {
         $this->addOption('id', '', InputOption::VALUE_REQUIRED, 'Process ID');
         $this->addOption('factory', 'f', InputOption::VALUE_REQUIRED, 'Factory ID');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output) : int {
+    protected function execute(InputInterface $input, OutputInterface $output): int {
         $id = $input->getOption('id');
         $factoryId = $input->getOption('factory');
 
@@ -58,7 +58,7 @@ class DeleteProcessCommand extends Command
         foreach ($processes as $process) {
             if (!$process->delete()) {
                 DB::getConnection()->rollback();
-                $output->writeln('<error>Failed to delete process (ID: '.$process->id.').</error>');
+                $output->writeln('<error>Failed to delete process (ID: ' . $process->id . ').</error>');
                 return self::FAILURE;
             }
         }

@@ -16,55 +16,55 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class ListFactoryCommand extends Command
 {
-    public static function getDefaultName() : ?string {
+    public static function getDefaultName(): ?string {
         return 'model:factory';
     }
 
-    public static function getDefaultDescription() : ?string {
+    public static function getDefaultDescription(): ?string {
         return 'List factories';
     }
 
-    protected function configure() : void {
+    protected function configure(): void {
         $this->addOption(
-          'search',
-          's',
-          InputOption::VALUE_REQUIRED,
-          'Search factory by its name.'
+            'search',
+            's',
+            InputOption::VALUE_REQUIRED,
+            'Search factory by its name.'
         );
         $this->addOption(
-          'id',
-          'i',
-          InputOption::VALUE_REQUIRED,
-          'Search factory by its ID.',
-          suggestedValues: static function (CompletionInput $input) {
-              $factories = Factory::query()
+            'id',
+            'i',
+            InputOption::VALUE_REQUIRED,
+            'Search factory by its ID.',
+            suggestedValues: static function (CompletionInput $input) {
+                $factories = Factory::query()
                                   ->where('CAST(id AS CHAR) LIKE %~like~', $input->getCompletionValue())
                                   ->get();
-              return array_values(
-                array_map(
-                  static fn(Factory $factory) => new Suggestion((string) $factory->id, $factory->name),
-                  $factories
-                )
-              );
-          },
+                return array_values(
+                    array_map(
+                        static fn(Factory $factory) => new Suggestion((string) $factory->id, $factory->name),
+                        $factories
+                    )
+                );
+            },
         );
         $this->addOption(
-          'limit',
-          'l',
-          InputOption::VALUE_REQUIRED,
-          'Limit the number of returned factories.',
-          50
+            'limit',
+            'l',
+            InputOption::VALUE_REQUIRED,
+            'Limit the number of returned factories.',
+            50
         );
         $this->addOption(
-          'offset',
-          'o',
-          InputOption::VALUE_REQUIRED,
-          'Offset of the returned factories (in combination with limit).',
-          0
+            'offset',
+            'o',
+            InputOption::VALUE_REQUIRED,
+            'Offset of the returned factories (in combination with limit).',
+            0
         );
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output) : int {
+    protected function execute(InputInterface $input, OutputInterface $output): int {
         $io = new SymfonyStyle($input, $output);
         $search = $input->getOption('search');
         $id = $input->getOption('id');
@@ -113,14 +113,13 @@ class ListFactoryCommand extends Command
      * @param  SymfonyStyle  $io
      * @return void
      */
-    private function outputFactories(array | Factory $factories, SymfonyStyle $io) : void {
+    private function outputFactories(array | Factory $factories, SymfonyStyle $io): void {
         $table = $io->createTable();
         $table->setHeaders(['ID', 'Name', 'Storage capacity']);
 
         if ($factories instanceof Factory) {
             $table->addRow([$factories->id, $factories->name, $factories->storageCapacity]);
-        }
-        else {
+        } else {
             foreach ($factories as $factory) {
                 $table->addRow([$factory->id, $factory->name, $factory->storageCapacity]);
             }

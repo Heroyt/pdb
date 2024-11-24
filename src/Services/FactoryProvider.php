@@ -17,8 +17,9 @@ use Throwable;
 readonly class FactoryProvider
 {
     public function __construct(
-      private ClientInterface $client,
-    ) {}
+        private ClientInterface $client,
+    ) {
+    }
 
     /**
      * @throws ModelCreationException
@@ -26,7 +27,7 @@ readonly class FactoryProvider
      * @throws DriverException
      * @throws Throwable
      */
-    public function createFactory(string $name, int $capacity = 50) : Factory {
+    public function createFactory(string $name, int $capacity = 50): Factory {
         $factory = new Factory();
         $factory->name = $name;
         $factory->storageCapacity = $capacity;
@@ -39,7 +40,7 @@ readonly class FactoryProvider
      * @throws Throwable
      * @throws ValidationException
      */
-    public function updateFactory(Factory $factory) : Factory {
+    public function updateFactory(Factory $factory): Factory {
         DB::getConnection()->begin();
         if (!$factory->save()) {
             DB::getConnection()->rollback();
@@ -55,10 +56,10 @@ readonly class FactoryProvider
         return $factory;
     }
 
-    public function createFactoryNode(TransactionInterface $tsx, Factory $factory) : void {
+    public function createFactoryNode(TransactionInterface $tsx, Factory $factory): void {
         $result = $tsx->run(
-          'MERGE (f:Factory {id: $id}) SET f.name = $name return f',
-          ['id' => $factory->id, 'name' => $factory->name]
+            'MERGE (f:Factory {id: $id}) SET f.name = $name return f',
+            ['id' => $factory->id, 'name' => $factory->name]
         );
         new Logger(LOG_DIR, 'neo4j')->debug('Result:', $result->jsonSerialize());
     }

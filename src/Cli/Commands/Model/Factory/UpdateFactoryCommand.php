@@ -19,41 +19,41 @@ use Symfony\Component\Console\Output\OutputInterface;
 class UpdateFactoryCommand extends Command
 {
     public function __construct(
-      private readonly FactoryProvider $factoryProvider,
+        private readonly FactoryProvider $factoryProvider,
     ) {
         parent::__construct();
     }
 
-    public static function getDefaultName() : ?string {
+    public static function getDefaultName(): ?string {
         return 'model:factory:update';
     }
 
-    public static function getDefaultDescription() : ?string {
+    public static function getDefaultDescription(): ?string {
         return 'Update an existing factory';
     }
 
-    protected function configure() : void {
+    protected function configure(): void {
         $this->addArgument(
-          'id',
-          InputArgument::REQUIRED,
-          'Factory ID',
-          suggestedValues: static function (CompletionInput $input) {
-              $factories = Factory::query()
+            'id',
+            InputArgument::REQUIRED,
+            'Factory ID',
+            suggestedValues: static function (CompletionInput $input) {
+                $factories = Factory::query()
                                   ->where('CAST(id AS CHAR) LIKE %~like~', $input->getCompletionValue())
                                   ->get();
-              return array_values(
-                array_map(
-                  static fn(Factory $factory) => new Suggestion((string) $factory->id, $factory->name),
-                  $factories
-                )
-              );
-          },
+                return array_values(
+                    array_map(
+                        static fn(Factory $factory) => new Suggestion((string) $factory->id, $factory->name),
+                        $factories
+                    )
+                );
+            },
         );
         $this->addOption('name', '', InputOption::VALUE_REQUIRED, 'The name of the factory');
         $this->addOption('capacity', '', InputOption::VALUE_REQUIRED, 'Storage capacity (must be a positive integer)');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output) : int {
+    protected function execute(InputInterface $input, OutputInterface $output): int {
         $id = (int) $input->getArgument('id');
 
         try {

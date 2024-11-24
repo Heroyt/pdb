@@ -20,46 +20,46 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class CreateProcessCommand extends Command
 {
-    public static function getDefaultName() : ?string {
+    public static function getDefaultName(): ?string {
         return 'model:process:create';
     }
 
-    public static function getDefaultDescription() : ?string {
+    public static function getDefaultDescription(): ?string {
         return 'Create a new process';
     }
 
-    protected function configure() : void {
+    protected function configure(): void {
         $this->addArgument(
-          'factory',
-          InputArgument::REQUIRED,
-          'Factory ID',
-          suggestedValues: static function (CompletionInput $input) {
-              $factories = Factory::query()
+            'factory',
+            InputArgument::REQUIRED,
+            'Factory ID',
+            suggestedValues: static function (CompletionInput $input) {
+                $factories = Factory::query()
                                   ->where('CAST(id AS CHAR) LIKE %~like~', $input->getCompletionValue())
                                   ->get();
-              return array_values(
-                array_map(
-                  static fn(Factory $factory) => new Suggestion((string) $factory->id, $factory->name),
-                  $factories
-                )
-              );
-          }
+                return array_values(
+                    array_map(
+                        static fn(Factory $factory) => new Suggestion((string) $factory->id, $factory->name),
+                        $factories
+                    )
+                );
+            }
         );
         $this->addOption(
-          'in',
-          'i',
-          InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
-          'Material inputs (ID[:Quantity=1] format)'
+            'in',
+            'i',
+            InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
+            'Material inputs (ID[:Quantity=1] format)'
         );
         $this->addOption(
-          'out',
-          'o',
-          InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
-          'Material outputs (ID[:Quantity=1] format)'
+            'out',
+            'o',
+            InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
+            'Material outputs (ID[:Quantity=1] format)'
         );
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output) : int {
+    protected function execute(InputInterface $input, OutputInterface $output): int {
         $factoryId = (int) $input->getArgument('factory');
 
         try {
@@ -131,8 +131,8 @@ class CreateProcessCommand extends Command
 
 
         $output->writeln("<info>Created a new process with IDs</info>");
-        $output->writeln('In: '.implode(', ', $inProcesses));
-        $output->writeln('Out: '.implode(', ', $outProcesses));
+        $output->writeln('In: ' . implode(', ', $inProcesses));
+        $output->writeln('Out: ' . implode(', ', $outProcesses));
         return self::SUCCESS;
     }
 }

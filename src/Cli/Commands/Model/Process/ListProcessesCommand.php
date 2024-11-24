@@ -17,19 +17,19 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class ListProcessesCommand extends Command
 {
-    public static function getDefaultName() : ?string {
+    public static function getDefaultName(): ?string {
         return 'model:process';
     }
 
-    public static function getDefaultDescription() : ?string {
+    public static function getDefaultDescription(): ?string {
         return 'List processes for factory';
     }
 
-    protected function configure() : void {
+    protected function configure(): void {
         $this->addArgument('factory', InputArgument::REQUIRED | InputArgument::IS_ARRAY, 'Factory IDs');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output) : int {
+    protected function execute(InputInterface $input, OutputInterface $output): int {
         $factoryIds = $input->getArgument('factory');
 
         foreach ($factoryIds as $factoryId) {
@@ -62,25 +62,24 @@ class ListProcessesCommand extends Command
             foreach ($processes as $process) {
                 if ($process->type === Direction::IN) {
                     $inputsTable->addRow(
-                      [
+                        [
                         $process->id,
-                        $process->material->name.' (ID: '.$process->material->id.')',
+                        $process->material->name . ' (ID: ' . $process->material->id . ')',
                         $process->quantity,
-                      ]
+                        ]
                     );
-                }
-                else {
+                } else {
                     $outputsTable->addRow(
-                      [
+                        [
                         $process->id,
-                        $process->material->name.' (ID: '.$process->material->id.')',
+                        $process->material->name . ' (ID: ' . $process->material->id . ')',
                         $process->quantity,
-                      ]
+                        ]
                     );
                 }
             }
             $io->section(
-              sprintf('Process for factory: %s (ID: %d)', $factory->name, $factory->id)
+                sprintf('Process for factory: %s (ID: %d)', $factory->name, $factory->id)
             );
             $inputsTable->render();
             $section->writeln('');

@@ -22,14 +22,14 @@ class InstallCommand extends Command
 
     protected function configure(): void {
         $this->addOption(
-          'fresh',
-          'f',
-          InputOption::VALUE_NONE,
-          'Fresh install.'
+            'fresh',
+            'f',
+            InputOption::VALUE_NONE,
+            'Fresh install.'
         );
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output) : int {
+    protected function execute(InputInterface $input, OutputInterface $output): int {
         $fresh = $input->getOption('fresh');
         if (!Install::install($fresh)) {
             $output->writeln('<error>Failed to install DB.</error>');

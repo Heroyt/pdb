@@ -15,34 +15,34 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class DeleteFactoryCommand extends Command
 {
-    public static function getDefaultName() : ?string {
+    public static function getDefaultName(): ?string {
         return 'model:factory:delete';
     }
 
-    public static function getDefaultDescription() : ?string {
+    public static function getDefaultDescription(): ?string {
         return 'Delete an existing factory';
     }
 
-    protected function configure() : void {
+    protected function configure(): void {
         $this->addArgument(
-          'id',
-          InputArgument::REQUIRED,
-          'Factory ID',
-          suggestedValues: static function (CompletionInput $input) {
-              $factories = Factory::query()
+            'id',
+            InputArgument::REQUIRED,
+            'Factory ID',
+            suggestedValues: static function (CompletionInput $input) {
+                $factories = Factory::query()
                                   ->where('CAST(id AS CHAR) LIKE %~like~', $input->getCompletionValue())
                                   ->get();
-              return array_values(
-                array_map(
-                  static fn(Factory $factory) => new Suggestion((string) $factory->id, $factory->name),
-                  $factories
-                )
-              );
-          },
+                return array_values(
+                    array_map(
+                        static fn(Factory $factory) => new Suggestion((string) $factory->id, $factory->name),
+                        $factories
+                    )
+                );
+            },
         );
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output) : int {
+    protected function execute(InputInterface $input, OutputInterface $output): int {
         $id = (int) $input->getArgument('id');
 
         try {

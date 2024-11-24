@@ -14,44 +14,44 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class ListMaterialCommand extends Command
 {
-    public static function getDefaultName() : ?string {
+    public static function getDefaultName(): ?string {
         return 'model:material';
     }
 
-    public static function getDefaultDescription() : ?string {
+    public static function getDefaultDescription(): ?string {
         return 'List materials';
     }
 
-    protected function configure() : void {
+    protected function configure(): void {
         $this->addOption(
-          'search',
-          's',
-          InputOption::VALUE_REQUIRED,
-          'Search material by its name.'
+            'search',
+            's',
+            InputOption::VALUE_REQUIRED,
+            'Search material by its name.'
         );
         $this->addOption(
-          'id',
-          'i',
-          InputOption::VALUE_REQUIRED,
-          'Search material by its ID.'
+            'id',
+            'i',
+            InputOption::VALUE_REQUIRED,
+            'Search material by its ID.'
         );
         $this->addOption(
-          'limit',
-          'l',
-          InputOption::VALUE_REQUIRED,
-          'Limit the number of returned materials.',
-          50
+            'limit',
+            'l',
+            InputOption::VALUE_REQUIRED,
+            'Limit the number of returned materials.',
+            50
         );
         $this->addOption(
-          'offset',
-          'o',
-          InputOption::VALUE_REQUIRED,
-          'Offset of the returned materials (in combination with limit).',
-          0
+            'offset',
+            'o',
+            InputOption::VALUE_REQUIRED,
+            'Offset of the returned materials (in combination with limit).',
+            0
         );
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output) : int {
+    protected function execute(InputInterface $input, OutputInterface $output): int {
         $io = new SymfonyStyle($input, $output);
         $search = $input->getOption('search');
         $id = $input->getOption('id');
@@ -100,14 +100,13 @@ class ListMaterialCommand extends Command
      * @param  SymfonyStyle  $io
      * @return void
      */
-    private function outputMaterials(array | Material $materials, SymfonyStyle $io) : void {
+    private function outputMaterials(array | Material $materials, SymfonyStyle $io): void {
         $table = $io->createTable();
         $table->setHeaders(['ID', 'Name', 'Size', 'Wildcard']);
 
         if ($materials instanceof Material) {
             $table->addRow([$materials->id, $materials->name, $materials->size, $materials->wildcard ? 'YES' : 'NO']);
-        }
-        else {
+        } else {
             foreach ($materials as $material) {
                 $table->addRow([$material->id, $material->name, $material->size, $material->wildcard ? 'YES' : 'NO']);
             }

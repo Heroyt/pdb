@@ -19,67 +19,67 @@ use Symfony\Component\Console\Output\OutputInterface;
 class CreateConnectionCommand extends Command
 {
     public function __construct(
-      private readonly ConnectionProvider $connectionProvider,
+        private readonly ConnectionProvider $connectionProvider,
     ) {
         parent::__construct();
     }
 
-    public static function getDefaultName() : ?string {
+    public static function getDefaultName(): ?string {
         return 'model:connection:create';
     }
 
-    public static function getDefaultDescription() : ?string {
+    public static function getDefaultDescription(): ?string {
         return 'Create a new connection';
     }
 
-    protected function configure() : void {
+    protected function configure(): void {
         $this->addArgument(
-          'start',
-          InputArgument::REQUIRED,
-          'Start factory ID',
-          suggestedValues: static function (CompletionInput $input) {
-              $factories = Factory::query()
+            'start',
+            InputArgument::REQUIRED,
+            'Start factory ID',
+            suggestedValues: static function (CompletionInput $input) {
+                $factories = Factory::query()
                                   ->where('CAST(id AS CHAR) LIKE %~like~', $input->getCompletionValue())
                                   ->get();
-              return array_values(
-                array_map(
-                  static fn(Factory $factory) => new Suggestion((string) $factory->id, $factory->name),
-                  $factories
-                )
-              );
-          }
+                return array_values(
+                    array_map(
+                        static fn(Factory $factory) => new Suggestion((string) $factory->id, $factory->name),
+                        $factories
+                    )
+                );
+            }
         );
         $this->addArgument(
-          'end',
-          InputArgument::REQUIRED,
-          'End factory ID',
-          suggestedValues: static function (CompletionInput $input) {
-              $factories = Factory::query()
+            'end',
+            InputArgument::REQUIRED,
+            'End factory ID',
+            suggestedValues: static function (CompletionInput $input) {
+                $factories = Factory::query()
                                   ->where('CAST(id AS CHAR) LIKE %~like~', $input->getCompletionValue())
                                   ->get();
-              return array_values(
-                array_map(
-                  static fn(Factory $factory) => new Suggestion((string) $factory->id, $factory->name),
-                  $factories
-                )
-              );
-          }
+                return array_values(
+                    array_map(
+                        static fn(Factory $factory) => new Suggestion((string) $factory->id, $factory->name),
+                        $factories
+                    )
+                );
+            }
         );
         $this->addOption(
-          'speed',
-          's',
-          InputOption::VALUE_REQUIRED,
-          'Connection speed (positive integer)'
+            'speed',
+            's',
+            InputOption::VALUE_REQUIRED,
+            'Connection speed (positive integer)'
         );
         $this->addOption(
-          'capacity',
-          'c',
-          InputOption::VALUE_REQUIRED,
-          'Connection material capacity (positive integer)'
+            'capacity',
+            'c',
+            InputOption::VALUE_REQUIRED,
+            'Connection material capacity (positive integer)'
         );
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output) : int {
+    protected function execute(InputInterface $input, OutputInterface $output): int {
         $startId = (int) $input->getArgument('start');
         $endId = (int) $input->getArgument('end');
 
@@ -106,7 +106,7 @@ class CreateConnectionCommand extends Command
             return self::FAILURE;
         }
 
-        $output->writeln('<info>Connection (ID: '.$connection->id.') created successfully.</info>');
+        $output->writeln('<info>Connection (ID: ' . $connection->id . ') created successfully.</info>');
         return self::SUCCESS;
     }
 }
