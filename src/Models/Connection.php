@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Models;
@@ -10,7 +11,6 @@ use OpenApi\Attributes as OA;
 #[PrimaryKey('id_connection'), OA\Schema]
 class Connection extends Model
 {
-
     public const string TABLE = 'connections';
 
     #[OA\Property]
@@ -21,6 +21,4 @@ class Connection extends Model
     public int $speed = 1;
     #[OA\Property]
     public int $storageCapacity = 10;
-
-
 }

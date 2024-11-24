@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Services;
@@ -16,7 +17,6 @@ use Throwable;
 
 readonly class ConnectionProvider
 {
-
     public function __construct(
       private ClientInterface $client,
       private FactoryProvider $factoryProvider,
@@ -87,5 +87,4 @@ readonly class ConnectionProvider
         );
         new Logger(LOG_DIR, 'neo4j')->debug('Result:', $result->jsonSerialize());
     }
-
 }
