@@ -26,6 +26,12 @@ class UpdateMaterialCommand extends Command
         $this->addArgument('id', InputArgument::REQUIRED, 'Material ID');
         $this->addOption('name', '', InputOption::VALUE_REQUIRED, 'The name of the material');
         $this->addOption('size', '', InputOption::VALUE_REQUIRED, 'Size (must be a positive integer)');
+        $this->addOption(
+          'wildcard',
+          'w',
+          InputOption::VALUE_NONE,
+          'Is the material a wildcard (substitutes any material)'
+        );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) : int {
@@ -57,6 +63,8 @@ class UpdateMaterialCommand extends Command
             }
             $material->size = (int) $size;
         }
+
+        $material->wildcard = $input->getOption('wildcard') ?? $material->wildcard;
 
         if (!$material->save()) {
             $output->writeln('<error>Failed to save material.</error>');

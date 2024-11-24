@@ -8,6 +8,7 @@ use App\Models\Material;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class CreateMaterialCommand extends Command
@@ -23,6 +24,12 @@ class CreateMaterialCommand extends Command
     protected function configure() : void {
         $this->addArgument('name', InputArgument::REQUIRED, 'The name of the material');
         $this->addArgument('size', InputArgument::OPTIONAL, 'Material size (must be a positive integer)', 1);
+        $this->addOption(
+          'wildcard',
+          'w',
+          InputOption::VALUE_NONE,
+          'Is the material a wildcard (substitutes any material)'
+        );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) : int {
@@ -36,6 +43,7 @@ class CreateMaterialCommand extends Command
         $material = new Material();
         $material->name = $name;
         $material->size = $size;
+        $material->wildcard = $input->getOption('wildcard') ?? false;
         if (!$material->save()) {
             $output->writeln('<error>Failed to create material.</error>');
             return self::FAILURE;

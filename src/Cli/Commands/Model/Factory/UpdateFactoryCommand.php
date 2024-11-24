@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Cli\Commands\Model\Factory;
 
+use App\Exceptions\ModelCreationException;
 use App\Models\Factory;
+use App\Services\FactoryProvider;
 use Lsr\Core\Exceptions\ModelNotFoundException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Completion\CompletionInput;
@@ -16,6 +18,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class UpdateFactoryCommand extends Command
 {
+    public function __construct(
+      private readonly FactoryProvider $factoryProvider,
+    ) {
+        parent::__construct();
+    }
+
     public static function getDefaultName() : ?string {
         return 'model:factory:update';
     }
@@ -75,11 +83,12 @@ class UpdateFactoryCommand extends Command
             $factory->storageCapacity = (int) $capacity;
         }
 
-        if (!$factory->save()) {
+        try {
+            $this->factoryProvider->updateFactory($factory);
+        } catch (ModelCreationException) {
             $output->writeln('<error>Failed to save factory.</error>');
             return self::FAILURE;
         }
-
 
         $output->writeln('<info>Factory saved</info>');
         return self::SUCCESS;

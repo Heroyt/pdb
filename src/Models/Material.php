@@ -17,4 +17,8 @@ class Material extends Model
     public string $name;
     #[OA\Property]
     public int $size;
+
+    /** @var bool If true, accepts and material */
+    #[OA\Property]
+    public bool $wildcard = false;
 }

@@ -17,9 +17,13 @@ tables:
 			`id_material` int(11) unsigned NOT NULL AUTO_INCREMENT,
 			`name` varchar(255) NOT NULL,
 			`size` int(11) unsigned NOT NULL DEFAULT 1,
+			`wildcard` tinyint(1) NOT NULL DEFAULT 0,
 			PRIMARY KEY (`id_material`)
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 		'''
+		modifications:
+			0.1:
+				- 'ADD `wildcard` tinyint(1) NOT NULL DEFAULT 0;'
 	App\Models\Factory:
 		order: 1
 		definition: '''

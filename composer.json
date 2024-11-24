@@ -37,7 +37,8 @@
     "symfony/property-access": "^7.1",
     "spiral/roadrunner-http": "^3.5",
     "nette/http": "^3.3",
-    "symfony/event-dispatcher-contracts": "^3.5"
+    "symfony/event-dispatcher-contracts": "^3.5",
+    "laudis/neo4j-php-client": "^3.1"
   },
   "autoload": {
     "psr-4": {
@@ -56,7 +57,8 @@
   "config": {
     "optimize-autoloader": true,
     "allow-plugins": {
-      "phpstan/extension-installer": true
+      "phpstan/extension-installer": true,
+      "php-http/discovery": true
     }
   },
   "require-dev": {

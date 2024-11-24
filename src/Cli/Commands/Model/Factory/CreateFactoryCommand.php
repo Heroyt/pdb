@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\Cli\Commands\Model\Factory;
 
-use App\Models\Factory;
+use App\Exceptions\ModelCreationException;
+use App\Services\FactoryProvider;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -12,6 +13,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class CreateFactoryCommand extends Command
 {
+    public function __construct(
+      private readonly FactoryProvider $factoryProvider,
+    ) {
+        parent::__construct();
+    }
+
     public static function getDefaultName() : ?string {
         return 'model:factory:create';
     }
@@ -38,10 +45,9 @@ class CreateFactoryCommand extends Command
             return self::FAILURE;
         }
         $storageCapacity = (int) $storageCapacity;
-        $factory = new Factory();
-        $factory->name = $name;
-        $factory->storageCapacity = $storageCapacity;
-        if (!$factory->save()) {
+        try {
+            $factory = $this->factoryProvider->createFactory($name, $storageCapacity);
+        } catch (ModelCreationException) {
             $output->writeln('<error>Failed to create factory.</error>');
             return self::FAILURE;
         }

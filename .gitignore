@@ -27,3 +27,4 @@ Temporary Items
 *.crt
 *.key
 .pid
+config/secret.neon

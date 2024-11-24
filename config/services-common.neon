@@ -1,8 +1,10 @@
 includes:
+	- secret.neon
 	- jobs.neon
 	- roadrunner.neon
 	- console.neon
 	- symfony.neon
+	- neo4j.neon
 extensions:
 	caching: Nette\Bridges\CacheDI\CacheExtension(%constants.tempDir%)
 	decorator: Nette\DI\Extensions\DecoratorExtension

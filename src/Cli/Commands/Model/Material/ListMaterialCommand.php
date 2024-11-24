@@ -64,7 +64,7 @@ class ListMaterialCommand extends Command
 
             try {
                 $material = Material::get((int) $id);
-                $this->outputFactories($material, $io);
+                $this->outputMaterials($material, $io);
             } catch (ModelNotFoundException) {
                 $output->writeln("<error>Material with ID `$id` was not found</error>");
                 return self::FAILURE;
@@ -91,7 +91,7 @@ class ListMaterialCommand extends Command
         }
 
         $output->writeln(sprintf('<info>Found %d materials</info>', count($materials)));
-        $this->outputFactories($materials, $io);
+        $this->outputMaterials($materials, $io);
         return self::SUCCESS;
     }
 
@@ -100,16 +100,16 @@ class ListMaterialCommand extends Command
      * @param  SymfonyStyle  $io
      * @return void
      */
-    private function outputFactories(array | Material $materials, SymfonyStyle $io) : void {
+    private function outputMaterials(array | Material $materials, SymfonyStyle $io) : void {
         $table = $io->createTable();
-        $table->setHeaders(['ID', 'Name', 'Size']);
+        $table->setHeaders(['ID', 'Name', 'Size', 'Wildcard']);
 
         if ($materials instanceof Material) {
-            $table->addRow([$materials->id, $materials->name, $materials->size]);
+            $table->addRow([$materials->id, $materials->name, $materials->size, $materials->wildcard ? 'YES' : 'NO']);
         }
         else {
             foreach ($materials as $material) {
-                $table->addRow([$material->id, $material->name, $material->size]);
+                $table->addRow([$material->id, $material->name, $material->size, $material->wildcard ? 'YES' : 'NO']);
             }
         }
         $table->render();
