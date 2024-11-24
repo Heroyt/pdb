@@ -16,7 +16,7 @@ tables:
 		(
 			`id_material` int(11) unsigned NOT NULL AUTO_INCREMENT,
 			`name` varchar(255) NOT NULL,
-			`size` int(11) unsigned NOT NULL DEFAULT 0,
+			`size` int(11) unsigned NOT NULL DEFAULT 1,
 			PRIMARY KEY (`id_material`)
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 		'''
@@ -26,8 +26,20 @@ tables:
 		(
 			`id_factory` int(11) unsigned NOT NULL AUTO_INCREMENT,
 			`name` varchar(255) NOT NULL,
-			`storage_capacity` int(11) unsigned NOT NULL DEFAULT 0,
+			`storage_capacity` int(11) unsigned NOT NULL DEFAULT 50,
 			PRIMARY KEY (`id_factory`)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+		'''
+	App\Models\Connection:
+		order: 1
+		definition: '''
+		(
+			`id_connection` int(11) unsigned NOT NULL AUTO_INCREMENT,
+			`assigned` tinyint(1) NOT NULL DEFAULT 0,
+			`active` tinyint(1) NOT NULL DEFAULT 0,
+			`speed` int(11) unsigned NOT NULL DEFAULT 1,
+			`storage_capacity` int(11) unsigned NOT NULL DEFAULT 1,
+			PRIMARY KEY (`id_connection`)
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 		'''
 	App\Models\Process:
@@ -77,6 +89,31 @@ tables:
 				column: id_factory
 				refTable: App\Models\Factory
 				refColumn: id_factory
+			-
+				column: id_material
+				refTable: App\Models\Material
+				refColumn: id_material
+	App\Models\ConnectionStorage:
+		order: 2
+		definition: '''
+		(
+			`id_storage` int(11) unsigned NOT NULL AUTO_INCREMENT,
+			`id_connection` int(11) unsigned NOT NULL,
+			`id_material` int(11) unsigned NOT NULL,
+			`quantity` int(11) unsigned NOT NULL DEFAULT 0,
+			PRIMARY KEY (`id_storage`)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+		'''
+		indexes:
+			-
+				name: 'storage_connection_material'
+				columns: ['id_connection', 'id_material']
+				unique: true
+		foreignKeys:
+			-
+				column: id_connection
+				refTable: App\Models\Connection
+				refColumn: id_connection
 			-
 				column: id_material
 				refTable: App\Models\Material
