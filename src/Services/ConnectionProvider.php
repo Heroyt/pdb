@@ -8,8 +8,10 @@ use App\Exceptions\ModelCreationException;
 use App\Models\Connection;
 use App\Models\Factory;
 use Dibi\DriverException;
+use Laudis\Neo4j\Bolt\BoltResult;
 use Laudis\Neo4j\Contracts\ClientInterface;
 use Laudis\Neo4j\Contracts\TransactionInterface;
+use Laudis\Neo4j\Databags\SummarizedResult;
 use Lsr\Core\DB;
 use Lsr\Core\Exceptions\ValidationException;
 use Lsr\Logging\Logger;
@@ -17,6 +19,9 @@ use Throwable;
 
 readonly class ConnectionProvider
 {
+    /**
+     * @param  ClientInterface<SummarizedResult<BoltResult>>  $client
+     */
     public function __construct(
         private ClientInterface $client,
         private FactoryProvider $factoryProvider,
@@ -68,6 +73,9 @@ readonly class ConnectionProvider
         return $connection;
     }
 
+    /**
+     * @param  TransactionInterface<SummarizedResult<BoltResult>>  $tsx
+     */
     public function createConnectionEdge(
         TransactionInterface $tsx,
         Factory              $start,

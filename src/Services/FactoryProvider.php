@@ -7,8 +7,10 @@ namespace App\Services;
 use App\Exceptions\ModelCreationException;
 use App\Models\Factory;
 use Dibi\DriverException;
+use Laudis\Neo4j\Bolt\BoltResult;
 use Laudis\Neo4j\Contracts\ClientInterface;
 use Laudis\Neo4j\Contracts\TransactionInterface;
+use Laudis\Neo4j\Databags\SummarizedResult;
 use Lsr\Core\DB;
 use Lsr\Core\Exceptions\ValidationException;
 use Lsr\Logging\Logger;
@@ -16,6 +18,9 @@ use Throwable;
 
 readonly class FactoryProvider
 {
+    /**
+     * @param  ClientInterface<SummarizedResult<BoltResult>>  $client
+     */
     public function __construct(
         private ClientInterface $client,
     ) {
@@ -56,6 +61,9 @@ readonly class FactoryProvider
         return $factory;
     }
 
+    /**
+     * @param  TransactionInterface<SummarizedResult<BoltResult>>  $tsx
+     */
     public function createFactoryNode(TransactionInterface $tsx, Factory $factory): void {
         $result = $tsx->run(
             'MERGE (f:Factory {id: $id}) SET f.name = $name return f',
