@@ -38,6 +38,7 @@ services:
       - cassandra
     volumes:
       - ./:/app
+      - ./docker/roadrunner/php.ini:/usr/local/etc/php/conf.d/custom.ini
     ports:
       - "6001:6001"
       - "2112:2112"

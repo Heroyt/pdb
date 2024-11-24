@@ -22,7 +22,7 @@ use Tracy\ILogger;
 
 const ROOT = __DIR__ . '/';
 
-error_reporting(E_ALL);
+error_reporting(E_ALL ^ E_DEPRECATED);
 ini_set('display_errors', 'stderr');
 ini_set('display_startup_errors', '1');
 
