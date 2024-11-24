@@ -1,0 +1,30 @@
+includes:
+	- jobs.neon
+	- roadrunner.neon
+	- console.neon
+	- symfony.neon
+extensions:
+	caching: Nette\Bridges\CacheDI\CacheExtension(%constants.tempDir%)
+	decorator: Nette\DI\Extensions\DecoratorExtension
+	inject: Nette\DI\Extensions\InjectExtension
+parameters:
+	routing:
+		routeFiles:
+			- %constants.appDir%routes
+		controllers:
+			- %constants.appDir%src/Controllers
+	redis:
+		host: redis
+services:
+	redis:
+		create: \Redis
+		setup:
+			- connect(%redis.host%)
+
+	caching.journal: Lsr\Core\Caching\RedisJournal(@redis)
+	cache.storage: Lsr\Core\Caching\RedisStorage(@redis, '', @caching.journal)
+	cache: Lsr\Core\Caching\Cache(@cache.storage, null, %constants.debug%)
+
+decorator:
+	Lsr\Core\Controllers\Controller:
+		inject: true

@@ -1,0 +1,12 @@
+extensions:
+	orisai.console: App\DI\Extensions\ConsoleExtension
+orisai.console:
+	name: 'Laser arena Control'
+services:
+search:
+	commands:
+		in: '%constants.appDir%src/Cli/Commands'
+		extends:
+			- Symfony\Component\Console\Command\Command
+		tags:
+			- cli

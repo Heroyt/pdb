@@ -1,0 +1,9 @@
+services:
+	# Jobs queue
+	jobs: Spiral\RoadRunner\Jobs\Jobs(@rpc)
+	queue:
+		type: Spiral\RoadRunner\Jobs\Queue
+		create: @jobs::connect(%jobs.queue%)
+	taskProducer: App\Services\TaskProducer(@queue)
+
+	# Jobs tasks

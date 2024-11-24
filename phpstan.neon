@@ -1,0 +1,11 @@
+parameters:
+	editorUrl: 'phpstorm://open?file=%%file%%&line=%%line%%'
+	level: 7
+	paths:
+		- src
+		- include
+		- routes
+		- config
+	tmpDir: temp
+	universalObjectCratesClasses:
+		- Dibi\Row

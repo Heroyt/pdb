@@ -1,0 +1,72 @@
+{
+  "name": "heroyt/pdb",
+  "type": "project",
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "https://packages.laserliga.cz"
+    }
+  ],
+  "scripts": {
+    "swagger": "./vendor/bin/openapi src vendor/lsr/request/src -o swagger.yaml",
+    "phpstan": "./vendor/bin/phpstan",
+    "phpcbf": "./vendor/bin/phpcbf",
+    "phpcs": "./vendor/bin/phpcs"
+  },
+  "require": {
+    "php": "^8.4",
+    "dibi/dibi": "^5.0",
+    "lsr/core": "^0.2",
+    "lsr/interfaces": "^0.2",
+    "lsr/helpers": "^0.2",
+    "lsr/logging": "^0.2",
+    "lsr/request": "^0.2",
+    "lsr/routing": "^0.2",
+    "tracy/tracy": "^2.10",
+    "latte/latte": "^3.0",
+    "nette/di": "^3.2",
+    "symfony/lock": "^7.1",
+    "zircote/swagger-php": "^4.11",
+    "spiral/roadrunner": "^2024.2",
+    "spiral/roadrunner-worker": "^3.6",
+    "spiral/roadrunner-jobs": "^4.6",
+    "spiral/roadrunner-tcp": "^4.1",
+    "spiral/roadrunner-metrics": "^3.2",
+    "symfony/console": "^7.1",
+    "symfony/serializer": "^7.1",
+    "symfony/property-access": "^7.1",
+    "spiral/roadrunner-http": "^3.5",
+    "nette/http": "^3.3",
+    "symfony/event-dispatcher-contracts": "^3.5"
+  },
+  "autoload": {
+    "psr-4": {
+      "App\\": "src/"
+    },
+    "files": [
+      "include/functions.php"
+    ]
+  },
+  "authors": [
+    {
+      "name": "Tomáš Vojík",
+      "email": "vojik@wboy.cz"
+    }
+  ],
+  "config": {
+    "optimize-autoloader": true,
+    "allow-plugins": {
+      "phpstan/extension-installer": true
+    }
+  },
+  "require-dev": {
+    "roave/security-advisories": "dev-latest",
+    "phpunit/phpunit": "^11.4",
+    "phpstan/phpstan": "^2.0",
+    "phpstan/extension-installer": "^1.4",
+    "phpstan/phpstan-dibi": "^2.0",
+    "phpstan/phpstan-nette": "^2.0",
+    "phpstan/phpstan-phpunit": "^2.0",
+    "squizlabs/php_codesniffer": "^3.11"
+  }
+}

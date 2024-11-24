@@ -1,0 +1,62 @@
+version: "3"
+envfile: .env
+server:
+  command: "php psr-worker.php"
+  relay: pipes
+metrics:
+  address: 0.0.0.0:2112
+  collect:
+rpc:
+  listen: tcp://0.0.0.0:6001
+http:
+  address: 0.0.0.0:8001
+  access_logs: true
+  middleware:
+    - headers
+    - http_metrics
+  pool:
+    debug: true
+    num_workers: 3
+    max_jobs: 5
+    max_queue_size: 10
+    supervisor:
+      max_worker_memory: 512
+  headers:
+    cors:
+      allowed_origin: "*"
+      allowed_headers: "*"
+      allowed_methods: "GET,POST,PUT,DELETE"
+      allow_credentials: true
+      exposed_headers: "Cache-Control,Content-Language,Content-Type,Expires,Last-Modified,Pragma"
+      max_age: 600
+      # Status code to use for successful OPTIONS requests. Default value is 200.
+      options_success_status: 200
+  fcgi:
+    address: tcp://0.0.0.0:9000
+jobs:
+  num_pollers: 10
+  timeout: 120
+  pipeline_size: 1000
+  pool:
+    num_workers: 5
+    max_jobs: 5
+    supervisor:
+      max_worker_memory: 512
+  consume: [ "commands" ]
+  pipelines:
+    commands:
+      driver: ampq
+      config:
+        queue: commands
+logs:
+  encoding: console
+  level: debug
+  mode: development
+amqp:
+  addr: amqp://${RABBITMQ_DEFAULT_USER}:${RABBITMQ_DEFAULT_PASS}@rabbitmq:5672
+#  file_logger_options:
+#    log_output: "logs/rr.log"
+#    max_size: 10
+#    max_age: 24
+#    max_backups: 10
+#    compress: true

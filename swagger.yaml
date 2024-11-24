@@ -1,0 +1,73 @@
+openapi: 3.0.0
+info:
+  title: 'PDB API'
+  description: 'API documentation.'
+  version: '1.0'
+servers:
+  -
+    url: 'https://pdb.local'
+    description: Dev
+components:
+  schemas:
+    ErrorResponse:
+      properties:
+        title:
+          type: string
+          example: 'Error title'
+        type:
+          $ref: '#/components/schemas/ErrorType'
+        detail:
+          type: string
+          example: 'Error description'
+          nullable: true
+        exception:
+          properties:
+            message:
+              type: string
+              example: 'Some exception description'
+            code:
+              type: integer
+              example: 123
+            trace:
+              type: array
+              items:
+                type: object
+              example:
+                -
+                  file: index.php
+                  line: 1
+                  function: abc
+                  args: ['Argument value']
+          type: object
+          nullable: true
+        values:
+          type: object
+          example:
+            key1: value1
+            key2: value2
+          nullable: true
+      type: object
+    SuccessResponse:
+      properties:
+        message:
+          type: string
+          example: Message
+        detail:
+          type: string
+          example: Description
+          nullable: true
+        values:
+          type: object
+          example:
+            key1: value1
+            key2: value2
+          nullable: true
+      type: object
+    ErrorType:
+      type: string
+      enum:
+        - validation_error
+        - database_error
+        - internal_error
+        - resource_not_found_error
+        - resource_access_error
