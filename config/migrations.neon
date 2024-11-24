@@ -10,6 +10,74 @@ tables:
     			PRIMARY KEY (`key`)
     		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
     		'''
-		modifications:
-			0.1:
-				- 'CHANGE `value` `value` BLOB DEFAULT NULL;'
+	App\Models\Material:
+		order: 1
+		definition: '''
+		(
+			`id_material` int(11) unsigned NOT NULL AUTO_INCREMENT,
+			`name` varchar(255) NOT NULL,
+			`size` int(11) unsigned NOT NULL DEFAULT 0,
+			PRIMARY KEY (`id_material`)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+		'''
+	App\Models\Factory:
+		order: 1
+		definition: '''
+		(
+			`id_factory` int(11) unsigned NOT NULL AUTO_INCREMENT,
+			`name` varchar(255) NOT NULL,
+			`storage_capacity` int(11) unsigned NOT NULL DEFAULT 0,
+			PRIMARY KEY (`id_factory`)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+		'''
+	App\Models\Process:
+		order: 2
+		definition: '''
+		(
+			`id_process` int(11) unsigned NOT NULL AUTO_INCREMENT,
+			`id_factory` int(11) unsigned NOT NULL,
+			`id_material` int(11) unsigned NOT NULL,
+			`type` enum('in', 'out') NOT NULL,
+			`quantity` int(11) unsigned NOT NULL DEFAULT 0,
+			PRIMARY KEY (`id_process`)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+		'''
+		indexes:
+			-
+				name: 'process_factory_material'
+				columns: ['id_factory', 'id_material']
+				unique: true
+		foreignKeys:
+			-
+				column: id_factory
+				refTable: App\Models\Factory
+				refColumn: id_factory
+			-
+				column: id_material
+				refTable: App\Models\Material
+				refColumn: id_material
+	App\Models\FactoryStorage:
+		order: 2
+		definition: '''
+		(
+			`id_storage` int(11) unsigned NOT NULL AUTO_INCREMENT,
+			`id_factory` int(11) unsigned NOT NULL,
+			`id_material` int(11) unsigned NOT NULL,
+			`quantity` int(11) unsigned NOT NULL DEFAULT 0,
+			PRIMARY KEY (`id_storage`)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+		'''
+		indexes:
+			-
+				name: 'storage_factory_material'
+				columns: ['id_factory', 'id_material']
+				unique: true
+		foreignKeys:
+			-
+				column: id_factory
+				refTable: App\Models\Factory
+				refColumn: id_factory
+			-
+				column: id_material
+				refTable: App\Models\Material
+				refColumn: id_material
