@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Cli\Commands\Model\Factory;
@@ -15,7 +16,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class UpdateFactoryCommand extends Command
 {
-
     public static function getDefaultName() : ?string {
         return 'model:factory:update';
     }
@@ -84,5 +84,4 @@ class UpdateFactoryCommand extends Command
         $output->writeln('<info>Factory saved</info>');
         return self::SUCCESS;
     }
-
 }

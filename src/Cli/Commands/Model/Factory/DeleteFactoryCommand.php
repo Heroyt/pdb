@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Cli\Commands\Model\Factory;
@@ -14,7 +15,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class DeleteFactoryCommand extends Command
 {
-
     public static function getDefaultName() : ?string {
         return 'model:factory:delete';
     }
@@ -61,5 +61,4 @@ class DeleteFactoryCommand extends Command
         $output->writeln('<info>Factory removed</info>');
         return self::SUCCESS;
     }
-
 }

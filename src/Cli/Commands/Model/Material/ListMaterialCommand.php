@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Cli\Commands\Model\Material;
@@ -13,7 +14,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class ListMaterialCommand extends Command
 {
-
     public static function getDefaultName() : ?string {
         return 'model:material';
     }
@@ -114,5 +114,4 @@ class ListMaterialCommand extends Command
         }
         $table->render();
     }
-
 }

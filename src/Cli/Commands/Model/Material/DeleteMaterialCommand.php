@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Cli\Commands\Model\Material;
@@ -12,7 +13,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class DeleteMaterialCommand extends Command
 {
-
     public static function getDefaultName() : ?string {
         return 'model:material:delete';
     }
@@ -44,5 +44,4 @@ class DeleteMaterialCommand extends Command
         $output->writeln('<info>Material removed</info>');
         return self::SUCCESS;
     }
-
 }

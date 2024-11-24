@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Cli\Commands\Model\Material;
@@ -13,7 +14,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class UpdateMaterialCommand extends Command
 {
-
     public static function getDefaultName() : ?string {
         return 'model:material:update';
     }
@@ -67,5 +67,4 @@ class UpdateMaterialCommand extends Command
         $output->writeln('<info>Material saved</info>');
         return self::SUCCESS;
     }
-
 }

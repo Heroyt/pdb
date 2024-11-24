@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Cli\Commands\Model\Factory;
@@ -11,7 +12,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class CreateFactoryCommand extends Command
 {
-
     public static function getDefaultName() : ?string {
         return 'model:factory:create';
     }
@@ -50,5 +50,4 @@ class CreateFactoryCommand extends Command
         $output->writeln("<info>Created a new factory with ID {$factory->id}</info>");
         return self::SUCCESS;
     }
-
 }

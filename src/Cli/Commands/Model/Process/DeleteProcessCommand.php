@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Cli\Commands\Model\Process;
@@ -13,7 +14,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class DeleteProcessCommand extends Command
 {
-
     public static function getDefaultName() : ?string {
         return 'model:process:delete';
     }
@@ -67,5 +67,4 @@ class DeleteProcessCommand extends Command
         $output->writeln(sprintf('<info>Removed %d processes</info>', count($processes)));
         return self::SUCCESS;
     }
-
 }

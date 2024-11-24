@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Cli\Commands\Install;
@@ -11,7 +12,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class InstallCommand extends Command
 {
-
     public static function getDefaultName(): ?string {
         return 'install';
     }
@@ -38,6 +38,4 @@ class InstallCommand extends Command
         $output->writeln('<info>Installed DB</info>');
         return self::SUCCESS;
     }
-
-
 }

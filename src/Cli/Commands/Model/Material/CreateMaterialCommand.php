@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Cli\Commands\Model\Material;
@@ -11,7 +12,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class CreateMaterialCommand extends Command
 {
-
     public static function getDefaultName() : ?string {
         return 'model:material:create';
     }
@@ -45,5 +45,4 @@ class CreateMaterialCommand extends Command
         $output->writeln("<info>Created a new material with ID {$material->id}</info>");
         return self::SUCCESS;
     }
-
 }

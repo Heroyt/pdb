@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Models;
@@ -12,7 +13,6 @@ use OpenApi\Attributes as OA;
 #[PrimaryKey('id_process'), OA\Schema]
 class Process extends Model
 {
-
     public const string TABLE = 'processes';
 
     #[ManyToOne(localKey: 'id_factory', class: Factory::class), OA\Property]
@@ -24,5 +24,4 @@ class Process extends Model
     public Direction $type;
     #[OA\Property]
     public int $quantity;
-
 }

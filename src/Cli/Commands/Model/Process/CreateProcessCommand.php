@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Cli\Commands\Model\Process;
@@ -19,7 +20,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class CreateProcessCommand extends Command
 {
-
     public static function getDefaultName() : ?string {
         return 'model:process:create';
     }
@@ -135,5 +135,4 @@ class CreateProcessCommand extends Command
         $output->writeln('Out: '.implode(', ', $outProcesses));
         return self::SUCCESS;
     }
-
 }

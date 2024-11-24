@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Cli\Commands\Model\Factory;
@@ -15,7 +16,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class ListFactoryCommand extends Command
 {
-
     public static function getDefaultName() : ?string {
         return 'model:factory';
     }
@@ -127,5 +127,4 @@ class ListFactoryCommand extends Command
         }
         $table->render();
     }
-
 }
