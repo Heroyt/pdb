@@ -7,8 +7,103 @@ servers:
   -
     url: 'https://pdb.local'
     description: Dev
+  -
+    url: 'https://localhost'
+    description: Local
+paths:
+  /command/factory:
+    post:
+      tags:
+        - command
+        - factory
+      description: 'Create a new factory.'
+      operationId: createFactory
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                name:
+                  description: 'Factory name'
+                  type: string
+                  nullable: false
+                capacity:
+                  description: 'Storage capacity'
+                  type: integer
+                  default: 50
+                  nullable: true
+              type: object
+      responses:
+        '201':
+          $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
+    Direction:
+      type: string
+      enum:
+        - in
+        - out
+    Connection:
+      properties:
+        assigned:
+          type: boolean
+        active:
+          type: boolean
+        speed:
+          type: integer
+        storageCapacity:
+          type: integer
+      type: object
+    ConnectionStorage:
+      properties:
+        connection:
+          $ref: '#/components/schemas/Connection'
+        material:
+          $ref: '#/components/schemas/Material'
+        quantity:
+          type: integer
+      type: object
+    Factory:
+      properties:
+        name:
+          type: string
+        storageCapacity:
+          type: integer
+      type: object
+    FactoryStorage:
+      properties:
+        facility:
+          $ref: '#/components/schemas/Factory'
+        material:
+          $ref: '#/components/schemas/Material'
+        quantity:
+          type: integer
+      type: object
+    Material:
+      properties:
+        name:
+          type: string
+        size:
+          type: integer
+        wildcard:
+          description: 'If true, accepts and material'
+          type: boolean
+      type: object
+    Process:
+      properties:
+        processFactory:
+          $ref: '#/components/schemas/Factory'
+        material:
+          $ref: '#/components/schemas/Material'
+        type:
+          $ref: '#/components/schemas/Direction'
+        quantity:
+          type: integer
+      type: object
     ErrorResponse:
       properties:
         title:
@@ -71,3 +166,10 @@ components:
         - internal_error
         - resource_not_found_error
         - resource_access_error
+tags:
+  -
+    name: command
+    description: command
+  -
+    name: factory
+    description: factory

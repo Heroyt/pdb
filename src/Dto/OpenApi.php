@@ -10,6 +10,7 @@ use OpenApi\Attributes as OA;
     title      : 'PDB API',
 )]
 #[OA\Server(url: 'https://pdb.local', description: 'Dev')]
+#[OA\Server(url: 'https://localhost', description: 'Local')]
 class OpenApi
 {
 }
