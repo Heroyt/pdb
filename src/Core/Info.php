@@ -56,4 +56,8 @@ class Info
             'value' => serialize($value),
         ]);
     }
+
+    public static function clearStaticCache(): void {
+        self::$info = [];
+    }
 }

@@ -1,10 +1,11 @@
 includes:
-	- secret.neon
 	- jobs.neon
 	- roadrunner.neon
 	- console.neon
 	- symfony.neon
 	- neo4j.neon
+	- eventStore.neon
+	- secret.neon
 extensions:
 	caching: Nette\Bridges\CacheDI\CacheExtension(%constants.tempDir%)
 	decorator: Nette\DI\Extensions\DecoratorExtension
@@ -18,6 +19,14 @@ parameters:
 	redis:
 		host: redis
 services:
+	translations:
+		create: Lsr\Core\Translations
+		arguments:
+			config: @config
+			defaultLang: 'en_US'
+			supportedLanguages:
+				- 'en_US'
+				- 'cs_CZ'
 	redis:
 		create: \Redis
 		setup:

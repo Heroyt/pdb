@@ -2,7 +2,7 @@ parameters:
 	rpc:
 		connection: 'tcp://localhost:6001'
 	jobs:
-		queue: tasks
+		queue: commands
 services:
 	rpc:
 		type: Spiral\Goridge\RPC\RPC

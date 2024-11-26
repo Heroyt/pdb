@@ -7,6 +7,7 @@ use Spiral\RoadRunner\Jobs\Exception\JobsException;
 use Spiral\RoadRunner\Jobs\OptionsInterface;
 use Spiral\RoadRunner\Jobs\Queue;
 use Spiral\RoadRunner\Jobs\Task\PreparedTaskInterface;
+use Spiral\RoadRunner\Jobs\Task\QueuedTaskInterface;
 
 /**
  *
@@ -21,13 +22,10 @@ class TaskProducer
 
     /**
      * @param  class-string<TaskDispatcherInterface>  $dispatcher
-     * @param  object  $payload
-     * @param  OptionsInterface|null  $options
-     * @return void
      * @throws JobsException
      */
-    public function push(string $dispatcher, ?object $payload, ?OptionsInterface $options = null): void {
-        $this->queue->push(
+    public function push(string $dispatcher, ?object $payload, ?OptionsInterface $options = null): QueuedTaskInterface {
+        return $this->queue->push(
             $dispatcher::getDiName(),
             igbinary_serialize($payload) ?? '',
             $options,

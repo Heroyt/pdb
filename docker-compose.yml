@@ -8,6 +8,8 @@ services:
       - .env
     volumes:
       - mariadb-data:/var/lib/mysql
+    networks:
+      app-network:
   redis:
     restart: unless-stopped
     image: eqalpha/keydb:latest
@@ -15,6 +17,8 @@ services:
       - "6379:6379"
     volumes:
       - redis-data:/data
+    networks:
+      app-network:
   roadrunner:
     restart: unless-stopped
     build:
@@ -29,13 +33,13 @@ services:
       - redis
       - rabbitmq
       - neo4j
-      - cassandra
+      - eventstore
     depends_on:
       - db
       - redis
       - rabbitmq
       - neo4j
-      - cassandra
+      - eventstore
     volumes:
       - ./:/app
       - ./docker/roadrunner/php.ini:/usr/local/etc/php/conf.d/custom.ini
@@ -46,6 +50,8 @@ services:
       - "host.docker.internal:host-gateway"
     env_file:
       - .env
+    networks:
+      app-network:
   web:
     restart: unless-stopped
     image: nginx:alpine
@@ -63,6 +69,8 @@ services:
       - ./docker/nginx/fastcgi_params.conf:/etc/nginx/fastcgi_params.conf
       - ./docker/nginx/mime-types.conf:/etc/nginx/mime-types.conf
       - ./docker/nginx/ssl:/etc/nginx/ssl
+    networks:
+      app-network:
   grafana:
     restart: unless-stopped
     image: grafana/grafana-oss
@@ -72,6 +80,8 @@ services:
       - prometheus
     volumes:
       - grafana-storage:/var/lib/grafana
+    networks:
+      app-network:
   prometheus:
     restart: unless-stopped
     image: prom/prometheus
@@ -82,13 +92,22 @@ services:
     volumes:
       - prometheus-storage:/prometheus
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      app-network:
   rabbitmq:
     restart: unless-stopped
     build:
       context: ./
       dockerfile: docker/rabbitmq/Dockerfile
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - ./docker/rabbitmq/definitions.json:/etc/rabbitmq/definitions.json:ro
     env_file:
       - .env
+    networks:
+      app-network:
   neo4j:
     restart: unless-stopped
     image: neo4j:latest
@@ -100,17 +119,27 @@ services:
     volumes:
       - neo4j-data:/data
       - ./docker/neo4j:/conf
-  cassandra:
+    networks:
+      app-network:
+  eventstore:
     restart: unless-stopped
-    image: cassandra:latest
+    image: eventstore/eventstore:24.10.0-alpha-arm64v8
     env_file:
       - .env
+    environment:
+      - EVENTSTORE_INSECURE=true
     volumes:
-      - cassandra-data:/var/lib/cassandra
+      - eventstore-data:/var/lib/eventstore
+    ports:
+      - "2113:2113"
+    networks:
+      app-network:
 volumes:
   mariadb-data:
   redis-data:
   grafana-storage:
   prometheus-storage:
   neo4j-data:
-  cassandra-data:
+  eventstore-data:
+networks:
+  app-network:

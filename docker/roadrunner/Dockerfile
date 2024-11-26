@@ -31,7 +31,7 @@ RUN docker-php-ext-install  \
     gettext  \
     opcache
 
-RUN pecl install igbinary cassandra
+RUN pecl install igbinary
 
 # Enable extensions
 RUN docker-php-ext-enable  \
@@ -47,12 +47,13 @@ RUN docker-php-ext-enable  \
     igbinary
 
 # APCu cache
-RUN pecl install apcu
-RUN docker-php-ext-enable apcu
+RUN pecl install apcu && docker-php-ext-enable apcu
 
 # Redis
-RUN pecl install redis
-RUN docker-php-ext-enable redis
+RUN pecl install redis && docker-php-ext-enable redis
+
+RUN pecl install protobuf && docker-php-ext-enable protobuf
+RUN pecl install grpc && docker-php-ext-enable grpc
 
 FROM ghcr.io/roadrunner-server/roadrunner:2024 AS roadrunner
 FROM composer:latest AS composer

@@ -1,0 +1,5 @@
+parameters:
+	eventStore:
+		host: 'localhost:2113'
+services:
+	eventstore.streams: App\EventStore\Streams(%eventStore.host%)

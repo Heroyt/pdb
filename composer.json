@@ -11,7 +11,9 @@
     "swagger": "./vendor/bin/openapi src vendor/lsr/request/src -o swagger.yaml",
     "phpstan": "./vendor/bin/phpstan",
     "phpcbf": "./vendor/bin/phpcbf",
-    "phpcs": "./vendor/bin/phpcs"
+    "phpcs": "./vendor/bin/phpcs",
+    "protoc-old": "protoc --proto_path=./proto --plugin=protoc-gen-php-grpc --php_out=./generated --php-grpc_out=./generated proto/*",
+    "protoc": "protoc --proto_path=./proto --plugin=protoc-gen-grpc=./grpc_php_plugin --php_out=./generated --grpc_out=./generated proto/*"
   },
   "require": {
     "php": "^8.4",
@@ -38,11 +40,19 @@
     "spiral/roadrunner-http": "^3.5",
     "nette/http": "^3.3",
     "symfony/event-dispatcher-contracts": "^3.5",
-    "laudis/neo4j-php-client": "^3.1"
+    "laudis/neo4j-php-client": "^3.1",
+    "ext-igbinary": "*",
+    "spiral/roadrunner-grpc": "^3.4",
+    "spiral/roadrunner-cli": "^2.6",
+    "guzzlehttp/guzzle": "^7.9",
+    "grpc/grpc": "^1.57",
+    "ext-grpc": "*"
   },
   "autoload": {
     "psr-4": {
-      "App\\": "src/"
+      "App\\": "src/",
+      "GPBMetadata\\": "generated/GPBMetadata",
+      "GRPC\\": "generated/GRPC"
     },
     "files": [
       "include/functions.php"

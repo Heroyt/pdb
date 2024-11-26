@@ -7,3 +7,4 @@ services:
 	taskProducer: App\Services\TaskProducer(@queue)
 
 	# Jobs tasks
+	task.factory.create: App\Tasks\Factory\CreateFactory
