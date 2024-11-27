@@ -25,6 +25,7 @@ class AppendResult
         public readonly string       $uuid,
         public readonly string       $eventType,
         public readonly string       $streamName,
+        /** @phpstan-ignore property.onlyWritten */
         private readonly ?AppendResp $response,
         public readonly Status       $status,
     ) {

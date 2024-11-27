@@ -18,7 +18,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class DeleteFactoryCommand extends Command
 {
     public function __construct(
-      private readonly FactoryProvider $factoryProvider,
+        private readonly FactoryProvider $factoryProvider,
     ) {
         parent::__construct();
     }

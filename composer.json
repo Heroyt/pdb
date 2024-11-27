@@ -10,8 +10,8 @@
   "scripts": {
     "swagger": "./vendor/bin/openapi src vendor/lsr/request/src -o swagger.yaml",
     "phpstan": "./vendor/bin/phpstan",
-    "phpcbf": "./vendor/bin/phpcbf",
-    "phpcs": "./vendor/bin/phpcs",
+    "phpcbf": "./vendor/bin/phpcbf --parallel=4 -p",
+    "phpcs": "./vendor/bin/phpcs --parallel=4 -p",
     "protoc-old": "protoc --proto_path=./proto --plugin=protoc-gen-php-grpc --php_out=./generated --php-grpc_out=./generated proto/*",
     "protoc": "protoc --proto_path=./proto --plugin=protoc-gen-grpc=./grpc_php_plugin --php_out=./generated --grpc_out=./generated proto/*"
   },

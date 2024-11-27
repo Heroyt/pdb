@@ -16,7 +16,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class DeleteMaterialCommand extends Command
 {
     public function __construct(
-      private readonly MaterialProvider $provider,
+        private readonly MaterialProvider $provider,
     ) {
         parent::__construct();
     }

@@ -87,10 +87,12 @@ final class Streams
 
         $optionsReq = new AppendReq();
         $optionsReq->setOptions($options);
+        /** @phpstan-ignore argument.type */
         $call->write($optionsReq);
 
         $payloadReq = new AppendReq();
         $payloadReq->setProposedMessage($proposedMessage);
+        /** @phpstan-ignore argument.type */
         $call->write($payloadReq);
 
         [$response, $status] = $call->wait();

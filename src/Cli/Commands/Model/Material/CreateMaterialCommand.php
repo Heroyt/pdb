@@ -15,31 +15,31 @@ use Symfony\Component\Console\Output\OutputInterface;
 class CreateMaterialCommand extends Command
 {
     public function __construct(
-      private readonly MaterialProvider $provider,
+        private readonly MaterialProvider $provider,
     ) {
         parent::__construct();
     }
 
-    public static function getDefaultName() : ?string {
+    public static function getDefaultName(): ?string {
         return 'model:material:create';
     }
 
-    public static function getDefaultDescription() : ?string {
+    public static function getDefaultDescription(): ?string {
         return 'Create a new material';
     }
 
-    protected function configure() : void {
+    protected function configure(): void {
         $this->addArgument('name', InputArgument::REQUIRED, 'The name of the material');
         $this->addArgument('size', InputArgument::OPTIONAL, 'Material size (must be a positive integer)', 1);
         $this->addOption(
-          'wildcard',
-          'w',
-          InputOption::VALUE_NONE,
-          'Is the material a wildcard (substitutes any material)'
+            'wildcard',
+            'w',
+            InputOption::VALUE_NONE,
+            'Is the material a wildcard (substitutes any material)'
         );
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output) : int {
+    protected function execute(InputInterface $input, OutputInterface $output): int {
         $name = $input->getArgument('name');
         $size = $input->getArgument('size');
         if (!is_numeric($size) || ((int) $size) < 1) {

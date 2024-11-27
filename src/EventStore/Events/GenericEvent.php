@@ -15,6 +15,11 @@ class GenericEvent extends Event
 {
     public string $type;
 
+    /**
+     * @param  array<string,mixed>  $data
+     * @param  string  $type
+     * @return GenericEvent
+     */
     public static function fromData(array $data, string $type): GenericEvent {
         $event = new self();
         $event->type = $type;

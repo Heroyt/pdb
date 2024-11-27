@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Request;
@@ -16,6 +17,7 @@ use ReflectionUnionType;
 
 /**
  * @template T of Model
+ * @phpstan-consistent-constructor
  */
 abstract class UpdateRequest
 {
@@ -23,8 +25,9 @@ abstract class UpdateRequest
      * @param  T  $entity
      */
     public function __construct(
-      public readonly Model $entity,
-    ) {}
+        public readonly Model $entity,
+    ) {
+    }
 
     /**
      * Apply changes to updated entity
@@ -33,7 +36,7 @@ abstract class UpdateRequest
      *
      * @return T
      */
-    public function apply() : Model {
+    public function apply(): Model {
         foreach ($this->getChanges() as $property => $value) {
             $this->entity->$property = $value;
         }
@@ -43,7 +46,7 @@ abstract class UpdateRequest
     /**
      * @return array<string, mixed>
      */
-    public function getChanges() : array {
+    public function getChanges(): array {
         $class = new ReflectionClass($this);
         $properties = $class->getProperties(ReflectionProperty::IS_PUBLIC);
         $changes = [];
@@ -53,9 +56,9 @@ abstract class UpdateRequest
                 continue;
             }
             if (
-              isset($this->$propertyName)
-              && property_exists($this->entity, $propertyName)
-              && $this->entity->$propertyName !== $this->$propertyName
+                isset($this->$propertyName)
+                && property_exists($this->entity, $propertyName)
+                && $this->entity->$propertyName !== $this->$propertyName
             ) {
                 $changes[$propertyName] = $this->$propertyName;
             }
@@ -69,7 +72,7 @@ abstract class UpdateRequest
      * @return static
      * @throws ValidationException
      */
-    public static function fromRequest(Request $request, Model $entity) : self {
+    public static function fromRequest(Request $request, Model $entity): self {
         $self = new static($entity);
 
         $class = new ReflectionClass($self);
@@ -103,7 +106,7 @@ abstract class UpdateRequest
     /**
      * @throws ValidationException
      */
-    protected static function validateProperty(ReflectionProperty $property, mixed $value) : void {
+    protected static function validateProperty(ReflectionProperty $property, mixed $value): void {
         $propertyName = $property->getName();
         $type = $property->getType();
         assert($type instanceof ReflectionNamedType || $type instanceof ReflectionUnionType);
@@ -116,21 +119,19 @@ abstract class UpdateRequest
                     $typeName = $unionType->getName();
                     if (!self::isValidType($typeName, $value)) {
                         throw new ValidationException(
-                          "Invalid type for property {$propertyName}. Expected {$typeName}, got ".gettype($value)."."
+                            "Invalid type for property {$propertyName}. Expected {$typeName}, got " . gettype($value) . "."
                         );
                     }
                 }
-            }
-            else {
+            } else {
                 $typeName = $type->getName();
                 if (!self::isValidType($typeName, $value)) {
                     throw new ValidationException(
-                      "Invalid type for property {$propertyName}. Expected {$typeName}, got ".gettype($value)."."
+                        "Invalid type for property {$propertyName}. Expected {$typeName}, got " . gettype($value) . "."
                     );
                 }
             }
-        }
-        else {
+        } else {
             $required = $property->getAttributes(Required::class, ReflectionAttribute::IS_INSTANCEOF);
             foreach ($required as $requiredAttribute) {
                 /** @var Required $attribute */

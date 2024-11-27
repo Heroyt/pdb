@@ -18,32 +18,32 @@ use Symfony\Component\Console\Output\OutputInterface;
 class UpdateMaterialCommand extends Command
 {
     public function __construct(
-      private readonly MaterialProvider $provider,
+        private readonly MaterialProvider $provider,
     ) {
         parent::__construct();
     }
 
-    public static function getDefaultName() : ?string {
+    public static function getDefaultName(): ?string {
         return 'model:material:update';
     }
 
-    public static function getDefaultDescription() : ?string {
+    public static function getDefaultDescription(): ?string {
         return 'Update an existing material';
     }
 
-    protected function configure() : void {
+    protected function configure(): void {
         $this->addArgument('id', InputArgument::REQUIRED, 'Material ID');
         $this->addOption('name', '', InputOption::VALUE_REQUIRED, 'The name of the material');
         $this->addOption('size', '', InputOption::VALUE_REQUIRED, 'Size (must be a positive integer)');
         $this->addOption(
-          'wildcard',
-          'w',
-          InputOption::VALUE_NONE,
-          'Is the material a wildcard (substitutes any material)'
+            'wildcard',
+            'w',
+            InputOption::VALUE_NONE,
+            'Is the material a wildcard (substitutes any material)'
         );
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output) : int {
+    protected function execute(InputInterface $input, OutputInterface $output): int {
         $id = (int) $input->getArgument('id');
 
         try {

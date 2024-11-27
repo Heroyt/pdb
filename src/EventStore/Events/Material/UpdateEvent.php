@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\EventStore\Events\Material;
@@ -13,12 +14,13 @@ class UpdateEvent extends Event
     public bool $wildcard;
 
     public function __construct(
-      public readonly int $id,
-    ) {}
+        public readonly int $id,
+    ) {
+    }
 
-    public static function fromMaterial(Material $material) : self {
+    public static function fromMaterial(Material $material): self {
         return new self(
-          $material->id,
+            $material->id,
         );
     }
 }

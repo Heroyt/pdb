@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Services\Provider;
@@ -17,10 +18,10 @@ use Lsr\Core\Exceptions\ValidationException;
 
 readonly class MaterialProvider
 {
-
     public function __construct(
-      private Streams $streams,
-    ) {}
+        private Streams $streams,
+    ) {
+    }
 
     /**
      * @param  non-empty-string  $name
@@ -31,7 +32,7 @@ readonly class MaterialProvider
      * @throws ModelCreationException
      * @throws ValidationException
      */
-    public function createMaterial(string $name, int $size, bool $wildcard = false) : Material {
+    public function createMaterial(string $name, int $size, bool $wildcard = false): Material {
         $material = new Material();
         $material->name = $name;
         $material->size = $size;
@@ -42,8 +43,8 @@ readonly class MaterialProvider
             throw new ModelCreationException('Failed to save material to database');
         }
         $result = $this->streams->appendEvent(
-          CreateEvent::fromMaterial($material),
-          $material::TABLE.'_'.$material->id
+            CreateEvent::fromMaterial($material),
+            $material::TABLE . '_' . $material->id
         );
         if (!$result->success) {
             DB::getConnection()->rollback();
@@ -58,7 +59,7 @@ readonly class MaterialProvider
      * @throws ModelCreationException
      * @throws ValidationException
      */
-    public function updateMaterial(UpdateRequest $request) : Material {
+    public function updateMaterial(UpdateRequest $request): Material {
         $changes = $request->getChanges();
         if (empty($changes)) {
             return $request->entity; // No changes
@@ -73,7 +74,7 @@ readonly class MaterialProvider
             DB::getConnection()->rollback();
             throw new ModelCreationException('Failed to save material to database');
         }
-        $result = $this->streams->appendEvent($event, $material::TABLE.'_'.$material->id);
+        $result = $this->streams->appendEvent($event, $material::TABLE . '_' . $material->id);
         if (!$result->success) {
             DB::getConnection()->rollback();
             throw new ModelCreationException($result->status->details);
@@ -86,18 +87,17 @@ readonly class MaterialProvider
      * @throws DriverException
      * @throws ModelDeleteException
      */
-    public function deleteMaterial(Material $material) : void {
+    public function deleteMaterial(Material $material): void {
         DB::getConnection()->begin();
         if (!$material->delete()) {
             DB::getConnection()->rollback();
-            throw new ModelDeleteException('Failed to delete material: '.$material->name);
+            throw new ModelDeleteException('Failed to delete material: ' . $material->name);
         }
-        $result = $this->streams->appendEvent(DeleteEvent::fromMaterial($material), $material::TABLE.'_'.$material->id);
+        $result = $this->streams->appendEvent(DeleteEvent::fromMaterial($material), $material::TABLE . '_' . $material->id);
         if (!$result->success) {
             DB::getConnection()->rollback();
             throw new ModelDeleteException($result->status->details);
         }
         DB::getConnection()->commit();
     }
-
 }

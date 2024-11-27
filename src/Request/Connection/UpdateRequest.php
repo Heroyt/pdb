@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Request\Connection;
@@ -13,7 +14,6 @@ use OpenApi\Attributes as OA;
 #[OA\Schema(schema: "ConnectionUpdateRequest")]
 class UpdateRequest extends \App\Request\UpdateRequest
 {
-
     #[OA\Property(nullable: true)]
     public bool $assigned;
     #[OA\Property(nullable: true)]
@@ -22,9 +22,4 @@ class UpdateRequest extends \App\Request\UpdateRequest
     public int $speed;
     #[OA\Property(nullable: true), IntRange(min: 1)]
     public int $storageCapacity;
-
-    public function __construct(Connection $entity) {
-        parent::__construct($entity);
-    }
-
 }
