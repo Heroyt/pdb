@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tasks\Factory;
 
-use App\Services\FactoryProvider;
+use App\Services\Provider\FactoryProvider;
 use App\Tasks\TaskDispatcherInterface;
 use Spiral\RoadRunner\Jobs\Task\ReceivedTaskInterface;
 

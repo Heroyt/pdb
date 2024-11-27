@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Services;
+namespace App\Services\Provider;
 
 use App\EventStore\Events\Factory\CreateEvent;
 use App\EventStore\Events\Factory\DeleteEvent;

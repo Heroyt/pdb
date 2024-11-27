@@ -6,7 +6,7 @@ namespace App\Cli\Commands\Model\Connection;
 
 use App\Exceptions\ModelCreationException;
 use App\Models\Factory;
-use App\Services\ConnectionProvider;
+use App\Services\Provider\ConnectionProvider;
 use Lsr\Core\Exceptions\ModelNotFoundException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Completion\CompletionInput;

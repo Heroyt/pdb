@@ -6,7 +6,7 @@ namespace App\Cli\Commands\Model\Factory;
 
 use App\Exceptions\ModelDeleteException;
 use App\Models\Factory;
-use App\Services\FactoryProvider;
+use App\Services\Provider\FactoryProvider;
 use Lsr\Core\Exceptions\ModelNotFoundException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Completion\CompletionInput;

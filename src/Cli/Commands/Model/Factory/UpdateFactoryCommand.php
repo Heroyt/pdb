@@ -7,7 +7,7 @@ namespace App\Cli\Commands\Model\Factory;
 use App\Exceptions\ModelCreationException;
 use App\Models\Factory;
 use App\Request\Factory\UpdateRequest;
-use App\Services\FactoryProvider;
+use App\Services\Provider\FactoryProvider;
 use Lsr\Core\Exceptions\ModelNotFoundException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Completion\CompletionInput;

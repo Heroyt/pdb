@@ -7,5 +7,5 @@ services:
 	neo4j:
 		create: @neo4j.builder::build()
 
-	connectionProvider: App\Services\ConnectionProvider
-	factoryProvider: App\Services\FactoryProvider
+	connectionProvider: App\Services\Provider\ConnectionProvider
+	factoryProvider: App\Services\Provider\FactoryProvider
