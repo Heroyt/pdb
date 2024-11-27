@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Provider;
 
+use App\Dto\FactoryConnection;
 use App\EventStore\Events\Connection\CreateEvent;
 use App\EventStore\Events\Connection\DeleteEvent;
 use App\EventStore\Events\Connection\UpdateEvent;
@@ -14,11 +15,15 @@ use App\Models\Connection;
 use App\Models\Factory;
 use App\Request\Connection\UpdateRequest;
 use Dibi\DriverException;
+use Generator;
 use Laudis\Neo4j\Bolt\BoltResult;
 use Laudis\Neo4j\Contracts\ClientInterface;
 use Laudis\Neo4j\Contracts\TransactionInterface;
 use Laudis\Neo4j\Databags\SummarizedResult;
+use Laudis\Neo4j\Types\Node;
+use Laudis\Neo4j\Types\Relationship;
 use Lsr\Core\DB;
+use Lsr\Core\Exceptions\ModelNotFoundException;
 use Lsr\Core\Exceptions\ValidationException;
 use Lsr\Logging\Logger;
 use Throwable;
@@ -184,7 +189,7 @@ readonly class ConnectionProvider
      * @throws ModelDeleteException
      * @throws Throwable
      */
-    public function deleteFactory(Connection $connection) : void {
+    public function deleteConnection(Connection $connection) : void {
         DB::getConnection()->begin();
         if (!$connection->delete()) {
             DB::getConnection()->rollback();
@@ -202,5 +207,68 @@ readonly class ConnectionProvider
             throw new ModelDeleteException($result->status->details);
         }
         DB::getConnection()->commit();
+    }
+
+    /**
+     * @param  Factory  $start
+     * @return Generator<FactoryConnection>
+     */
+    public function &findConnectionsStartingAt(Factory $start) : Generator {
+        $result = $this->client->run(
+          'MATCH (s:Factory {id: $id})-[r:Connection]->(e:Factory) RETURN s, r, e',
+          [
+            'id'       => $start->id,
+          ]
+        );
+        
+        foreach ($result->getResults() as $record) {
+            $connectionData = $record->get('r');
+            assert($connectionData instanceof Relationship);
+            $connectionId = $connectionData->getProperty('id');
+            assert(is_int($connectionId));
+            $endData = $record->get('e');
+            assert($endData instanceof Node);
+            $endId = $endData->getProperty('id');
+            assert(is_int($endId));
+
+            try {
+                $connection = Connection::get($connectionId);
+                $endFactory = Factory::get($endId);
+
+                yield new FactoryConnection($start, $connection, $endFactory);
+            } catch (ModelNotFoundException | ValidationException) {
+            }
+        }
+    }
+    /**
+     * @param  Factory  $end
+     * @return Generator<FactoryConnection>
+     */
+    public function &findConnectionsEndingAt(Factory $end) : Generator {
+        $result = $this->client->run(
+          'MATCH (s:Factory)-[r:Connection]->(e:Factory {id: $id}) RETURN s, r, e',
+          [
+            'id'       => $end->id,
+          ]
+        );
+
+        foreach ($result->getResults() as $record) {
+            $startData = $record->get('s');
+            assert($startData instanceof Node);
+            $startId = $startData->getProperty('id');
+            assert(is_int($startId));
+            $connectionData = $record->get('r');
+            assert($connectionData instanceof Relationship);
+            $connectionId = $connectionData->getProperty('id');
+            assert(is_int($connectionId));
+
+            try {
+                $connection = Connection::get($connectionId);
+                $startFactory = Factory::get($startId);
+
+                yield new FactoryConnection($startFactory, $connection, $end);
+            } catch (ModelNotFoundException | ValidationException) {
+            }
+        }
     }
 }
