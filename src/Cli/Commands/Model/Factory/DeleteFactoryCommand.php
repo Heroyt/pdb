@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Cli\Commands\Model\Factory;
 
+use App\Exceptions\ModelDeleteException;
 use App\Models\Factory;
+use App\Services\FactoryProvider;
 use Lsr\Core\Exceptions\ModelNotFoundException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Completion\CompletionInput;
@@ -15,6 +17,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class DeleteFactoryCommand extends Command
 {
+    public function __construct(
+      private readonly FactoryProvider $factoryProvider,
+    ) {
+        parent::__construct();
+    }
+
     public static function getDefaultName(): ?string {
         return 'model:factory:delete';
     }
@@ -52,7 +60,9 @@ class DeleteFactoryCommand extends Command
             return self::FAILURE;
         }
 
-        if (!$factory->delete()) {
+        try {
+            $this->factoryProvider->deleteFactory($factory);
+        } catch (ModelDeleteException) {
             $output->writeln('<error>Failed to delete factory.</error>');
             return self::FAILURE;
         }

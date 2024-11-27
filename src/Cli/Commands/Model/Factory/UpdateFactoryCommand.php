@@ -6,6 +6,7 @@ namespace App\Cli\Commands\Model\Factory;
 
 use App\Exceptions\ModelCreationException;
 use App\Models\Factory;
+use App\Request\Factory\UpdateRequest;
 use App\Services\FactoryProvider;
 use Lsr\Core\Exceptions\ModelNotFoundException;
 use Symfony\Component\Console\Command\Command;
@@ -63,6 +64,7 @@ class UpdateFactoryCommand extends Command
             return self::FAILURE;
         }
 
+        $request = new UpdateRequest($factory);
         $name = $input->getOption('name');
         $capacity = $input->getOption('capacity');
 
@@ -72,7 +74,7 @@ class UpdateFactoryCommand extends Command
         }
 
         if (!empty($name)) {
-            $factory->name = $name;
+            $request->name = $name;
         }
 
         if (!empty($capacity)) {
@@ -80,11 +82,11 @@ class UpdateFactoryCommand extends Command
                 $output->writeln('<error>Option `capacity` must be a positive integer.</error>');
                 return self::FAILURE;
             }
-            $factory->storageCapacity = (int) $capacity;
+            $request->storageCapacity = (int) $capacity;
         }
 
         try {
-            $this->factoryProvider->updateFactory($factory);
+            $this->factoryProvider->updateFactory($request);
         } catch (ModelCreationException) {
             $output->writeln('<error>Failed to save factory.</error>');
             return self::FAILURE;
