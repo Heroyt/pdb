@@ -105,9 +105,13 @@ tables:
 			`id_connection` int(11) unsigned NOT NULL,
 			`id_material` int(11) unsigned NOT NULL,
 			`quantity` int(11) unsigned NOT NULL DEFAULT 0,
+			`max_quantity` int(11) unsigned NOT NULL DEFAULT 0,
 			PRIMARY KEY (`id_storage`)
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 		'''
+		modifications:
+			0.1:
+				- 'ADD `max_quantity` int(11) unsigned NOT NULL DEFAULT 0;'
 		indexes:
 			-
 				name: 'storage_connection_material'

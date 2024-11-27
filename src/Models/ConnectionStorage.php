@@ -19,5 +19,7 @@ class ConnectionStorage extends Model
     #[ManyToOne, OA\Property]
     public Material $material;
     #[OA\Property]
-    public int $quantity;
+    public int $maxQuantity = 0;
+    #[OA\Property]
+    public int $quantity = 0;
 }
