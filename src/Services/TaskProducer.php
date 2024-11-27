@@ -21,7 +21,9 @@ class TaskProducer
     }
 
     /**
-     * @param  class-string<TaskDispatcherInterface>  $dispatcher
+     * @template Payload of object
+     * @param  class-string<TaskDispatcherInterface<Payload>>  $dispatcher
+     * @param Payload|null $payload
      * @throws JobsException
      */
     public function push(string $dispatcher, ?object $payload, ?OptionsInterface $options = null): QueuedTaskInterface {
@@ -33,8 +35,9 @@ class TaskProducer
     }
 
     /**
-     * @param  class-string<TaskDispatcherInterface>  $dispatcher
-     * @param  object  $payload
+     * @template Payload of object
+     * @param  class-string<TaskDispatcherInterface<Payload>>  $dispatcher
+     * @param  Payload|null  $payload
      * @param  OptionsInterface|null  $options
      * @return PreparedTaskInterface
      */

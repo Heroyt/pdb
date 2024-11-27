@@ -10,3 +10,5 @@ $command = Route::group('command');
 $factory = $command->group('factory');
 
 $factory->post('', [FactoryController::class, 'create']);
+$factory->put('{id}', [FactoryController::class, 'update']);
+$factory->delete('{id}', [FactoryController::class, 'delete']);

@@ -4,6 +4,9 @@ namespace App\Tasks;
 
 use Spiral\RoadRunner\Jobs\Task\ReceivedTaskInterface;
 
+/**
+ * @template Payload
+ */
 interface TaskDispatcherInterface
 {
     /**

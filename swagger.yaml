@@ -40,6 +40,58 @@ paths:
           $ref: '#/components/schemas/ErrorResponse'
         '500':
           $ref: '#/components/schemas/ErrorResponse'
+  '/command/factory/{id}':
+    put:
+      tags:
+        - command
+        - factory
+      description: 'Update a factory.'
+      operationId: updateFactory
+      parameters:
+        -
+          parameter: id
+          name: id
+          in: path
+          description: 'Factory ID'
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FactoryUpdateRequest'
+      responses:
+        '200':
+          $ref: '#/components/schemas/SuccessResponse'
+        '404':
+          $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      tags:
+        - command
+        - factory
+      description: 'Delete a factory.'
+      operationId: deleteFactory
+      parameters:
+        -
+          parameter: id
+          name: id
+          in: path
+          description: 'Factory ID'
+          schema:
+            type: integer
+      responses:
+        '200':
+          $ref: '#/components/schemas/SuccessResponse'
+        '404':
+          $ref: '#/components/schemas/ErrorResponse'
+        '412':
+          $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
     Direction:
@@ -64,6 +116,8 @@ components:
           $ref: '#/components/schemas/Connection'
         material:
           $ref: '#/components/schemas/Material'
+        maxQuantity:
+          type: integer
         quantity:
           type: integer
       type: object
@@ -103,6 +157,43 @@ components:
           $ref: '#/components/schemas/Direction'
         quantity:
           type: integer
+      type: object
+    ConnectionUpdateRequest:
+      properties:
+        assigned:
+          type: boolean
+          nullable: true
+        active:
+          type: boolean
+          nullable: true
+        speed:
+          type: integer
+          nullable: true
+        storageCapacity:
+          type: integer
+          nullable: true
+      type: object
+    FactoryUpdateRequest:
+      properties:
+        name:
+          type: string
+          nullable: true
+        storageCapacity:
+          type: integer
+          minimum: 1
+          nullable: true
+      type: object
+    MaterialUpdateRequest:
+      properties:
+        name:
+          type: string
+          nullable: true
+        size:
+          type: integer
+          nullable: true
+        wildcard:
+          type: boolean
+          nullable: true
       type: object
     ErrorResponse:
       properties:

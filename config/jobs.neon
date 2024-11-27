@@ -8,3 +8,5 @@ services:
 
 	# Jobs tasks
 	task.factory.create: App\Tasks\Factory\CreateFactory
+	task.factory.update: App\Tasks\Factory\UpdateFactory
+	task.factory.delete: App\Tasks\Factory\DeleteFactory

@@ -4,14 +4,16 @@ declare(strict_types=1);
 
 namespace App\Tasks\Factory;
 
+use App\Models\Factory;
 use App\Services\Provider\FactoryProvider;
+use App\Tasks\IdPayload;
 use App\Tasks\TaskDispatcherInterface;
 use Spiral\RoadRunner\Jobs\Task\ReceivedTaskInterface;
 
 /**
- * @implements TaskDispatcherInterface<CreateFactoryPayload>
+ * @implements TaskDispatcherInterface<IdPayload>
  */
-class CreateFactory implements TaskDispatcherInterface
+class DeleteFactory implements TaskDispatcherInterface
 {
     public function __construct(
         private readonly FactoryProvider $factoryProvider,
@@ -22,14 +24,15 @@ class CreateFactory implements TaskDispatcherInterface
      * @inheritDoc
      */
     public static function getDiName(): string {
-        return 'task.factory.create';
+        return 'task.factory.delete';
     }
 
     public function process(ReceivedTaskInterface $task): void {
         $payload = igbinary_unserialize($task->getPayload());
-        assert($payload instanceof CreateFactoryPayload);
+        assert($payload instanceof IdPayload);
 
-        $factory = $this->factoryProvider->createFactory($payload->name, $payload->capacity);
+        $factory = Factory::get($payload->id);
+        $this->factoryProvider->deleteFactory($factory);
         $task->ack();
     }
 }
