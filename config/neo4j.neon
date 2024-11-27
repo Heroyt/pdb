@@ -6,6 +6,3 @@ services:
 		create: Laudis\Neo4j\ClientBuilder::create()::withDriver('bolt', 'bolt://%neo4j.user%:%neo4j.password%@%neo4j.host%')::withDefaultDriver('bolt')
 	neo4j:
 		create: @neo4j.builder::build()
-
-	connectionProvider: App\Services\Provider\ConnectionProvider
-	factoryProvider: App\Services\Provider\FactoryProvider

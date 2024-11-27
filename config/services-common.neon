@@ -36,6 +36,10 @@ services:
 	cache.storage: Lsr\Core\Caching\RedisStorage(@redis, '', @caching.journal)
 	cache: Lsr\Core\Caching\Cache(@cache.storage, null, %constants.debug%)
 
+	provider.connection: App\Services\Provider\ConnectionProvider
+	provider.factory: App\Services\Provider\FactoryProvider
+	provider.material: App\Services\Provider\MaterialProvider
+
 decorator:
 	Lsr\Core\Controllers\Controller:
 		inject: true

@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Cli\Commands\Model\Material;
 
+use App\Exceptions\ModelCreationException;
 use App\Models\Material;
+use App\Request\Material\UpdateRequest;
+use App\Services\Provider\MaterialProvider;
 use Lsr\Core\Exceptions\ModelNotFoundException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -14,27 +17,33 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class UpdateMaterialCommand extends Command
 {
-    public static function getDefaultName(): ?string {
+    public function __construct(
+      private readonly MaterialProvider $provider,
+    ) {
+        parent::__construct();
+    }
+
+    public static function getDefaultName() : ?string {
         return 'model:material:update';
     }
 
-    public static function getDefaultDescription(): ?string {
+    public static function getDefaultDescription() : ?string {
         return 'Update an existing material';
     }
 
-    protected function configure(): void {
+    protected function configure() : void {
         $this->addArgument('id', InputArgument::REQUIRED, 'Material ID');
         $this->addOption('name', '', InputOption::VALUE_REQUIRED, 'The name of the material');
         $this->addOption('size', '', InputOption::VALUE_REQUIRED, 'Size (must be a positive integer)');
         $this->addOption(
-            'wildcard',
-            'w',
-            InputOption::VALUE_NONE,
-            'Is the material a wildcard (substitutes any material)'
+          'wildcard',
+          'w',
+          InputOption::VALUE_NONE,
+          'Is the material a wildcard (substitutes any material)'
         );
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): int {
+    protected function execute(InputInterface $input, OutputInterface $output) : int {
         $id = (int) $input->getArgument('id');
 
         try {
@@ -44,6 +53,7 @@ class UpdateMaterialCommand extends Command
             return self::FAILURE;
         }
 
+        $request = new UpdateRequest($material);
         $name = $input->getOption('name');
         $size = $input->getOption('size');
 
@@ -53,7 +63,7 @@ class UpdateMaterialCommand extends Command
         }
 
         if (!empty($name)) {
-            $material->name = $name;
+            $request->name = $name;
         }
 
         if (!empty($size)) {
@@ -61,12 +71,16 @@ class UpdateMaterialCommand extends Command
                 $output->writeln('<error>Option `size` must be a positive integer.</error>');
                 return self::FAILURE;
             }
-            $material->size = (int) $size;
+            $request->size = (int) $size;
         }
 
-        $material->wildcard = $input->getOption('wildcard') ?? $material->wildcard;
+        if ($input->hasOption('wildcard')) {
+            $request->wildcard = $input->getOption('wildcard');
+        }
 
-        if (!$material->save()) {
+        try {
+            $this->provider->updateMaterial($request);
+        } catch (ModelCreationException) {
             $output->writeln('<error>Failed to save material.</error>');
             return self::FAILURE;
         }

@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Cli\Commands\Model\Material;
 
+use App\Exceptions\ModelDeleteException;
 use App\Models\Material;
+use App\Services\Provider\MaterialProvider;
 use Lsr\Core\Exceptions\ModelNotFoundException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -13,6 +15,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class DeleteMaterialCommand extends Command
 {
+    public function __construct(
+      private readonly MaterialProvider $provider,
+    ) {
+        parent::__construct();
+    }
     public static function getDefaultName(): ?string {
         return 'model:material:delete';
     }
@@ -35,7 +42,9 @@ class DeleteMaterialCommand extends Command
             return self::FAILURE;
         }
 
-        if (!$material->delete()) {
+        try {
+            $this->provider->deleteMaterial($material);
+        } catch (ModelDeleteException) {
             $output->writeln('<error>Failed to delete material.</error>');
             return self::FAILURE;
         }
