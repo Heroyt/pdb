@@ -134,7 +134,7 @@ paths:
       tags:
         - query
         - factory
-      operationId: 'Find factory'
+      operationId: 'Find factories'
       parameters:
         -
           name: name
@@ -152,7 +152,7 @@ paths:
             description: 'Material IDs'
             type: array
             items:
-              type: number
+              type: integer
         -
           name: 'output[]'
           in: query
@@ -162,7 +162,7 @@ paths:
             description: 'Material IDs'
             type: array
             items:
-              type: number
+              type: integer
       responses:
         '200':
           description: 'List of found factories'
@@ -172,6 +172,25 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/FactoryFullDto'
+  '/query/factory/{id}':
+    get:
+      tags:
+        - query
+        - factory
+      operationId: 'Get factory'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Factory id'
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          $ref: '#/components/schemas/FactoryFullDto'
+        '404':
+          $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
     FactoryFullDto:

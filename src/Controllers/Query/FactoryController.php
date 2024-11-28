@@ -18,7 +18,7 @@ class FactoryController extends Controller
     #[
       OA\Get(
         path       : '/query/factory',
-        operationId: 'Find factory',
+        operationId: 'Find factories',
         tags       : ['query', 'factory'],
       ),
       OA\QueryParameter(
@@ -35,7 +35,7 @@ class FactoryController extends Controller
           description: 'Material IDs',
           type       : 'array',
           items      : new OA\Items(
-                         type: 'number',
+                         type: 'integer',
                        )
         ),
       ),
@@ -47,7 +47,7 @@ class FactoryController extends Controller
           description: 'Material IDs',
           type       : 'array',
           items      : new OA\Items(
-                         type: 'number',
+                         type: 'integer',
                        )
         ),
       ),
@@ -115,6 +115,35 @@ class FactoryController extends Controller
             )
           )
         );
+    }
+
+
+    #[
+      OA\Get(
+        path       : '/query/factory/{id}',
+        operationId: 'Get factory',
+        tags       : ['query', 'factory'],
+      ),
+      OA\PathParameter(
+        name       : 'id',
+        description: 'Factory id',
+        required   : true,
+        schema     : new OA\Schema(
+          type: 'integer',
+        )
+      ),
+      OA\Response(
+        ref     : '#/components/schemas/FactoryFullDto',
+        response: 200
+      ),
+      OA\Response(
+        ref        : '#/components/schemas/ErrorResponse',
+        response   : 404,
+        description: 'Factory not found'
+      )
+    ]
+    public function show(Factory $factory) : ResponseInterface {
+        return $this->respond(FactoryFull::fromFactory($factory));
     }
 
 }
