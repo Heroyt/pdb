@@ -493,16 +493,16 @@
         },
         {
             "name": "google/protobuf",
-            "version": "v4.28.3",
+            "version": "v4.29.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/protocolbuffers/protobuf-php.git",
-                "reference": "c5c311e0f3d89928251ac5a2f0e3db283612c100"
+                "reference": "0ef6b2eb74b782f3f9023276c324d22e440f7587"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/protocolbuffers/protobuf-php/zipball/c5c311e0f3d89928251ac5a2f0e3db283612c100",
-                "reference": "c5c311e0f3d89928251ac5a2f0e3db283612c100",
+                "url": "https://api.github.com/repos/protocolbuffers/protobuf-php/zipball/0ef6b2eb74b782f3f9023276c324d22e440f7587",
+                "reference": "0ef6b2eb74b782f3f9023276c324d22e440f7587",
                 "shasum": ""
             },
             "require": {
@@ -531,9 +531,9 @@
                 "proto"
             ],
             "support": {
-                "source": "https://github.com/protocolbuffers/protobuf-php/tree/v4.28.3"
+                "source": "https://github.com/protocolbuffers/protobuf-php/tree/v4.29.0"
             },
-            "time": "2024-10-22T22:27:17+00:00"
+            "time": "2024-11-27T18:37:40+00:00"
         },
         {
             "name": "graham-campbell/result-type",
@@ -1488,16 +1488,16 @@
         },
         {
             "name": "lsr/routing",
-            "version": "0.2.14",
+            "version": "0.2.15",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Heroyt/lsr-routing.git",
-                "reference": "ac52f32f1a3d5168b37ce106ab939b34752178d0"
+                "reference": "60d87d4f3e7aa25ed7381a5f829ba2d0fbbc67fe"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Heroyt/lsr-routing/zipball/ac52f32f1a3d5168b37ce106ab939b34752178d0",
-                "reference": "ac52f32f1a3d5168b37ce106ab939b34752178d0",
+                "url": "https://api.github.com/repos/Heroyt/lsr-routing/zipball/60d87d4f3e7aa25ed7381a5f829ba2d0fbbc67fe",
+                "reference": "60d87d4f3e7aa25ed7381a5f829ba2d0fbbc67fe",
                 "shasum": ""
             },
             "require": {
@@ -1540,10 +1540,10 @@
             ],
             "description": "Laser framework core - Routing.",
             "support": {
-                "source": "https://github.com/Heroyt/lsr-routing/tree/v0.2.14",
+                "source": "https://github.com/Heroyt/lsr-routing/tree/v0.2.15",
                 "issues": "https://github.com/Heroyt/lsr-routing/issues"
             },
-            "time": "2024-08-04T16:42:43+00:00"
+            "time": "2024-11-28T14:50:41+00:00"
         },
         {
             "name": "nette/caching",
@@ -7245,12 +7245,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "4b0583eef37941e72c51ea847d0e03ef52a302d9"
+                "reference": "fff26f7a91a7458bf6eea5afdd71b4aba1f1d3ea"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/4b0583eef37941e72c51ea847d0e03ef52a302d9",
-                "reference": "4b0583eef37941e72c51ea847d0e03ef52a302d9",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/fff26f7a91a7458bf6eea5afdd71b4aba1f1d3ea",
+                "reference": "fff26f7a91a7458bf6eea5afdd71b4aba1f1d3ea",
                 "shasum": ""
             },
             "conflict": {
@@ -7831,6 +7831,7 @@
                 "socialiteproviders/steam": "<1.1",
                 "spatie/browsershot": "<3.57.4",
                 "spatie/image-optimizer": "<1.7.3",
+                "spencer14420/sp-php-email-handler": "<1",
                 "spipu/html2pdf": "<5.2.8",
                 "spoon/library": "<1.4.1",
                 "spoonity/tcpdf": "<6.2.22",
@@ -8079,7 +8080,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-11-26T22:05:25+00:00"
+            "time": "2024-11-27T22:05:07+00:00"
         },
         {
             "name": "sebastian/cli-parser",
