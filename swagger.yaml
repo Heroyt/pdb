@@ -129,8 +129,95 @@ paths:
           $ref: '#/components/schemas/ErrorResponse'
         '500':
           $ref: '#/components/schemas/ErrorResponse'
+  /query/factory:
+    get:
+      tags:
+        - query
+        - factory
+      operationId: 'Find factory'
+      parameters:
+        -
+          name: name
+          in: query
+          description: 'Factory name'
+          required: false
+          schema:
+            type: string
+        -
+          name: 'input[]'
+          in: query
+          description: 'Input material IDs'
+          required: false
+          schema:
+            description: 'Material IDs'
+            type: array
+            items:
+              type: number
+        -
+          name: 'output[]'
+          in: query
+          description: 'Output material IDs'
+          required: false
+          schema:
+            description: 'Material IDs'
+            type: array
+            items:
+              type: number
+      responses:
+        '200':
+          description: 'List of found factories'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FactoryFullDto'
 components:
   schemas:
+    FactoryFullDto:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        storageCapacity:
+          type: integer
+        storage:
+          type: array
+          items:
+            $ref: '#/components/schemas/StorageDto'
+        process:
+          $ref: '#/components/schemas/ProcessDto'
+      type: object
+    ProcessDto:
+      properties:
+        outputs:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProcessPartDto'
+        inputs:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProcessPartDto'
+      type: object
+    ProcessPartDto:
+      properties:
+        id:
+          type: integer
+        material:
+          $ref: '#/components/schemas/Material'
+        quantity:
+          type: integer
+      type: object
+    StorageDto:
+      properties:
+        material:
+          $ref: '#/components/schemas/Material'
+        quantity:
+          type: integer
+        size:
+          type: integer
+      type: object
     Direction:
       type: string
       enum:
@@ -168,6 +255,10 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/FactoryStorage'
+        processes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Process'
       type: object
     FactoryStorage:
       properties:
@@ -312,3 +403,6 @@ tags:
   -
     name: factory
     description: factory
+  -
+    name: query
+    description: query

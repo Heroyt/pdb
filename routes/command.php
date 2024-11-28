@@ -8,8 +8,9 @@ use Lsr\Core\Routing\Route;
 $command = Route::group('command');
 
 $factory = $command->group('factory');
+$factoryId = $factory->group('{id}');
 
 $factory->post('', [FactoryController::class, 'create']);
-$factory->put('{id}', [FactoryController::class, 'update']);
-$factory->delete('{id}', [FactoryController::class, 'delete']);
-$factory->put('{id}/storage', [FactoryController::class, 'updateStorage']);
+$factoryId->put('', [FactoryController::class, 'update']);
+$factoryId->delete('', [FactoryController::class, 'delete']);
+$factoryId->put('storage', [FactoryController::class, 'updateStorage']);
