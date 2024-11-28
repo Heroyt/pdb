@@ -20,4 +20,12 @@ class FactoryStorage extends Model
     public Material $material;
     #[OA\Property]
     public int $quantity = 0;
+
+    public function getCacheTags() : array {
+        $tags = parent::getCacheTags();
+        $tags[] = Material::TABLE.'/'.$this->material->id;
+        $tags[] = Factory::TABLE.'/'.$this->facility->id;
+        $tags[] = Factory::TABLE.'/'.$this->facility->id.'/storage';
+        return $tags;
+    }
 }
