@@ -104,6 +104,46 @@ abstract class UpdateRequest
     }
 
     /**
+     * @param  array<string, mixed>  $data
+     * @param  T  $entity
+     * @return static
+     * @throws ValidationException
+     */
+    public static function fromArray(array $data, Model $entity): self {
+        $self = new static($entity);
+
+        $class = new ReflectionClass($self);
+        $properties = $class->getProperties(ReflectionProperty::IS_PUBLIC);
+        foreach ($properties as $property) {
+            $propertyName = $property->getName();
+            if ($propertyName === 'entity') {
+                continue;
+            }
+
+            if (!array_key_exists($propertyName, $data)) {
+                continue;
+            }
+            $value = $data[$propertyName];
+
+            $type = $property->getType();
+            assert($type instanceof ReflectionNamedType || $type instanceof ReflectionUnionType);
+
+            if ($value === null) {
+                if ($type->allowsNull()) {
+                    $self->$propertyName = null;
+                }
+                continue; // Value not set
+            }
+
+            static::validateProperty($property, $value);
+
+            $self->$propertyName = $value;
+        }
+
+        return $self;
+    }
+
+    /**
      * @throws ValidationException
      */
     protected static function validateProperty(ReflectionProperty $property, mixed $value): void {

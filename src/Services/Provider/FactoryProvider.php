@@ -7,17 +7,20 @@ namespace App\Services\Provider;
 use App\EventStore\Events\Factory\CreateEvent;
 use App\EventStore\Events\Factory\DeleteEvent;
 use App\EventStore\Events\Factory\UpdateEvent;
+use App\EventStore\Events\Factory\UpdateStorage;
 use App\EventStore\Streams;
 use App\Exceptions\ModelCreationException;
 use App\Exceptions\ModelDeleteException;
 use App\Models\Factory;
 use App\Request\Factory\UpdateRequest;
+use App\Request\Factory\UpdateStorageRequest;
 use Dibi\DriverException;
 use Laudis\Neo4j\Bolt\BoltResult;
 use Laudis\Neo4j\Contracts\ClientInterface;
 use Laudis\Neo4j\Contracts\TransactionInterface;
 use Laudis\Neo4j\Databags\SummarizedResult;
 use Lsr\Core\DB;
+use Lsr\Core\Exceptions\ModelNotFoundException;
 use Lsr\Core\Exceptions\ValidationException;
 use Lsr\Logging\Logger;
 use Throwable;
@@ -143,5 +146,52 @@ readonly class FactoryProvider
             ['id' => $factory->id, 'name' => $factory->name]
         );
         new Logger(LOG_DIR, 'neo4j')->debug('Result:', $result->jsonSerialize());
+    }
+
+    /**
+     * @throws DriverException
+     * @throws ModelCreationException
+     * @throws ModelDeleteException
+     * @throws ValidationException
+     * @throws ModelNotFoundException
+     */
+    public function updateStorage(UpdateStorageRequest $request): void {
+        DB::getConnection()->begin();
+        $storage = $request->entity;
+        $factory = $storage->facility;
+
+        if (isset($storage->id)) {
+            // Fetch current data
+            $storage->fetch(true);
+        }
+        else { // New entity
+            // Reset quantity -> will be calculated later
+            $storage->quantity = 0;
+        }
+
+        $quantityDiff = $request->quantity;
+        $newQuantity = $storage->quantity + $quantityDiff;
+        if ($newQuantity < 0) {
+            $quantityDiff = -$storage->quantity; // Set quantity to 0
+        }
+        elseif ($newQuantity > $factory->storageCapacity) {
+            // Cannot go over storage capacity
+            $quantityDiff -= $newQuantity - $factory->storageCapacity;
+        }
+
+        $storage->quantity += $quantityDiff;
+
+        $event = new UpdateStorage($factory->id, $storage->material->id, $quantityDiff);
+
+        if (!$storage->save()) {
+            DB::getConnection()->rollback();
+            throw new ModelCreationException('Failed to update factory storage');
+        }
+        $result = $this->streams->appendEvent($event, $factory::TABLE . '_' . $factory->id);
+        if (!$result->success) {
+            DB::getConnection()->rollback();
+            throw new ModelDeleteException($result->status->details);
+        }
+        DB::getConnection()->commit();
     }
 }

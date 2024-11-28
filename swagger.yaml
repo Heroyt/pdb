@@ -92,6 +92,43 @@ paths:
           $ref: '#/components/schemas/ErrorResponse'
         '500':
           $ref: '#/components/schemas/ErrorResponse'
+  '/command/factory/{id}/storage':
+    put:
+      tags:
+        - command
+        - factory
+      description: 'Update a factory storage.'
+      operationId: updateFactoryStorage
+      parameters:
+        -
+          parameter: id
+          name: id
+          in: path
+          description: 'Factory ID'
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+                - materials
+              properties:
+                materials:
+                  type: array
+                  items: { required: [id, quantity], properties: { id: { description: 'Material ID.', type: integer }, quantity: { description: 'Quantity difference (positive for adding stock, negative for removing).', type: integer } }, type: object }
+              type: object
+      responses:
+        '200':
+          $ref: '#/components/schemas/SuccessResponse'
+        '404':
+          $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          $ref: '#/components/schemas/ErrorResponse'
+        '412':
+          $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
     Direction:
@@ -127,6 +164,10 @@ components:
           type: string
         storageCapacity:
           type: integer
+        storage:
+          type: array
+          items:
+            $ref: '#/components/schemas/FactoryStorage'
       type: object
     FactoryStorage:
       properties:
@@ -182,6 +223,13 @@ components:
           type: integer
           minimum: 1
           nullable: true
+      type: object
+    FactoryUpdateStorageRequest:
+      properties:
+        material:
+          $ref: '#/components/schemas/Material'
+        quantity:
+          type: integer
       type: object
     MaterialUpdateRequest:
       properties:

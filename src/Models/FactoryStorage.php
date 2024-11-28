@@ -19,5 +19,5 @@ class FactoryStorage extends Model
     #[ManyToOne, OA\Property]
     public Material $material;
     #[OA\Property]
-    public int $quantity;
+    public int $quantity = 0;
 }

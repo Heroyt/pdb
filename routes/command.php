@@ -12,3 +12,4 @@ $factory = $command->group('factory');
 $factory->post('', [FactoryController::class, 'create']);
 $factory->put('{id}', [FactoryController::class, 'update']);
 $factory->delete('{id}', [FactoryController::class, 'delete']);
+$factory->put('{id}/storage', [FactoryController::class, 'updateStorage']);

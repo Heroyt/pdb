@@ -10,3 +10,4 @@ services:
 	task.factory.create: App\Tasks\Factory\CreateFactory
 	task.factory.update: App\Tasks\Factory\UpdateFactory
 	task.factory.delete: App\Tasks\Factory\DeleteFactory
+	task.factory.storage.update: App\Tasks\Factory\UpdateFactoryStorage
