@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Lsr\Core\App;
+use Lsr\Core\Caching\Cache;
 use Lsr\Core\Models\Attributes\ManyToOne;
 use Lsr\Core\Models\Attributes\PrimaryKey;
 use Lsr\Core\Models\Model;
@@ -27,5 +29,20 @@ class FactoryStorage extends Model
         $tags[] = Factory::TABLE.'/'.$this->facility->id;
         $tags[] = Factory::TABLE.'/'.$this->facility->id.'/storage';
         return $tags;
+    }
+
+    public function clearCache() : void {
+        parent::clearCache();
+        
+        $cache = App::getService('cache');
+        assert($cache instanceof Cache);
+        $cache->clean(
+          [
+            $cache::Tags => [
+              Factory::TABLE.'/'.$this->facility->id,
+              Factory::TABLE.'/'.$this->facility->id.'/storage',
+            ],
+          ]
+        );
     }
 }
