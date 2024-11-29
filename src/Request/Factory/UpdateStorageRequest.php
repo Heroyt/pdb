@@ -12,7 +12,7 @@ use OpenApi\Attributes as OA;
  * @extends UpdateRequest<FactoryStorage>
  */
 #[OA\Schema(schema: 'FactoryUpdateStorageRequest')]
-class UpdateStorageRequest extends UpdateRequest
+final class UpdateStorageRequest extends UpdateRequest
 {
     #[OA\Property]
     public Material $material;

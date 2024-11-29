@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace App\Tasks\Factory;
 
+use App\Request\Factory\CreateRequest;
 use App\Services\Provider\FactoryProvider;
 use App\Tasks\TaskDispatcherInterface;
 use Spiral\RoadRunner\Jobs\Task\ReceivedTaskInterface;
 
 /**
- * @implements TaskDispatcherInterface<CreateFactoryPayload>
+ * @implements TaskDispatcherInterface<CreateRequest>
  */
 class CreateFactory implements TaskDispatcherInterface
 {
@@ -27,7 +28,7 @@ class CreateFactory implements TaskDispatcherInterface
 
     public function process(ReceivedTaskInterface $task): void {
         $payload = igbinary_unserialize($task->getPayload());
-        assert($payload instanceof CreateFactoryPayload);
+        assert($payload instanceof CreateRequest);
 
         $factory = $this->factoryProvider->createFactory($payload->name, $payload->capacity);
         $task->ack();

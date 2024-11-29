@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace App\Tasks\Factory;
 
 use App\Models\Factory;
+use App\Request\Factory\DeleteRequest;
 use App\Services\Provider\FactoryProvider;
-use App\Tasks\IdPayload;
 use App\Tasks\TaskDispatcherInterface;
 use Spiral\RoadRunner\Jobs\Task\ReceivedTaskInterface;
 
 /**
- * @implements TaskDispatcherInterface<IdPayload>
+ * @implements TaskDispatcherInterface<DeleteRequest>
  */
 class DeleteFactory implements TaskDispatcherInterface
 {
@@ -29,7 +29,7 @@ class DeleteFactory implements TaskDispatcherInterface
 
     public function process(ReceivedTaskInterface $task): void {
         $payload = igbinary_unserialize($task->getPayload());
-        assert($payload instanceof IdPayload);
+        assert($payload instanceof DeleteRequest);
 
         $factory = Factory::get($payload->id);
         $this->factoryProvider->deleteFactory($factory);

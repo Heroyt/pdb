@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Tasks\Factory;
+namespace App\Request\Factory;
 
-final readonly class CreateFactoryPayload
+final readonly class CreateRequest
 {
     /**
      * @param  non-empty-string  $name

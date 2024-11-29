@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Tasks;
+namespace App\Request;
 
-class IdPayload
+abstract class IdRequest
 {
     public function __construct(
         public int $id,

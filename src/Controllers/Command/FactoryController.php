@@ -7,16 +7,16 @@ namespace App\Controllers\Command;
 use App\Models\Factory;
 use App\Models\FactoryStorage;
 use App\Models\Material;
+use App\Request\Factory\CreateRequest;
+use App\Request\Factory\DeleteRequest;
 use App\Request\Factory\UpdateRequest;
 use App\Request\Factory\UpdateStorageRequest;
 use App\Services\Provider\ConnectionProvider;
 use App\Services\TaskProducer;
 use App\Tasks\Factory\CreateFactory;
-use App\Tasks\Factory\CreateFactoryPayload;
 use App\Tasks\Factory\DeleteFactory;
 use App\Tasks\Factory\UpdateFactory;
 use App\Tasks\Factory\UpdateFactoryStorage;
-use App\Tasks\IdPayload;
 use Lsr\Core\Controllers\Controller;
 use Lsr\Core\Exceptions\ModelNotFoundException;
 use Lsr\Core\Exceptions\ValidationException;
@@ -84,7 +84,7 @@ class FactoryController extends Controller
         }
 
         try {
-            $task = $this->taskProducer->push(CreateFactory::class, new CreateFactoryPayload($name, (int) $capacity));
+            $task = $this->taskProducer->push(CreateFactory::class, new CreateRequest($name, (int) $capacity));
         } catch (JobsException $e) {
             return $this->respond(new ErrorResponse('Failed to queue the creation task', exception: $e), 500);
         }
@@ -199,7 +199,7 @@ class FactoryController extends Controller
         }
 
         try {
-            $task = $this->taskProducer->push(DeleteFactory::class, new IdPayload($factory->id));
+            $task = $this->taskProducer->push(DeleteFactory::class, new DeleteRequest($factory->id));
         } catch (JobsException $e) {
             return $this->respond(new ErrorResponse('Failed to queue the creation task', exception: $e), 500);
         }

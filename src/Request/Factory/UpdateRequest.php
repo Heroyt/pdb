@@ -12,7 +12,7 @@ use OpenApi\Attributes as OA;
  * @extends \App\Request\UpdateRequest<Factory>
  */
 #[OA\Schema(schema: "FactoryUpdateRequest")]
-class UpdateRequest extends \App\Request\UpdateRequest
+final class UpdateRequest extends \App\Request\UpdateRequest
 {
     #[OA\Property(nullable: true)]
     public string $name;
