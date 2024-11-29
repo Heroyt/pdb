@@ -191,6 +191,23 @@ paths:
           $ref: '#/components/schemas/FactoryFullDto'
         '404':
           $ref: '#/components/schemas/ErrorResponse'
+  /query/factory/stopped:
+    get:
+      tags:
+        - query
+        - factory
+      operationId: 'Get stopped factories'
+      responses:
+        '200':
+          description: 'List of stopped factories'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StoppedFactoryDto'
+        '404':
+          $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
     FactoryFullDto:
@@ -228,6 +245,20 @@ components:
         quantity:
           type: integer
       type: object
+    StoppedFactoryDto:
+      type: object
+      allOf:
+        -
+          $ref: '#/components/schemas/FactoryFullDto'
+        -
+          properties:
+            stored:
+              type: integer
+            outSize:
+              type: integer
+            hasAllMaterials:
+              type: boolean
+          type: object
     StorageDto:
       properties:
         material:

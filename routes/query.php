@@ -10,5 +10,5 @@ $factory = $query->group('factory');
 $factoryId = $factory->group('{id}');
 
 $factory->get('', [FactoryController::class, 'find']);
+$factory->get('stopped', [FactoryController::class, 'stoppedFactories']);
 $factoryId->get('', [FactoryController::class, 'show']);
-

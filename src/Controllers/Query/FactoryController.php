@@ -7,6 +7,7 @@ use App\Dto\FactoryFull;
 use App\Enums\Direction;
 use App\Models\Factory;
 use App\Models\Process;
+use App\Services\Provider\FactoryProvider;
 use Lsr\Core\Controllers\Controller;
 use Lsr\Core\Requests\Request;
 use OpenApi\Attributes as OA;
@@ -14,6 +15,12 @@ use Psr\Http\Message\ResponseInterface;
 
 class FactoryController extends Controller
 {
+
+    public function __construct(
+      private readonly FactoryProvider $factoryProvider,
+    ) {
+        parent::__construct();
+    }
 
     #[
       OA\Get(
@@ -144,6 +151,33 @@ class FactoryController extends Controller
     ]
     public function show(Factory $factory) : ResponseInterface {
         return $this->respond(FactoryFull::fromFactory($factory));
+    }
+
+    #[
+      OA\Get(
+        path       : '/query/factory/stopped',
+        operationId: 'Get stopped factories',
+        tags       : ['query', 'factory'],
+      ),
+      OA\Response(
+        response: 200,
+        description: 'List of stopped factories',
+        content    : new OA\JsonContent(
+          type : 'array',
+          items: new OA\Items(
+            ref: '#/components/schemas/StoppedFactoryDto'
+                 )
+        )
+      ),
+      OA\Response(
+        ref        : '#/components/schemas/ErrorResponse',
+        response   : 404,
+        description: 'Factory not found'
+      )
+    ]
+    public function stoppedFactories() : ResponseInterface {
+        $factories = $this->factoryProvider->findStoppedFactories();
+        return $this->respond(iterator_to_array($factories));
     }
 
 }
