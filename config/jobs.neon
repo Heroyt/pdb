@@ -11,3 +11,11 @@ services:
 	task.factory.update: App\Tasks\Factory\UpdateFactory
 	task.factory.delete: App\Tasks\Factory\DeleteFactory
 	task.factory.storage.update: App\Tasks\Factory\UpdateFactoryStorage
+
+	task.material.create: App\Tasks\Material\CreateMaterial
+	task.material.update: App\Tasks\Material\UpdateMaterial
+	task.material.delete: App\Tasks\Material\DeleteMaterial
+
+	task.connection.create: App\Tasks\Connection\CreateConnection
+	task.connection.update: App\Tasks\Connection\UpdateConnection
+	task.connection.delete: App\Tasks\Connection\DeleteConnection

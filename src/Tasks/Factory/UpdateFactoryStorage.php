@@ -12,10 +12,10 @@ use Spiral\RoadRunner\Jobs\Task\ReceivedTaskInterface;
 /**
  * @implements TaskDispatcherInterface<UpdateStorageRequest>
  */
-class UpdateFactoryStorage implements TaskDispatcherInterface
+final readonly class UpdateFactoryStorage implements TaskDispatcherInterface
 {
     public function __construct(
-        private readonly FactoryProvider $factoryProvider,
+        private FactoryProvider $factoryProvider,
     ) {
     }
 

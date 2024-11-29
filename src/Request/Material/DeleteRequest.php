@@ -1,18 +1,18 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Request\Factory;
+namespace App\Request\Material;
 
-use App\Models\Factory;
+use App\Models\Material;
 use App\Request\Attributes\ModelExists;
 use OpenApi\Attributes as OA;
 
-#[OA\Schema(schema: "FactoryDeleteRequest")]
+#[OA\Schema(schema: "MaterialDeleteRequest")]
 final class DeleteRequest
 {
     public function __construct(
-      #[ModelExists(Factory::class), OA\Property]
+      #[ModelExists(Material::class), OA\Property]
       public int $id,
-    ) {
-    }
+    ) {}
+
 }

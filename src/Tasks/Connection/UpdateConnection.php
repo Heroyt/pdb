@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace App\Tasks\Factory;
+namespace App\Tasks\Connection;
 
-use App\Request\Factory\UpdateRequest;
-use App\Services\Provider\FactoryProvider;
+use App\Request\Connection\UpdateRequest;
+use App\Services\Provider\ConnectionProvider;
 use App\Tasks\TaskDispatcherInterface;
 use Spiral\RoadRunner\Jobs\Task\ReceivedTaskInterface;
 
 /**
  * @implements TaskDispatcherInterface<UpdateRequest>
  */
-final readonly class UpdateFactory implements TaskDispatcherInterface
+final readonly class UpdateConnection implements TaskDispatcherInterface
 {
     public function __construct(
-        private FactoryProvider $factoryProvider,
+        private ConnectionProvider $connectionProvider,
     ) {
     }
 
@@ -23,7 +23,7 @@ final readonly class UpdateFactory implements TaskDispatcherInterface
      * @inheritDoc
      */
     public static function getDiName(): string {
-        return 'task.factory.update';
+        return 'task.connection.update';
     }
 
     public function process(ReceivedTaskInterface $task): void {
@@ -33,7 +33,7 @@ final readonly class UpdateFactory implements TaskDispatcherInterface
         // Update the current state of entity
         $payload->entity->fetch(true);
 
-        $this->factoryProvider->updateFactory($payload);
+        $this->connectionProvider->updateConnection($payload);
         $task->ack();
     }
 }
