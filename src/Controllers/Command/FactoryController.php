@@ -43,24 +43,7 @@ class FactoryController extends Controller
         operationId: 'createFactory',
         description: 'Create a new factory.',
         requestBody: new OA\RequestBody(
-          content: new OA\JsonContent(
-                     properties: [
-                                   new OA\Property(
-                                     property   : 'name',
-                                     description: 'Factory name',
-                                     type       : 'string',
-                                     nullable   : false,
-                                   ),
-                                   new OA\Property(
-                                     property   : 'capacity',
-                                     description: 'Storage capacity',
-                                     type       : 'integer',
-                                     default    : 50,
-                                     nullable   : true,
-                                   ),
-                                 ],
-                     type      : 'object'
-                   ),
+          content: new OA\JsonContent(ref: '#/components/schemas/FactoryCreateRequest',),
         ),
         tags       : ['command', 'factory'],
       ),
@@ -69,22 +52,14 @@ class FactoryController extends Controller
       OA\Response(ref: '#/components/schemas/ErrorResponse', response: 500, description: 'Internal server error.'),
     ]
     public function create(Request $request) : ResponseInterface {
-        $name = $request->getPost('name');
-        $capacity = $request->getPost('capacity', 50);
-
-        if (!is_string($name) || empty($name)) {
-            return $this->respond(new ErrorResponse('Missing required "name" parameter.', ErrorType::VALIDATION), 400);
-        }
-
-        if (!is_numeric($capacity) || ($capacity = (int) $capacity) < 1) {
-            return $this->respond(
-              new ErrorResponse('Capacity must be a valid positive integer.', ErrorType::VALIDATION),
-              400
-            );
+        try {
+            $createRequest = CreateRequest::fromRequest($request);
+        } catch (ValidationException $e) {
+            return $this->respond(new ErrorResponse('Validation error', ErrorType::VALIDATION, $e->getMessage()), 400);
         }
 
         try {
-            $task = $this->taskProducer->push(CreateFactory::class, new CreateRequest($name, (int) $capacity));
+            $task = $this->taskProducer->push(CreateFactory::class, $createRequest);
         } catch (JobsException $e) {
             return $this->respond(new ErrorResponse('Failed to queue the creation task', exception: $e), 500);
         }
@@ -130,7 +105,7 @@ class FactoryController extends Controller
         try {
             $task = $this->taskProducer->push(UpdateFactory::class, $updateRequest);
         } catch (JobsException $e) {
-            return $this->respond(new ErrorResponse('Failed to queue the creation task', exception: $e), 500);
+            return $this->respond(new ErrorResponse('Failed to queue the update task', exception: $e), 500);
         }
 
         return $this->respond(
@@ -201,7 +176,7 @@ class FactoryController extends Controller
         try {
             $task = $this->taskProducer->push(DeleteFactory::class, new DeleteRequest($factory->id));
         } catch (JobsException $e) {
-            return $this->respond(new ErrorResponse('Failed to queue the creation task', exception: $e), 500);
+            return $this->respond(new ErrorResponse('Failed to queue the deletion task', exception: $e), 500);
         }
 
         return $this->respond(
@@ -389,7 +364,7 @@ class FactoryController extends Controller
         try {
             $this->taskProducer->dispatch();
         } catch (JobsException $e) {
-            return $this->respond(new ErrorResponse('Failed to queue the creation task', exception: $e), 500);
+            return $this->respond(new ErrorResponse('Failed to queue the storage update task', exception: $e), 500);
         }
 
         return $this->respond(

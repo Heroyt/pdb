@@ -11,6 +11,77 @@ servers:
     url: 'https://localhost'
     description: Local
 paths:
+  /command/connection:
+    post:
+      tags:
+        - command
+        - connection
+      description: 'Create a new connection.'
+      operationId: createConnection
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectionCreateRequest'
+      responses:
+        '201':
+          $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          $ref: '#/components/schemas/ErrorResponse'
+  '/command/connection/{id}':
+    put:
+      tags:
+        - command
+        - connection
+      description: 'Update a connection.'
+      operationId: updateConnection
+      parameters:
+        -
+          parameter: id
+          name: id
+          in: path
+          description: 'Connection ID'
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectionUpdateRequest'
+      responses:
+        '200':
+          $ref: '#/components/schemas/SuccessResponse'
+        '404':
+          $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      tags:
+        - command
+        - connection
+      description: 'Delete a connection.'
+      operationId: deleteConnection
+      parameters:
+        -
+          parameter: id
+          name: id
+          in: path
+          description: 'Connection ID'
+          schema:
+            type: integer
+      responses:
+        '200':
+          $ref: '#/components/schemas/SuccessResponse'
+        '404':
+          $ref: '#/components/schemas/ErrorResponse'
+        '412':
+          $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          $ref: '#/components/schemas/ErrorResponse'
   /command/factory:
     post:
       tags:
@@ -22,17 +93,7 @@ paths:
         content:
           application/json:
             schema:
-              properties:
-                name:
-                  description: 'Factory name'
-                  type: string
-                  nullable: false
-                capacity:
-                  description: 'Storage capacity'
-                  type: integer
-                  default: 50
-                  nullable: true
-              type: object
+              $ref: '#/components/schemas/FactoryCreateRequest'
       responses:
         '201':
           $ref: '#/components/schemas/SuccessResponse'
@@ -124,6 +185,77 @@ paths:
         '404':
           $ref: '#/components/schemas/ErrorResponse'
         '400':
+          $ref: '#/components/schemas/ErrorResponse'
+        '412':
+          $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          $ref: '#/components/schemas/ErrorResponse'
+  /command/material:
+    post:
+      tags:
+        - command
+        - material
+      description: 'Create a new material.'
+      operationId: createMaterial
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MaterialCreateRequest'
+      responses:
+        '201':
+          $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          $ref: '#/components/schemas/ErrorResponse'
+  '/command/material/{id}':
+    put:
+      tags:
+        - command
+        - material
+      description: 'Update a material.'
+      operationId: updateMaterial
+      parameters:
+        -
+          parameter: id
+          name: id
+          in: path
+          description: 'Material ID'
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MaterialUpdateRequest'
+      responses:
+        '200':
+          $ref: '#/components/schemas/SuccessResponse'
+        '404':
+          $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      tags:
+        - command
+        - material
+      description: 'Delete a material.'
+      operationId: deleteMaterial
+      parameters:
+        -
+          parameter: id
+          name: id
+          in: path
+          description: 'Material ID'
+          schema:
+            type: integer
+      responses:
+        '200':
+          $ref: '#/components/schemas/SuccessResponse'
+        '404':
           $ref: '#/components/schemas/ErrorResponse'
         '412':
           $ref: '#/components/schemas/ErrorResponse'
@@ -253,10 +385,15 @@ components:
         -
           properties:
             stored:
+              description: 'Total size of materials in storage'
               type: integer
+              minimum: 0
             outSize:
+              description: 'Total size of produces materials (minimum required space)'
               type: integer
+              minimum: 0
             hasAllMaterials:
+              description: 'If it has all required process inputs in storage'
               type: boolean
           type: object
     StorageDto:
@@ -340,6 +477,28 @@ components:
         quantity:
           type: integer
       type: object
+    ConnectionCreateRequest:
+      properties:
+        startId:
+          description: 'Start factory ID'
+          type: integer
+          minimum: 1
+        endId:
+          description: 'End factory ID'
+          type: integer
+          minimum: 1
+        speed:
+          type: integer
+          minimum: 1
+        capacity:
+          type: integer
+          minimum: 1
+      type: object
+    ConnectionDeleteRequest:
+      properties:
+        id:
+          type: integer
+      type: object
     ConnectionUpdateRequest:
       properties:
         assigned:
@@ -354,6 +513,19 @@ components:
         storageCapacity:
           type: integer
           nullable: true
+      type: object
+    FactoryCreateRequest:
+      properties:
+        name:
+          type: string
+        capacity:
+          type: integer
+          minimum: 1
+      type: object
+    FactoryDeleteRequest:
+      properties:
+        id:
+          type: integer
       type: object
     FactoryUpdateRequest:
       properties:
@@ -370,6 +542,22 @@ components:
         material:
           $ref: '#/components/schemas/Material'
         quantity:
+          type: integer
+      type: object
+    MaterialCreateRequest:
+      properties:
+        name:
+          type: string
+        size:
+          type: integer
+          minimum: 1
+        wildcard:
+          description: 'Used in processes where concrete materials do not matter'
+          type: boolean
+      type: object
+    MaterialDeleteRequest:
+      properties:
+        id:
           type: integer
       type: object
     MaterialUpdateRequest:
@@ -451,8 +639,14 @@ tags:
     name: command
     description: command
   -
+    name: connection
+    description: connection
+  -
     name: factory
     description: factory
+  -
+    name: material
+    description: material
   -
     name: query
     description: query
