@@ -165,7 +165,7 @@ class FactoryController extends Controller
           content    : new OA\JsonContent(
               type : 'array',
               items: new OA\Items(
-                  ref: '#/components/schemas/StoppedFactoryDto'
+                  ref: '#/components/schemas/FactoryWithStatusDto'
               )
           )
       ),
@@ -177,6 +177,33 @@ class FactoryController extends Controller
     ]
     public function stoppedFactories(): ResponseInterface {
         $factories = $this->factoryProvider->findStoppedFactories();
+        return $this->respond(iterator_to_array($factories));
+    }
+
+    #[
+      OA\Get(
+          path       : '/query/factory/running',
+          operationId: 'Get running factories',
+          tags       : ['query', 'factory'],
+      ),
+      OA\Response(
+          response: 200,
+          description: 'List of running factories',
+          content    : new OA\JsonContent(
+              type : 'array',
+              items: new OA\Items(
+                  ref: '#/components/schemas/FactoryWithStatusDto'
+              )
+          )
+      ),
+      OA\Response(
+          ref        : '#/components/schemas/ErrorResponse',
+          response   : 404,
+          description: 'Factory not found'
+      )
+    ]
+    public function runningFactories(): ResponseInterface {
+        $factories = $this->factoryProvider->findRunningFactories();
         return $this->respond(iterator_to_array($factories));
     }
 }

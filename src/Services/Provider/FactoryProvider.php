@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services\Provider;
 
-use App\Dto\Db\StoppedFactory as StoppedFactoryRow;
-use App\Dto\StoppedFactory;
+use App\Dto\Db\FactoryStatusRow;
+use App\Dto\FactoryWithStatus;
 use App\Enums\Direction;
 use App\EventStore\Events\Factory\CreateEvent;
 use App\EventStore\Events\Factory\DeleteEvent;
@@ -202,7 +202,7 @@ readonly class FactoryProvider
     }
 
     /**
-     * @return Generator<StoppedFactory>
+     * @return Generator<FactoryWithStatus>
      * @throws Exception
      */
     public function findStoppedFactories(): Generator {
@@ -241,8 +241,53 @@ readonly class FactoryProvider
                    ->groupBy('f.id_factory')
                    ->having('has_all_materials = 0 OR (storage_capacity - stored) < out_size');
 
-        foreach ($query->fetchIteratorDto(StoppedFactoryRow::class) as $row) {
-            yield StoppedFactory::fromStoppedFactoryRow($row);
+        foreach ($query->fetchIteratorDto(FactoryStatusRow::class) as $row) {
+            yield FactoryWithStatus::fromFactoryStatusRow($row);
+        }
+    }
+
+    /**
+     * @return Generator<FactoryWithStatus>
+     * @throws Exception
+     */
+    public function findRunningFactories(): Generator {
+        $query = DB::select(
+            [Factory::TABLE, 'f'],
+            <<<SQL
+            f.*, 
+            COALESCE(SUM(s.quantity * m.size),0) as [stored],
+            %sql as [out_size],
+            CASE 
+            WHEN COUNT(DISTINCT p.id_material) = SUM(CASE WHEN COALESCE(ps.quantity, 0) >= p.quantity THEN 1 ELSE 0 END) 
+                THEN 1 
+                ELSE 0 
+            END AS has_all_materials
+            SQL,
+            DB::select([Process::TABLE, 'po'], 'COALESCE(SUM(po.quantity * pm.size), 0)')
+            ->join(Material::TABLE, 'pm')
+            ->on('po.id_material = pm.id_material')
+            ->where('po.id_factory = f.id_factory AND po.type = %s', Direction::OUT->value)
+            ->fluent
+        )
+                   ->cacheTags(
+                       'models',
+                       Factory::TABLE,
+                       Factory::TABLE . '/query',
+                       ...Factory::CACHE_TAGS
+                   )
+                   ->leftJoin(FactoryStorage::TABLE, 's')
+                   ->on('f.id_factory = s.id_factory')
+                   ->leftJoin(Material::TABLE, 'm')
+                   ->on('m.id_material = s.id_material')
+                   ->leftJoin(Process::TABLE, 'p')
+                   ->on('(p.id_factory = f.id_factory AND p.type = %s)', Direction::IN->value)
+                   ->leftJoin(FactoryStorage::TABLE, 'ps')
+                   ->on('(f.id_factory = ps.id_factory AND p.id_material = ps.id_material)')
+                   ->groupBy('f.id_factory')
+                   ->having('has_all_materials = 1 AND (storage_capacity - stored) >= out_size');
+
+        foreach ($query->fetchIteratorDto(FactoryStatusRow::class) as $row) {
+            yield FactoryWithStatus::fromFactoryStatusRow($row);
         }
     }
 }

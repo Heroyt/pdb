@@ -13,6 +13,7 @@ $factoryId = $factory->group('{id}');
 
 $factory->get('', [FactoryController::class, 'find']);
 $factory->get('stopped', [FactoryController::class, 'stoppedFactories']);
+$factory->get('running', [FactoryController::class, 'runningFactories']);
 $factoryId->get('', [FactoryController::class, 'show']);
 
 $query->get('path', [PathController::class, 'findShortestPaths']);
