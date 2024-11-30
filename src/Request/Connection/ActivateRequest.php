@@ -8,8 +8,8 @@ use App\Models\Connection;
 use App\Request\Attributes\ModelExists;
 use OpenApi\Attributes as OA;
 
-#[OA\Schema(schema: "ConnectionDeleteRequest")]
-final readonly class DeleteRequest
+#[OA\Schema(schema: "ConnectionActivateRequest")]
+final readonly class ActivateRequest
 {
     public function __construct(
         #[ModelExists(Connection::class), OA\Property]

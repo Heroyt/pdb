@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace App\Tasks\Connection;
 
-use App\Request\Connection\CreateRequest;
+use App\Request\Connection\UpdateMaxStorageRequest;
 use App\Services\Provider\ConnectionProvider;
 use App\Tasks\TaskDispatcherInterface;
 use Spiral\RoadRunner\Jobs\Task\ReceivedTaskInterface;
 
 /**
- * @implements TaskDispatcherInterface<CreateRequest>
+ * @implements TaskDispatcherInterface<UpdateMaxStorageRequest>
  */
-final readonly class CreateConnection implements TaskDispatcherInterface
+final readonly class UpdateConnectionMaxStorage implements TaskDispatcherInterface
 {
     public function __construct(
         private ConnectionProvider $connectionProvider,
@@ -23,19 +23,15 @@ final readonly class CreateConnection implements TaskDispatcherInterface
      * @inheritDoc
      */
     public static function getDiName(): string {
-        return 'task.connection.create';
+        return 'task.connection.storage.max';
     }
 
     public function process(ReceivedTaskInterface $task): void {
         $payload = igbinary_unserialize($task->getPayload());
-        assert($payload instanceof CreateRequest);
+        assert($payload instanceof UpdateMaxStorageRequest);
 
-        $factory = $this->connectionProvider->createConnection(
-            $payload->start,
-            $payload->end,
-            $payload->speed,
-            $payload->capacity
-        );
+        $this->connectionProvider->updateMaxStorage($payload);
+
         $task->ack();
     }
 }

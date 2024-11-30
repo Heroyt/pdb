@@ -14,10 +14,6 @@ use OpenApi\Attributes as OA;
 #[OA\Schema(schema: "ConnectionUpdateRequest")]
 class UpdateRequest extends \App\Request\UpdateRequest
 {
-    #[OA\Property(nullable: true)]
-    public bool $assigned;
-    #[OA\Property(nullable: true)]
-    public bool $active;
     #[OA\Property(nullable: true), IntRange(min: 1)]
     public int $speed;
     #[OA\Property(nullable: true), IntRange(min: 1)]

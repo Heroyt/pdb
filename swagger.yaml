@@ -82,6 +82,168 @@ paths:
           $ref: '#/components/schemas/ErrorResponse'
         '500':
           $ref: '#/components/schemas/ErrorResponse'
+  '/command/connection/{id}/storage':
+    put:
+      tags:
+        - command
+        - connection
+      description: 'Update a connection storage.'
+      operationId: updateConnectionStorage
+      parameters:
+        -
+          parameter: id
+          name: id
+          in: path
+          description: 'Connection ID'
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+                - materials
+              properties:
+                materials:
+                  type: array
+                  items: { $ref: '#/components/schemas/ConnectionUpdateStorageRequest' }
+              type: object
+      responses:
+        '200':
+          $ref: '#/components/schemas/SuccessResponse'
+        '404':
+          $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          $ref: '#/components/schemas/ErrorResponse'
+        '412':
+          $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          $ref: '#/components/schemas/ErrorResponse'
+  '/command/connection/{id}/storage-max':
+    put:
+      tags:
+        - command
+        - connection
+      description: 'Update a connection storage max quantity (what should be automatically loaded).'
+      operationId: updateConnectionMaxStorage
+      parameters:
+        -
+          parameter: id
+          name: id
+          in: path
+          description: 'Connection ID'
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+                - materials
+              properties:
+                materials:
+                  type: array
+                  items: { $ref: '#/components/schemas/ConnectionUpdateMaxStorageRequest' }
+              type: object
+      responses:
+        '200':
+          $ref: '#/components/schemas/SuccessResponse'
+        '404':
+          $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          $ref: '#/components/schemas/ErrorResponse'
+        '412':
+          $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          $ref: '#/components/schemas/ErrorResponse'
+  '/command/connection/{id}/assign':
+    post:
+      tags:
+        - command
+        - connection
+      description: 'Assign a connection - assigned connection should automatically transport material.'
+      operationId: assignConnection
+      parameters:
+        -
+          parameter: id
+          name: id
+          in: path
+          description: 'Connection ID'
+          schema:
+            type: integer
+      responses:
+        '200':
+          $ref: '#/components/schemas/SuccessResponse'
+        '404':
+          $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          $ref: '#/components/schemas/ErrorResponse'
+  '/command/connection/{id}/unassign':
+    post:
+      tags:
+        - command
+        - connection
+      description: 'Unassign a connection - unassigned connection should not automatically transport material.'
+      operationId: unassignConnection
+      parameters:
+        -
+          parameter: id
+          name: id
+          in: path
+          description: 'Connection ID'
+          schema:
+            type: integer
+      responses:
+        '200':
+          $ref: '#/components/schemas/SuccessResponse'
+        '404':
+          $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          $ref: '#/components/schemas/ErrorResponse'
+  '/command/connection/{id}/activate':
+    post:
+      tags:
+        - command
+        - connection
+      description: 'Activate a connection - active connection is currently on route.'
+      operationId: activateConnection
+      parameters:
+        -
+          parameter: id
+          name: id
+          in: path
+          description: 'Connection ID'
+          schema:
+            type: integer
+      responses:
+        '200':
+          $ref: '#/components/schemas/SuccessResponse'
+        '404':
+          $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          $ref: '#/components/schemas/ErrorResponse'
+  '/command/connection/{id}/deactivate':
+    post:
+      tags:
+        - command
+        - connection
+      description: 'Deactivate a connection - deactivated connection is currently not on route.'
+      operationId: deactivateConnection
+      parameters:
+        -
+          parameter: id
+          name: id
+          in: path
+          description: 'Connection ID'
+          schema:
+            type: integer
+      responses:
+        '200':
+          $ref: '#/components/schemas/SuccessResponse'
+        '404':
+          $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          $ref: '#/components/schemas/ErrorResponse'
   /command/factory:
     post:
       tags:
@@ -413,13 +575,20 @@ components:
     Connection:
       properties:
         assigned:
+          description: 'If a connection is assigned, it is set to transport material between factories.'
           type: boolean
         active:
+          description: 'If a connection is active, it is currently on route between factories.'
           type: boolean
         speed:
+          description: 'How many simulation steps does it take.'
           type: integer
         storageCapacity:
           type: integer
+        storage:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConnectionStorage'
       type: object
     ConnectionStorage:
       properties:
@@ -477,6 +646,16 @@ components:
         quantity:
           type: integer
       type: object
+    ConnectionActivateRequest:
+      properties:
+        id:
+          type: integer
+      type: object
+    ConnectionAssignRequest:
+      properties:
+        id:
+          type: integer
+      type: object
     ConnectionCreateRequest:
       properties:
         startId:
@@ -494,25 +673,46 @@ components:
           type: integer
           minimum: 1
       type: object
+    ConnectionDeactivateRequest:
+      properties:
+        id:
+          type: integer
+      type: object
     ConnectionDeleteRequest:
       properties:
         id:
           type: integer
       type: object
+    ConnectionUnassignRequest:
+      properties:
+        id:
+          type: integer
+      type: object
+    ConnectionUpdateMaxStorageRequest:
+      properties:
+        material:
+          $ref: '#/components/schemas/Material'
+        maxQuantity:
+          description: 'Maximum amount of material that should be automatically loaded'
+          type: integer
+          minimum: 0
+      type: object
     ConnectionUpdateRequest:
       properties:
-        assigned:
-          type: boolean
-          nullable: true
-        active:
-          type: boolean
-          nullable: true
         speed:
           type: integer
           nullable: true
         storageCapacity:
           type: integer
           nullable: true
+      type: object
+    ConnectionUpdateStorageRequest:
+      properties:
+        material:
+          $ref: '#/components/schemas/Material'
+        quantity:
+          description: 'Quantity difference (positive for adding stock, negative for removing).'
+          type: integer
       type: object
     FactoryCreateRequest:
       properties:

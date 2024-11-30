@@ -19,3 +19,9 @@ services:
 	task.connection.create: App\Tasks\Connection\CreateConnection
 	task.connection.update: App\Tasks\Connection\UpdateConnection
 	task.connection.delete: App\Tasks\Connection\DeleteConnection
+	task.connection.storage.update: App\Tasks\Connection\UpdateConnectionStorage
+	task.connection.storage.max: App\Tasks\Connection\UpdateConnectionMaxStorage
+	task.connection.assign: App\Tasks\Connection\AssignConnection
+	task.connection.unassign: App\Tasks\Connection\UnassignConnection
+	task.connection.activate: App\Tasks\Connection\ActivateConnection
+	task.connection.deactivate: App\Tasks\Connection\DeactivateConnection
