@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Dto;
@@ -22,13 +23,14 @@ class FactoryFull
     #[OA\Property]
     public Process $process;
     public function __construct(
-      #[OA\Property]
-      public int $id,
-      #[OA\Property]
-      public string $name,
-      #[OA\Property]
-      public int $storageCapacity,
-    ){}
+        #[OA\Property]
+        public int $id,
+        #[OA\Property]
+        public string $name,
+        #[OA\Property]
+        public int $storageCapacity,
+    ) {
+    }
 
     public static function fromFactory(Factory $factory): static {
         $self = new static($factory->id, $factory->name, $factory->storageCapacity);
@@ -38,12 +40,11 @@ class FactoryFull
         }
         $self->process = new Process();
         foreach ($factory->processes as $process) {
-             if ($process->type === Direction::IN) {
-                 $self->process->addInput(ProcessPart::fromProcess($process));
-             }
-             else {
-                 $self->process->addOutput(ProcessPart::fromProcess($process));
-             }
+            if ($process->type === Direction::IN) {
+                $self->process->addInput(ProcessPart::fromProcess($process));
+            } else {
+                $self->process->addOutput(ProcessPart::fromProcess($process));
+            }
         }
         return $self;
     }
@@ -55,9 +56,8 @@ class FactoryFull
     /**
      * @throws ModelNotFoundException
      */
-    public function getFactory() : Factory {
+    public function getFactory(): Factory {
         $this->factory ??= Factory::get($this->id);
         return $this->factory;
     }
-
 }

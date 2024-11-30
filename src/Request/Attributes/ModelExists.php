@@ -37,8 +37,8 @@ class ModelExists implements Validator
 
         if (!$this->class::exists($value)) {
             throw ValidationException::createWithValue(
-              'Model ('.$this->class.') of given ID does not exist.',
-              $value
+                'Model (' . $this->class . ') of given ID does not exist.',
+                $value
             );
         }
     }

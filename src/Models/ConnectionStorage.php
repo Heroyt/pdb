@@ -23,11 +23,11 @@ class ConnectionStorage extends Model
     #[OA\Property]
     public int $quantity = 0;
 
-    public function getCacheTags() : array {
+    public function getCacheTags(): array {
         $tags = parent::getCacheTags();
-        $tags[] = Material::TABLE.'/'.$this->material->id;
-        $tags[] = Connection::TABLE.'/'.$this->connection->id;
-        $tags[] = Connection::TABLE.'/'.$this->connection->id.'/storage';
+        $tags[] = Material::TABLE . '/' . $this->material->id;
+        $tags[] = Connection::TABLE . '/' . $this->connection->id;
+        $tags[] = Connection::TABLE . '/' . $this->connection->id . '/storage';
         return $tags;
     }
 }

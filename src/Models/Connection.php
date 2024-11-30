@@ -32,9 +32,9 @@ class Connection extends Model
     ]
     public array $storage {
         get {
-            if (!isset($this->storage)) {
-                $this->storage = ConnectionStorage::query()->where('id_factory = %i', $this->id)->get();
-            }
+    if (!isset($this->storage)) {
+        $this->storage = ConnectionStorage::query()->where('id_factory = %i', $this->id)->get();
+    }
             return $this->storage;
         }
         /**
@@ -50,5 +50,4 @@ class Connection extends Model
         }
         return $this->storageCapacity - $filled;
     }
-
 }

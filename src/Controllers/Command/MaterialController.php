@@ -25,26 +25,26 @@ use Spiral\RoadRunner\Jobs\Exception\JobsException;
 class MaterialController extends Controller
 {
     public function __construct(
-      private readonly TaskProducer $taskProducer,
+        private readonly TaskProducer $taskProducer,
     ) {
         parent::__construct();
     }
 
     #[
       OA\Post(
-        path       : '/command/material',
-        operationId: 'createMaterial',
-        description: 'Create a new material.',
-        requestBody: new OA\RequestBody(
-          content: new OA\JsonContent(ref: '#/components/schemas/MaterialCreateRequest'),
-        ),
-        tags       : ['command', 'material'],
+          path       : '/command/material',
+          operationId: 'createMaterial',
+          description: 'Create a new material.',
+          requestBody: new OA\RequestBody(
+              content: new OA\JsonContent(ref: '#/components/schemas/MaterialCreateRequest'),
+          ),
+          tags       : ['command', 'material'],
       ),
       OA\Response(ref: '#/components/schemas/SuccessResponse', response: 201),
       OA\Response(ref: '#/components/schemas/ErrorResponse', response: 400, description: 'Bad request.'),
       OA\Response(ref: '#/components/schemas/ErrorResponse', response: 500, description: 'Internal server error.'),
     ]
-    public function create(Request $request) : ResponseInterface {
+    public function create(Request $request): ResponseInterface {
         try {
             $createRequest = CreateRequest::fromRequest($request);
         } catch (ValidationException $e) {
@@ -58,37 +58,37 @@ class MaterialController extends Controller
         }
 
         return $this->respond(
-          new SuccessResponse(
-                    'Material creation was queued',
-            values: ['pipeline' => $task->getPipeline(), 'id' => $task->getId(), 'name' => $task->getName()],
-          ),
-          201
+            new SuccessResponse(
+                'Material creation was queued',
+                values: ['pipeline' => $task->getPipeline(), 'id' => $task->getId(), 'name' => $task->getName()],
+            ),
+            201
         );
     }
 
     #[
       OA\Put(
-        path       : '/command/material/{id}',
-        operationId: 'updateMaterial',
-        description: 'Update a material.',
-        requestBody: new OA\RequestBody(
-          content: new OA\JsonContent(ref: '#/components/schemas/MaterialUpdateRequest'),
-        ),
-        tags       : ['command', 'material'],
+          path       : '/command/material/{id}',
+          operationId: 'updateMaterial',
+          description: 'Update a material.',
+          requestBody: new OA\RequestBody(
+              content: new OA\JsonContent(ref: '#/components/schemas/MaterialUpdateRequest'),
+          ),
+          tags       : ['command', 'material'],
       ),
       OA\PathParameter(
-        parameter  : 'id',
-        name       : 'id',
-        description: 'Material ID',
-        in         : 'path',
-        schema     : new OA\Schema(type: 'integer'),
+          parameter  : 'id',
+          name       : 'id',
+          description: 'Material ID',
+          in         : 'path',
+          schema     : new OA\Schema(type: 'integer'),
       ),
       OA\Response(ref: '#/components/schemas/SuccessResponse', response: 200),
       OA\Response(ref: '#/components/schemas/ErrorResponse', response: 404, description: 'Material not found.'),
       OA\Response(ref: '#/components/schemas/ErrorResponse', response: 400, description: 'Bad request.'),
       OA\Response(ref: '#/components/schemas/ErrorResponse', response: 500, description: 'Internal server error.'),
     ]
-    public function update(Material $material, Request $request) : ResponseInterface {
+    public function update(Material $material, Request $request): ResponseInterface {
         try {
             $updateRequest = UpdateRequest::fromRequest($request, $material);
         } catch (ValidationException $e) {
@@ -102,38 +102,38 @@ class MaterialController extends Controller
         }
 
         return $this->respond(
-          new SuccessResponse(
-                    'Material update was queued',
-            values: [
+            new SuccessResponse(
+                'Material update was queued',
+                values: [
                       'changes'  => $updateRequest->getChanges(),
                       'pipeline' => $task->getPipeline(),
                       'id'       => $task->getId(),
                       'name'     => $task->getName(),
                     ],
-          )
+            )
         );
     }
 
     #[
       OA\Delete(
-        path       : '/command/material/{id}',
-        operationId: 'deleteMaterial',
-        description: 'Delete a material.',
-        tags       : ['command', 'material'],
+          path       : '/command/material/{id}',
+          operationId: 'deleteMaterial',
+          description: 'Delete a material.',
+          tags       : ['command', 'material'],
       ),
       OA\PathParameter(
-        parameter  : 'id',
-        name       : 'id',
-        description: 'Material ID',
-        in         : 'path',
-        schema     : new OA\Schema(type: 'integer'),
+          parameter  : 'id',
+          name       : 'id',
+          description: 'Material ID',
+          in         : 'path',
+          schema     : new OA\Schema(type: 'integer'),
       ),
       OA\Response(ref: '#/components/schemas/SuccessResponse', response: 200),
       OA\Response(ref: '#/components/schemas/ErrorResponse', response: 404, description: 'Material not found.'),
       OA\Response(ref: '#/components/schemas/ErrorResponse', response: 412, description: 'Cannot delete material.'),
       OA\Response(ref: '#/components/schemas/ErrorResponse', response: 500, description: 'Internal server error.'),
     ]
-    public function delete(Material $material) : ResponseInterface {
+    public function delete(Material $material): ResponseInterface {
         // TODO: Check if material is not stocked anywhere
 
         try {
@@ -143,15 +143,14 @@ class MaterialController extends Controller
         }
 
         return $this->respond(
-          new SuccessResponse(
-                    'Material delete was queued',
-            values: [
+            new SuccessResponse(
+                'Material delete was queued',
+                values: [
                       'pipeline' => $task->getPipeline(),
                       'id'       => $task->getId(),
                       'name'     => $task->getName(),
                     ],
-          )
+            )
         );
     }
-
 }

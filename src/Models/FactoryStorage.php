@@ -23,26 +23,26 @@ class FactoryStorage extends Model
     #[OA\Property]
     public int $quantity = 0;
 
-    public function getCacheTags() : array {
+    public function getCacheTags(): array {
         $tags = parent::getCacheTags();
-        $tags[] = Material::TABLE.'/'.$this->material->id;
-        $tags[] = Factory::TABLE.'/'.$this->facility->id;
-        $tags[] = Factory::TABLE.'/'.$this->facility->id.'/storage';
+        $tags[] = Material::TABLE . '/' . $this->material->id;
+        $tags[] = Factory::TABLE . '/' . $this->facility->id;
+        $tags[] = Factory::TABLE . '/' . $this->facility->id . '/storage';
         return $tags;
     }
 
-    public function clearCache() : void {
+    public function clearCache(): void {
         parent::clearCache();
-        
+
         $cache = App::getService('cache');
         assert($cache instanceof Cache);
         $cache->clean(
-          [
+            [
             $cache::Tags => [
-              Factory::TABLE.'/'.$this->facility->id,
-              Factory::TABLE.'/'.$this->facility->id.'/storage',
+              Factory::TABLE . '/' . $this->facility->id,
+              Factory::TABLE . '/' . $this->facility->id . '/storage',
             ],
-          ]
+            ]
         );
     }
 }

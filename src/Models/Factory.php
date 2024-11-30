@@ -27,15 +27,15 @@ class Factory extends Model
     ]
     public array $storage {
         get {
-            if (!isset($this->storage)) {
-                $this->storage = FactoryStorage::query()->where('id_factory = %i', $this->id)->get();
-            }
+    if (!isset($this->storage)) {
+        $this->storage = FactoryStorage::query()->where('id_factory = %i', $this->id)->get();
+    }
             return $this->storage;
         }
         /**
          * @param  Process[]  $value
          */
-        set (array $value) => $this->storage = $value;
+        set(array $value) => $this->storage = $value;
     }
 
     /** @var Process[] */
@@ -45,15 +45,15 @@ class Factory extends Model
     ]
     public array $processes {
         get {
-            if (!isset($this->processes)) {
-                $this->processes = Process::query()->where('id_factory = %i', $this->id)->get();
-            }
+    if (!isset($this->processes)) {
+        $this->processes = Process::query()->where('id_factory = %i', $this->id)->get();
+    }
             return $this->processes;
         }
         /**
          * @param  Process[]  $value
          */
-        set (array $value) => $this->processes = $value;
+        set(array $value) => $this->processes = $value;
     }
 
     public function getRemainingStorageCapacity(): int {

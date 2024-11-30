@@ -171,32 +171,32 @@ class ConnectionController extends Controller
 
     #[
       OA\Put(
-        path       : '/command/connection/{id}/storage',
-        operationId: 'updateConnectionStorage',
-        description: 'Update a connection storage.',
-        requestBody: new OA\RequestBody(
-          content: new OA\JsonContent(
-                     required  : ['materials'],
-                     properties: [
+          path       : '/command/connection/{id}/storage',
+          operationId: 'updateConnectionStorage',
+          description: 'Update a connection storage.',
+          requestBody: new OA\RequestBody(
+              content: new OA\JsonContent(
+                  required  : ['materials'],
+                  properties: [
                                    new OA\Property(
-                                            'materials',
-                                     type : 'array',
-                                     items: new OA\Items(
-                                              ref: '#/components/schemas/ConnectionUpdateStorageRequest',
-                                            ),
+                                       'materials',
+                                       type : 'array',
+                                       items: new OA\Items(
+                                           ref: '#/components/schemas/ConnectionUpdateStorageRequest',
+                                       ),
                                    ),
                                  ],
-                     type      : 'object',
-                   ),
-        ),
-        tags       : ['command', 'connection'],
+                  type      : 'object',
+              ),
+          ),
+          tags       : ['command', 'connection'],
       ),
       OA\PathParameter(
-        parameter  : 'id',
-        name       : 'id',
-        description: 'Connection ID',
-        in         : 'path',
-        schema     : new OA\Schema(type: 'integer'),
+          parameter  : 'id',
+          name       : 'id',
+          description: 'Connection ID',
+          in         : 'path',
+          schema     : new OA\Schema(type: 'integer'),
       ),
       OA\Response(ref: '#/components/schemas/SuccessResponse', response: 200),
       OA\Response(ref: '#/components/schemas/ErrorResponse', response: 404, description: 'Connection or material not found.'),
@@ -208,12 +208,12 @@ class ConnectionController extends Controller
         $materials = $request->getPost('materials', []);
         if (!is_array($materials)) {
             return $this->respond(
-              new ErrorResponse(
-                'Invalid input',
-                ErrorType::VALIDATION,
-                'materials must be an array of objects'
-              ),
-              400
+                new ErrorResponse(
+                    'Invalid input',
+                    ErrorType::VALIDATION,
+                    'materials must be an array of objects'
+                ),
+                400
             );
         }
 
@@ -226,51 +226,51 @@ class ConnectionController extends Controller
         foreach ($materials as $key => $material) {
             if (!is_array($material)) {
                 return $this->respond(
-                  new ErrorResponse(
-                    'Invalid input',
-                    ErrorType::VALIDATION,
-                    'materials[' . $key . '] must be an objects'
-                  ),
-                  400
+                    new ErrorResponse(
+                        'Invalid input',
+                        ErrorType::VALIDATION,
+                        'materials[' . $key . '] must be an objects'
+                    ),
+                    400
                 );
             }
             if (
-              !isset($material['id'])
-              || !is_numeric($material['id'])
+                !isset($material['id'])
+                || !is_numeric($material['id'])
             ) {
                 return $this->respond(
-                  new ErrorResponse(
-                    'Invalid input',
-                    ErrorType::VALIDATION,
-                    'materials[' . $key . '].id must be an integer'
-                  ),
-                  400
+                    new ErrorResponse(
+                        'Invalid input',
+                        ErrorType::VALIDATION,
+                        'materials[' . $key . '].id must be an integer'
+                    ),
+                    400
                 );
             }
             try {
                 $materialObj = Material::get((int) $material['id']);
             } catch (ModelNotFoundException) {
                 return $this->respond(
-                  new ErrorResponse(
-                            'Material not found',
-                            ErrorType::NOT_FOUND,
-                    values: [
+                    new ErrorResponse(
+                        'Material not found',
+                        ErrorType::NOT_FOUND,
+                        values: [
                               'key' => $key,
                               'id'  => (int) $material['id'],
                             ]
-                  ),
-                  404
+                    ),
+                    404
                 );
             }
 
             if (!isset($material['quantity']) || !is_numeric($material['quantity'])) {
                 return $this->respond(
-                  new ErrorResponse(
-                    'Invalid input',
-                    ErrorType::VALIDATION,
-                    'materials[' . $key . '].quantity must be an integer'
-                  ),
-                  400
+                    new ErrorResponse(
+                        'Invalid input',
+                        ErrorType::VALIDATION,
+                        'materials[' . $key . '].quantity must be an integer'
+                    ),
+                    400
                 );
             }
 
@@ -294,16 +294,16 @@ class ConnectionController extends Controller
             $storage->quantity += $quantity;
             if ($storage->quantity < 0) {
                 return $this->respond(
-                  new ErrorResponse(
-                            'Overall storage quantity cannot be negative',
-                            ErrorType::VALIDATION,
-                    values: [
+                    new ErrorResponse(
+                        'Overall storage quantity cannot be negative',
+                        ErrorType::VALIDATION,
+                        values: [
                               'finalQuantity' => $storage->quantity,
                               'diff'          => $quantity,
                               'key'           => $key,
                             ]
-                  ),
-                  412
+                    ),
+                    412
                 );
             }
 
@@ -314,15 +314,15 @@ class ConnectionController extends Controller
 
         if ($remainingStorage < $sizeSum) {
             return $this->respond(
-              new ErrorResponse(
-                        'Connection does not have enough storage space',
-                        ErrorType::VALIDATION,
-                values: [
+                new ErrorResponse(
+                    'Connection does not have enough storage space',
+                    ErrorType::VALIDATION,
+                    values: [
                           'remainingStorage' => $remainingStorage,
                           'totalSize'        => $sizeSum,
                         ],
-              ),
-              412
+                ),
+                412
             );
         }
 
@@ -333,43 +333,43 @@ class ConnectionController extends Controller
         }
 
         return $this->respond(
-          new SuccessResponse(
-                    'Connection storage update was queued',
-            values: [
+            new SuccessResponse(
+                'Connection storage update was queued',
+                values: [
                       'totalSize' => $sizeSum,
                       'factoryCapacity' => $connection->storageCapacity,
                       'remainingStorage' => $remainingStorage - $sizeSum,
                     ],
-          )
+            )
         );
     }
 
     #[
       OA\Put(
-        path       : '/command/connection/{id}/storage-max',
-        operationId: 'updateConnectionMaxStorage',
-        description: 'Update a connection storage max quantity (what should be automatically loaded).',
-        requestBody: new OA\RequestBody(
-          content: new OA\JsonContent(
-                     required  : ['materials'],
-                     properties: [
+          path       : '/command/connection/{id}/storage-max',
+          operationId: 'updateConnectionMaxStorage',
+          description: 'Update a connection storage max quantity (what should be automatically loaded).',
+          requestBody: new OA\RequestBody(
+              content: new OA\JsonContent(
+                  required  : ['materials'],
+                  properties: [
                                    new OA\Property(
-                                            'materials',
-                                     type : 'array',
-                                     items: new OA\Items(ref: '#/components/schemas/ConnectionUpdateMaxStorageRequest'),
+                                       'materials',
+                                       type : 'array',
+                                       items: new OA\Items(ref: '#/components/schemas/ConnectionUpdateMaxStorageRequest'),
                                    ),
                                  ],
-                     type      : 'object',
-                   ),
-        ),
-        tags       : ['command', 'connection'],
+                  type      : 'object',
+              ),
+          ),
+          tags       : ['command', 'connection'],
       ),
       OA\PathParameter(
-        parameter  : 'id',
-        name       : 'id',
-        description: 'Connection ID',
-        in         : 'path',
-        schema     : new OA\Schema(type: 'integer'),
+          parameter  : 'id',
+          name       : 'id',
+          description: 'Connection ID',
+          in         : 'path',
+          schema     : new OA\Schema(type: 'integer'),
       ),
       OA\Response(ref: '#/components/schemas/SuccessResponse', response: 200),
       OA\Response(ref: '#/components/schemas/ErrorResponse', response: 404, description: 'Connection or material not found.'),
@@ -381,12 +381,12 @@ class ConnectionController extends Controller
         $materials = $request->getPost('materials', []);
         if (!is_array($materials)) {
             return $this->respond(
-              new ErrorResponse(
-                'Invalid input',
-                ErrorType::VALIDATION,
-                'materials must be an array of objects'
-              ),
-              400
+                new ErrorResponse(
+                    'Invalid input',
+                    ErrorType::VALIDATION,
+                    'materials must be an array of objects'
+                ),
+                400
             );
         }
 
@@ -396,40 +396,40 @@ class ConnectionController extends Controller
         foreach ($materials as $key => $material) {
             if (!is_array($material)) {
                 return $this->respond(
-                  new ErrorResponse(
-                    'Invalid input',
-                    ErrorType::VALIDATION,
-                    'materials[' . $key . '] must be an objects'
-                  ),
-                  400
+                    new ErrorResponse(
+                        'Invalid input',
+                        ErrorType::VALIDATION,
+                        'materials[' . $key . '] must be an objects'
+                    ),
+                    400
                 );
             }
             if (
-              !isset($material['id'])
-              || !is_numeric($material['id'])
+                !isset($material['id'])
+                || !is_numeric($material['id'])
             ) {
                 return $this->respond(
-                  new ErrorResponse(
-                    'Invalid input',
-                    ErrorType::VALIDATION,
-                    'materials[' . $key . '].id must be an integer'
-                  ),
-                  400
+                    new ErrorResponse(
+                        'Invalid input',
+                        ErrorType::VALIDATION,
+                        'materials[' . $key . '].id must be an integer'
+                    ),
+                    400
                 );
             }
             try {
                 $materialObj = Material::get((int) $material['id']);
             } catch (ModelNotFoundException) {
                 return $this->respond(
-                  new ErrorResponse(
-                            'Material not found',
-                            ErrorType::NOT_FOUND,
-                    values: [
+                    new ErrorResponse(
+                        'Material not found',
+                        ErrorType::NOT_FOUND,
+                        values: [
                               'key' => $key,
                               'id'  => (int) $material['id'],
                             ]
-                  ),
-                  404
+                    ),
+                    404
                 );
             }
 
@@ -451,15 +451,15 @@ class ConnectionController extends Controller
                 $updateRequest = UpdateMaxStorageRequest::fromArray($material, $storage);
             } catch (ValidationException $e) {
                 return $this->respond(
-                  new ErrorResponse(
-                    'Invalid input',
-                    ErrorType::VALIDATION,
-                    $e->getMessage(),
-                    values: [
-                      'key' => $key,
-                    ]
-                  ),
-                  400
+                    new ErrorResponse(
+                        'Invalid input',
+                        ErrorType::VALIDATION,
+                        $e->getMessage(),
+                        values: [
+                        'key' => $key,
+                        ]
+                    ),
+                    400
                 );
             }
             $this->taskProducer->plan(UpdateConnectionMaxStorage::class, $updateRequest);
@@ -472,29 +472,29 @@ class ConnectionController extends Controller
         }
 
         return $this->respond(
-          new SuccessResponse('Connection storage update was queued')
+            new SuccessResponse('Connection storage update was queued')
         );
     }
 
     #[
       OA\Post(
-        path       : '/command/connection/{id}/assign',
-        operationId: 'assignConnection',
-        description: 'Assign a connection - assigned connection should automatically transport material.',
-        tags       : ['command', 'connection'],
+          path       : '/command/connection/{id}/assign',
+          operationId: 'assignConnection',
+          description: 'Assign a connection - assigned connection should automatically transport material.',
+          tags       : ['command', 'connection'],
       ),
       OA\PathParameter(
-        parameter  : 'id',
-        name       : 'id',
-        description: 'Connection ID',
-        in         : 'path',
-        schema     : new OA\Schema(type: 'integer'),
+          parameter  : 'id',
+          name       : 'id',
+          description: 'Connection ID',
+          in         : 'path',
+          schema     : new OA\Schema(type: 'integer'),
       ),
       OA\Response(ref: '#/components/schemas/SuccessResponse', response: 200),
       OA\Response(ref: '#/components/schemas/ErrorResponse', response: 404, description: 'Connection not found.'),
       OA\Response(ref: '#/components/schemas/ErrorResponse', response: 500, description: 'Internal server error.'),
     ]
-    public function assign(Connection $connection) : ResponseInterface {
+    public function assign(Connection $connection): ResponseInterface {
         try {
             $task = $this->taskProducer->push(AssignConnection::class, new AssignRequest($connection->id));
         } catch (JobsException $e) {
@@ -502,36 +502,36 @@ class ConnectionController extends Controller
         }
 
         return $this->respond(
-          new SuccessResponse(
-                    'Connection assigning was queued',
-            values: [
+            new SuccessResponse(
+                'Connection assigning was queued',
+                values: [
                       'pipeline' => $task->getPipeline(),
                       'id'       => $task->getId(),
                       'name'     => $task->getName(),
                     ],
-          )
+            )
         );
     }
 
     #[
       OA\Post(
-        path       : '/command/connection/{id}/unassign',
-        operationId: 'unassignConnection',
-        description: 'Unassign a connection - unassigned connection should not automatically transport material.',
-        tags       : ['command', 'connection'],
+          path       : '/command/connection/{id}/unassign',
+          operationId: 'unassignConnection',
+          description: 'Unassign a connection - unassigned connection should not automatically transport material.',
+          tags       : ['command', 'connection'],
       ),
       OA\PathParameter(
-        parameter  : 'id',
-        name       : 'id',
-        description: 'Connection ID',
-        in         : 'path',
-        schema     : new OA\Schema(type: 'integer'),
+          parameter  : 'id',
+          name       : 'id',
+          description: 'Connection ID',
+          in         : 'path',
+          schema     : new OA\Schema(type: 'integer'),
       ),
       OA\Response(ref: '#/components/schemas/SuccessResponse', response: 200),
       OA\Response(ref: '#/components/schemas/ErrorResponse', response: 404, description: 'Connection not found.'),
       OA\Response(ref: '#/components/schemas/ErrorResponse', response: 500, description: 'Internal server error.'),
     ]
-    public function unassign(Connection $connection) : ResponseInterface {
+    public function unassign(Connection $connection): ResponseInterface {
         try {
             $task = $this->taskProducer->push(UnassignConnection::class, new UnassignRequest($connection->id));
         } catch (JobsException $e) {
@@ -539,36 +539,36 @@ class ConnectionController extends Controller
         }
 
         return $this->respond(
-          new SuccessResponse(
-                    'Connection unassigning was queued',
-            values: [
+            new SuccessResponse(
+                'Connection unassigning was queued',
+                values: [
                       'pipeline' => $task->getPipeline(),
                       'id'       => $task->getId(),
                       'name'     => $task->getName(),
                     ],
-          )
+            )
         );
     }
 
     #[
       OA\Post(
-        path       : '/command/connection/{id}/activate',
-        operationId: 'activateConnection',
-        description: 'Activate a connection - active connection is currently on route.',
-        tags       : ['command', 'connection'],
+          path       : '/command/connection/{id}/activate',
+          operationId: 'activateConnection',
+          description: 'Activate a connection - active connection is currently on route.',
+          tags       : ['command', 'connection'],
       ),
       OA\PathParameter(
-        parameter  : 'id',
-        name       : 'id',
-        description: 'Connection ID',
-        in         : 'path',
-        schema     : new OA\Schema(type: 'integer'),
+          parameter  : 'id',
+          name       : 'id',
+          description: 'Connection ID',
+          in         : 'path',
+          schema     : new OA\Schema(type: 'integer'),
       ),
       OA\Response(ref: '#/components/schemas/SuccessResponse', response: 200),
       OA\Response(ref: '#/components/schemas/ErrorResponse', response: 404, description: 'Connection not found.'),
       OA\Response(ref: '#/components/schemas/ErrorResponse', response: 500, description: 'Internal server error.'),
     ]
-    public function activate(Connection $connection) : ResponseInterface {
+    public function activate(Connection $connection): ResponseInterface {
         try {
             $task = $this->taskProducer->push(ActivateConnection::class, new ActivateRequest($connection->id));
         } catch (JobsException $e) {
@@ -576,36 +576,36 @@ class ConnectionController extends Controller
         }
 
         return $this->respond(
-          new SuccessResponse(
-                    'Connection activation was queued',
-            values: [
+            new SuccessResponse(
+                'Connection activation was queued',
+                values: [
                       'pipeline' => $task->getPipeline(),
                       'id'       => $task->getId(),
                       'name'     => $task->getName(),
                     ],
-          )
+            )
         );
     }
 
     #[
       OA\Post(
-        path       : '/command/connection/{id}/deactivate',
-        operationId: 'deactivateConnection',
-        description: 'Deactivate a connection - deactivated connection is currently not on route.',
-        tags       : ['command', 'connection'],
+          path       : '/command/connection/{id}/deactivate',
+          operationId: 'deactivateConnection',
+          description: 'Deactivate a connection - deactivated connection is currently not on route.',
+          tags       : ['command', 'connection'],
       ),
       OA\PathParameter(
-        parameter  : 'id',
-        name       : 'id',
-        description: 'Connection ID',
-        in         : 'path',
-        schema     : new OA\Schema(type: 'integer'),
+          parameter  : 'id',
+          name       : 'id',
+          description: 'Connection ID',
+          in         : 'path',
+          schema     : new OA\Schema(type: 'integer'),
       ),
       OA\Response(ref: '#/components/schemas/SuccessResponse', response: 200),
       OA\Response(ref: '#/components/schemas/ErrorResponse', response: 404, description: 'Connection not found.'),
       OA\Response(ref: '#/components/schemas/ErrorResponse', response: 500, description: 'Internal server error.'),
     ]
-    public function deactivate(Connection $connection) : ResponseInterface {
+    public function deactivate(Connection $connection): ResponseInterface {
         try {
             $task = $this->taskProducer->push(DeactivateConnection::class, new DeactivateRequest($connection->id));
         } catch (JobsException $e) {
@@ -613,14 +613,14 @@ class ConnectionController extends Controller
         }
 
         return $this->respond(
-          new SuccessResponse(
-                    'Connection deactivation was queued',
-            values: [
+            new SuccessResponse(
+                'Connection deactivation was queued',
+                values: [
                       'pipeline' => $task->getPipeline(),
                       'id'       => $task->getId(),
                       'name'     => $task->getName(),
                     ],
-          )
+            )
         );
     }
 }

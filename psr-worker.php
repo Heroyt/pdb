@@ -23,23 +23,23 @@ use Tracy\Debugger;
 use Tracy\Helpers;
 use Tracy\ILogger;
 
-const ROOT = __DIR__.'/';
+const ROOT = __DIR__ . '/';
 
 error_reporting(E_ALL ^ E_DEPRECATED);
 ini_set('display_errors', 'stderr');
 ini_set('display_startup_errors', '1');
 
-require_once ROOT."include/load.php";
+require_once ROOT . "include/load.php";
 
 $app = App::getInstance();
 $env = Environment::fromGlobals();
 
-Debugger::$logDirectory = LOG_DIR.'tracy';
+Debugger::$logDirectory = LOG_DIR . 'tracy';
 
 if (
-  !file_exists(Debugger::$logDirectory) &&
-  !mkdir(Debugger::$logDirectory, 0777, true) &&
-  !is_dir(Debugger::$logDirectory)
+    !file_exists(Debugger::$logDirectory) &&
+    !mkdir(Debugger::$logDirectory, 0777, true) &&
+    !is_dir(Debugger::$logDirectory)
 ) {
     Debugger::$logDirectory = LOG_DIR;
 }
@@ -107,70 +107,67 @@ switch ($env->getMode()) {
 
                 try {
                     $psr7->respond(
-                      $app->run()
+                        $app->run()
                           ->withAddedHeader('Content-Language', $app->translations->getLang())
                     );
                 } catch (RouteNotFoundException $e) { // 404 error
                     if (in_array('application/json', getAcceptTypes($request))) {
                         $psr7->respond(
-                          new Response(
-                            404,
-                            ['Content-Type' => 'application/json'],
-                            json_encode(
-                              new ErrorResponse(
-                                           'Route not found',
-                                type     : ErrorType::NOT_FOUND,
-                                detail   : $e->getMessage(),
-                                exception: $e
-                              ),
-                              JSON_THROW_ON_ERROR
+                            new Response(
+                                404,
+                                ['Content-Type' => 'application/json'],
+                                json_encode(
+                                    new ErrorResponse(
+                                        'Route not found',
+                                        type     : ErrorType::NOT_FOUND,
+                                        detail   : $e->getMessage(),
+                                        exception: $e
+                                    ),
+                                    JSON_THROW_ON_ERROR
+                                )
                             )
-                          )
                         );
-                    }
-                    else {
+                    } else {
                         $psr7->respond(new Response(404, [], $e->getMessage()));
                     }
                     continue;
                 } catch (MethodNotAllowedException $e) {
                     if (in_array('application/json', getAcceptTypes($request))) {
                         $psr7->respond(
-                          new Response(
-                            405,
-                            ['Content-Type' => 'application/json'],
-                            json_encode(
-                              new ErrorResponse(
-                                      $e->getMessage(),
-                                type: ErrorType::NOT_FOUND,
-                              ),
-                              JSON_THROW_ON_ERROR
+                            new Response(
+                                405,
+                                ['Content-Type' => 'application/json'],
+                                json_encode(
+                                    new ErrorResponse(
+                                        $e->getMessage(),
+                                        type: ErrorType::NOT_FOUND,
+                                    ),
+                                    JSON_THROW_ON_ERROR
+                                )
                             )
-                          )
                         );
-                    }
-                    else {
+                    } else {
                         $psr7->respond(new Response(405, [], $e->getMessage()));
                     }
                     continue;
                 } catch (RoutingModelNotFoundException | ModelNotFoundException $e) {
                     if (in_array('application/json', getAcceptTypes($request))) {
                         $psr7->respond(
-                          new Response(
-                            404,
-                            ['Content-Type' => 'application/json'],
-                            json_encode(
-                              new ErrorResponse(
-                                           'Model not found',
-                                type     : ErrorType::NOT_FOUND,
-                                detail   : $e->getMessage(),
-                                exception: $e
-                              ),
-                              JSON_THROW_ON_ERROR
+                            new Response(
+                                404,
+                                ['Content-Type' => 'application/json'],
+                                json_encode(
+                                    new ErrorResponse(
+                                        'Model not found',
+                                        type     : ErrorType::NOT_FOUND,
+                                        detail   : $e->getMessage(),
+                                        exception: $e
+                                    ),
+                                    JSON_THROW_ON_ERROR
+                                )
                             )
-                          )
                         );
-                    }
-                    else {
+                    } else {
                         $psr7->respond(new Response(404, [], $e->getMessage()));
                     }
                     continue;
@@ -181,14 +178,14 @@ switch ($env->getMode()) {
 
                     if (in_array('application/json', getAcceptTypes($request))) {
                         $psr7->respond(
-                          new Response(
-                            500,
-                            ['Content-Type' => 'application/json'],
-                            json_encode(
-                              new ErrorResponse('Something Went wrong!', detail: $e->getMessage(), exception: $e, values: [$e::class]),
-                              JSON_THROW_ON_ERROR
+                            new Response(
+                                500,
+                                ['Content-Type' => 'application/json'],
+                                json_encode(
+                                    new ErrorResponse('Something Went wrong!', detail: $e->getMessage(), exception: $e, values: [$e::class]),
+                                    JSON_THROW_ON_ERROR
+                                )
                             )
-                          )
                         );
                         continue;
                     }
@@ -202,13 +199,13 @@ switch ($env->getMode()) {
                         ob_end_clean();
 
                         $psr7->respond(
-                          new Response(
-                            500,
-                            [
-                              'Content-Type' => 'text/html',
-                            ],
-                            $blueScreen
-                          )
+                            new Response(
+                                500,
+                                [
+                                'Content-Type' => 'text/html',
+                                ],
+                                $blueScreen
+                            )
                         );
                         file_put_contents('php://stderr', (string) $e);
                         continue;

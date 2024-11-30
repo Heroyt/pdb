@@ -15,7 +15,6 @@ use OpenApi\Attributes as OA;
 #[OA\Schema(schema: "FactoryCreateRequest")]
 final class CreateRequest extends AbstractCreateRequest
 {
-
     /** @var non-empty-string */
     #[OA\Property]
     public string $name;

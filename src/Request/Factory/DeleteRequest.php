@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Request\Factory;
@@ -11,8 +12,8 @@ use OpenApi\Attributes as OA;
 final class DeleteRequest
 {
     public function __construct(
-      #[ModelExists(Factory::class), OA\Property]
-      public int $id,
+        #[ModelExists(Factory::class), OA\Property]
+        public int $id,
     ) {
     }
 }

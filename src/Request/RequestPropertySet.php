@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Request;
@@ -10,14 +11,13 @@ use ReflectionUnionType;
 
 trait RequestPropertySet
 {
-
     /**
      * @param  mixed  $value
      * @param  ReflectionProperty  $property
      * @return void
      * @throws ValidationException
      */
-    protected function setValidatedValue(mixed $value, ReflectionProperty $property) : void {
+    protected function setValidatedValue(mixed $value, ReflectionProperty $property): void {
         $propertyName = $property->getName();
         $type = $property->getType();
         assert($type instanceof ReflectionNamedType || $type instanceof ReflectionUnionType);
@@ -33,5 +33,4 @@ trait RequestPropertySet
 
         $this->$propertyName = $value;
     }
-
 }

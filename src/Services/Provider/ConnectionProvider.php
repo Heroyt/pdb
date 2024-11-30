@@ -42,10 +42,11 @@ readonly class ConnectionProvider
      * @param  ClientInterface<SummarizedResult<BoltResult>>  $client
      */
     public function __construct(
-      private ClientInterface $client,
-      private FactoryProvider $factoryProvider,
-      private Streams         $streams,
-    ) {}
+        private ClientInterface $client,
+        private FactoryProvider $factoryProvider,
+        private Streams         $streams,
+    ) {
+    }
 
     /**
      * @throws DriverException
@@ -53,15 +54,15 @@ readonly class ConnectionProvider
      * @throws Throwable
      * @throws ValidationException
      */
-    public function createConnection(Factory $start, Factory $end, int $speed, int $capacity) : Connection {
+    public function createConnection(Factory $start, Factory $end, int $speed, int $capacity): Connection {
         $connection = new Connection();
         $connection->speed = $speed;
         $connection->storageCapacity = $capacity;
         DB::getConnection()->begin();
         $this->writeConnection($connection, $start, $end);
         $result = $this->streams->appendEvent(
-          CreateEvent::fromConnection($connection, $start, $end),
-          $connection::TABLE.'_'.$connection->id
+            CreateEvent::fromConnection($connection, $start, $end),
+            $connection::TABLE . '_' . $connection->id
         );
         if (!$result->success) {
             DB::getConnection()->rollback();
@@ -77,7 +78,7 @@ readonly class ConnectionProvider
      * @throws Throwable
      * @throws ValidationException
      */
-    public function writeConnection(Connection $connection, ?Factory $start = null, ?Factory $end = null) : void {
+    public function writeConnection(Connection $connection, ?Factory $start = null, ?Factory $end = null): void {
         if (!$connection->save()) {
             DB::getConnection()->rollback();
             throw new ModelCreationException('Failed to save connection to database');
@@ -85,19 +86,18 @@ readonly class ConnectionProvider
 
         try {
             $this->client->writeTransaction(
-              function (TransactionInterface $tsx) use ($connection, $start, $end) {
-                  if ($start !== null && $end !== null) {
+                function (TransactionInterface $tsx) use ($connection, $start, $end) {
+                    if ($start !== null && $end !== null) {
 
-                      // Make sure that the nodes exist
-                      $this->factoryProvider->createFactoryNode($tsx, $start);
-                      $this->factoryProvider->createFactoryNode($tsx, $end);
-                      // Connect the nodes
-                      $this->createConnectionEdge($tsx, $start, $end, $connection);
-                  }
-                  else {
-                      $this->updateConnectionEdge($tsx, $connection);
-                  }
-              }
+                        // Make sure that the nodes exist
+                        $this->factoryProvider->createFactoryNode($tsx, $start);
+                        $this->factoryProvider->createFactoryNode($tsx, $end);
+                        // Connect the nodes
+                        $this->createConnectionEdge($tsx, $start, $end, $connection);
+                    } else {
+                        $this->updateConnectionEdge($tsx, $connection);
+                    }
+                }
             );
         } catch (Throwable $e) {
             DB::getConnection()->rollback();
@@ -109,14 +109,14 @@ readonly class ConnectionProvider
      * @param  TransactionInterface<SummarizedResult<BoltResult>>  $tsx
      */
     public function createConnectionEdge(
-      TransactionInterface $tsx,
-      Factory              $start,
-      Factory              $end,
-      Connection           $connection
-    ) : void {
+        TransactionInterface $tsx,
+        Factory              $start,
+        Factory              $end,
+        Connection           $connection
+    ): void {
         $result = $tsx->run(
-          'MATCH (f1:Factory {id: $id1}), (f2:Factory {id: $id2}) MERGE (f1)-[r:Connection {id: $id}]->(f2) SET r.assigned = $assigned, r.active = $active, r.speed = $speed, r.storage = $capacity RETURN r',
-          [
+            'MATCH (f1:Factory {id: $id1}), (f2:Factory {id: $id2}) MERGE (f1)-[r:Connection {id: $id}]->(f2) SET r.assigned = $assigned, r.active = $active, r.speed = $speed, r.storage = $capacity RETURN r',
+            [
             'id'       => $connection->id,
             'id1'      => $start->id,
             'id2'      => $end->id,
@@ -124,7 +124,7 @@ readonly class ConnectionProvider
             'active'   => $connection->active,
             'speed'    => $connection->speed,
             'capacity' => $connection->storageCapacity,
-          ]
+            ]
         );
         new Logger(LOG_DIR, 'neo4j')->debug('Result:', $result->jsonSerialize());
     }
@@ -133,18 +133,18 @@ readonly class ConnectionProvider
      * @param  TransactionInterface<SummarizedResult<BoltResult>>  $tsx
      */
     public function updateConnectionEdge(
-      TransactionInterface $tsx,
-      Connection           $connection
-    ) : void {
+        TransactionInterface $tsx,
+        Connection           $connection
+    ): void {
         $result = $tsx->run(
-          'MATCH ()-(r:Connection {id: $id})->() SET r.assigned = $assigned, r.active = $active, r.speed = $speed, r.storage = $capacity RETURN r',
-          [
+            'MATCH ()-(r:Connection {id: $id})->() SET r.assigned = $assigned, r.active = $active, r.speed = $speed, r.storage = $capacity RETURN r',
+            [
             'id'       => $connection->id,
             'assigned' => $connection->assigned,
             'active'   => $connection->active,
             'speed'    => $connection->speed,
             'capacity' => $connection->storageCapacity,
-          ]
+            ]
         );
         new Logger(LOG_DIR, 'neo4j')->debug('Result:', $result->jsonSerialize());
     }
@@ -155,7 +155,7 @@ readonly class ConnectionProvider
      * @throws Throwable
      * @throws ValidationException
      */
-    public function updateConnection(UpdateRequest $request) : Connection {
+    public function updateConnection(UpdateRequest $request): Connection {
         $changes = $request->getChanges();
         if (empty($changes)) {
             return $request->entity; // No changes
@@ -167,7 +167,7 @@ readonly class ConnectionProvider
         }
         $connection = $request->apply();
         $this->writeConnection($connection);
-        $result = $this->streams->appendEvent($event, $connection::TABLE.'_'.$connection->id);
+        $result = $this->streams->appendEvent($event, $connection::TABLE . '_' . $connection->id);
         if (!$result->success) {
             DB::getConnection()->rollback();
             throw new ModelCreationException($result->status->details);
@@ -181,23 +181,23 @@ readonly class ConnectionProvider
      * @throws ModelDeleteException
      * @throws Throwable
      */
-    public function deleteConnection(Connection $connection) : void {
+    public function deleteConnection(Connection $connection): void {
         DB::getConnection()->begin();
         if (!$connection->delete()) {
             DB::getConnection()->rollback();
-            throw new ModelDeleteException('Failed to delete connection: '.$connection->id);
+            throw new ModelDeleteException('Failed to delete connection: ' . $connection->id);
         }
         try {
             $this->client->writeTransaction(
-              fn(TransactionInterface $tsx) => $this->deleteConnectionEdge($tsx, $connection)
+                fn(TransactionInterface $tsx) => $this->deleteConnectionEdge($tsx, $connection)
             );
         } catch (Throwable $e) {
             DB::getConnection()->rollback();
             throw $e;
         }
         $result = $this->streams->appendEvent(
-          DeleteEvent::fromConnection($connection),
-          $connection::TABLE.'_'.$connection->id
+            DeleteEvent::fromConnection($connection),
+            $connection::TABLE . '_' . $connection->id
         );
         if (!$result->success) {
             DB::getConnection()->rollback();
@@ -210,14 +210,14 @@ readonly class ConnectionProvider
      * @param  TransactionInterface<SummarizedResult<BoltResult>>  $tsx
      */
     public function deleteConnectionEdge(
-      TransactionInterface $tsx,
-      Connection           $connection
-    ) : void {
+        TransactionInterface $tsx,
+        Connection           $connection
+    ): void {
         $result = $tsx->run(
-          'MATCH ()-(r:Connection {id: $id})->() DETACH DELETE r',
-          [
+            'MATCH ()-(r:Connection {id: $id})->() DETACH DELETE r',
+            [
             'id' => $connection->id,
-          ]
+            ]
         );
         new Logger(LOG_DIR, 'neo4j')->debug('Result:', $result->jsonSerialize());
     }
@@ -226,12 +226,12 @@ readonly class ConnectionProvider
      * @param  Factory  $start
      * @return Generator<FactoryConnection>
      */
-    public function &findConnectionsStartingAt(Factory $start) : Generator {
+    public function &findConnectionsStartingAt(Factory $start): Generator {
         $result = $this->client->run(
-          'MATCH (s:Factory {id: $id})-[r:Connection]->(e:Factory) RETURN s, r, e',
-          [
+            'MATCH (s:Factory {id: $id})-[r:Connection]->(e:Factory) RETURN s, r, e',
+            [
             'id' => $start->id,
-          ]
+            ]
         );
 
         foreach ($result->getResults() as $record) {
@@ -258,12 +258,12 @@ readonly class ConnectionProvider
      * @param  Factory  $end
      * @return Generator<FactoryConnection>
      */
-    public function &findConnectionsEndingAt(Factory $end) : Generator {
+    public function &findConnectionsEndingAt(Factory $end): Generator {
         $result = $this->client->run(
-          'MATCH (s:Factory)-[r:Connection]->(e:Factory {id: $id}) RETURN s, r, e',
-          [
+            'MATCH (s:Factory)-[r:Connection]->(e:Factory {id: $id}) RETURN s, r, e',
+            [
             'id' => $end->id,
-          ]
+            ]
         );
 
         foreach ($result->getResults() as $record) {
@@ -294,7 +294,7 @@ readonly class ConnectionProvider
      * @throws ValidationException
      * @throws ModelNotFoundException
      */
-    public function updateStorage(UpdateStorageRequest $request) : void {
+    public function updateStorage(UpdateStorageRequest $request): void {
         DB::getConnection()->begin();
         $storage = $request->entity;
         $connection = $storage->connection;
@@ -302,8 +302,7 @@ readonly class ConnectionProvider
         if (isset($storage->id)) {
             // Fetch current data
             $storage->fetch(true);
-        }
-        else { // New entity
+        } else { // New entity
             // Reset quantity -> will be calculated later
             $storage->quantity = 0;
         }
@@ -312,8 +311,7 @@ readonly class ConnectionProvider
         $newQuantity = $storage->quantity + $quantityDiff;
         if ($newQuantity < 0) {
             $quantityDiff = -$storage->quantity; // Set quantity to 0
-        }
-        else if ($newQuantity > $connection->storageCapacity) {
+        } else if ($newQuantity > $connection->storageCapacity) {
             // Cannot go over storage capacity
             $quantityDiff -= $newQuantity - $connection->storageCapacity;
         }
@@ -326,7 +324,7 @@ readonly class ConnectionProvider
             DB::getConnection()->rollback();
             throw new ModelCreationException('Failed to update connection storage');
         }
-        $result = $this->streams->appendEvent($event, $connection::TABLE.'_'.$connection->id);
+        $result = $this->streams->appendEvent($event, $connection::TABLE . '_' . $connection->id);
         if (!$result->success) {
             DB::getConnection()->rollback();
             throw new ModelCreationException($result->status->details);
@@ -340,7 +338,7 @@ readonly class ConnectionProvider
      * @throws ValidationException
      * @throws ModelNotFoundException
      */
-    public function updateMaxStorage(UpdateMaxStorageRequest $request) : void {
+    public function updateMaxStorage(UpdateMaxStorageRequest $request): void {
         DB::getConnection()->begin();
         if (isset($request->entity->id)) {
             // Fetch current data
@@ -353,7 +351,7 @@ readonly class ConnectionProvider
             DB::getConnection()->rollback();
             throw new ModelCreationException('Failed to update connection storage');
         }
-        $result = $this->streams->appendEvent($event, $connection::TABLE.'_'.$connection->id);
+        $result = $this->streams->appendEvent($event, $connection::TABLE . '_' . $connection->id);
         if (!$result->success) {
             DB::getConnection()->rollback();
             throw new ModelCreationException($result->status->details);
@@ -367,7 +365,7 @@ readonly class ConnectionProvider
      * @throws Throwable
      * @throws ValidationException
      */
-    public function setActive(Connection $connection, bool $active) : Connection {
+    public function setActive(Connection $connection, bool $active): Connection {
         DB::getConnection()->begin();
         $event = $active ? new ActivateEvent($connection->id) : new DeactivateEvent($connection->id);
         $connection->active = $active;
@@ -377,7 +375,7 @@ readonly class ConnectionProvider
             DB::getConnection()->rollback();
             throw $e;
         }
-        $result = $this->streams->appendEvent($event, $connection::TABLE.'_'.$connection->id);
+        $result = $this->streams->appendEvent($event, $connection::TABLE . '_' . $connection->id);
         if (!$result->success) {
             DB::getConnection()->rollback();
             throw new ModelCreationException($result->status->details);
@@ -392,7 +390,7 @@ readonly class ConnectionProvider
      * @throws Throwable
      * @throws ValidationException
      */
-    public function setAssigned(Connection $connection, bool $assigned) : Connection {
+    public function setAssigned(Connection $connection, bool $assigned): Connection {
         DB::getConnection()->begin();
         $event = $assigned ? new AssignEvent($connection->id) : new UnassignEvent($connection->id);
         $connection->assigned = $assigned;
@@ -402,7 +400,7 @@ readonly class ConnectionProvider
             DB::getConnection()->rollback();
             throw $e;
         }
-        $result = $this->streams->appendEvent($event, $connection::TABLE.'_'.$connection->id);
+        $result = $this->streams->appendEvent($event, $connection::TABLE . '_' . $connection->id);
         if (!$result->success) {
             DB::getConnection()->rollback();
             throw new ModelCreationException($result->status->details);

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Request;
@@ -13,7 +14,6 @@ use ReflectionUnionType;
 
 trait RequestValidation
 {
-
     /**
      * @throws ValidationException
      */
@@ -30,7 +30,7 @@ trait RequestValidation
                     $typeName = $unionType->getName();
                     if (!self::isValidType($typeName, $value)) {
                         throw new ValidationException(
-                          "Invalid type for property {$propertyName}. Expected {$typeName}, got " . gettype($value) . "."
+                            "Invalid type for property {$propertyName}. Expected {$typeName}, got " . gettype($value) . "."
                         );
                     }
                 }
@@ -38,7 +38,7 @@ trait RequestValidation
                 $typeName = $type->getName();
                 if (!self::isValidType($typeName, $value)) {
                     throw new ValidationException(
-                      "Invalid type for property {$propertyName}. Expected {$typeName}, got " . gettype($value) . "."
+                        "Invalid type for property {$propertyName}. Expected {$typeName}, got " . gettype($value) . "."
                     );
                 }
             }

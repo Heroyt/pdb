@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Dto;
@@ -8,7 +9,6 @@ use OpenApi\Attributes as OA;
 #[OA\Schema(schema: 'ProcessDto')]
 class Process
 {
-
     /** @var ProcessPart[] */
     #[OA\Property]
     public array $outputs = [];
@@ -23,5 +23,4 @@ class Process
     public function addInput(ProcessPart $part): void {
         $this->inputs[] = $part;
     }
-
 }
