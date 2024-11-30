@@ -499,7 +499,24 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/StoppedFactoryDto'
+                  $ref: '#/components/schemas/FactoryWithStatusDto'
+        '404':
+          $ref: '#/components/schemas/ErrorResponse'
+  /query/factory/running:
+    get:
+      tags:
+        - query
+        - factory
+      operationId: 'Get running factories'
+      responses:
+        '200':
+          description: 'List of running factories'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FactoryWithStatusDto'
         '404':
           $ref: '#/components/schemas/ErrorResponse'
   /query/path:
@@ -569,7 +586,7 @@ components:
           items:
             $ref: '#/components/schemas/FactoryConnectionWithCost'
       type: object
-    StoppedFactory:
+    FactoryStatusRow:
       properties:
         id_factory:
           type: integer
@@ -621,6 +638,25 @@ components:
         process:
           $ref: '#/components/schemas/ProcessDto'
       type: object
+    FactoryWithStatusDto:
+      type: object
+      allOf:
+        -
+          $ref: '#/components/schemas/FactoryFullDto'
+        -
+          properties:
+            stored:
+              description: 'Total size of materials in storage'
+              type: integer
+              minimum: 0
+            outSize:
+              description: 'Total size of produces materials (minimum required space)'
+              type: integer
+              minimum: 0
+            hasAllMaterials:
+              description: 'If it has all required process inputs in storage'
+              type: boolean
+          type: object
     ProcessDto:
       properties:
         outputs:
@@ -650,25 +686,6 @@ components:
         storageCapacity:
           type: integer
       type: object
-    StoppedFactoryDto:
-      type: object
-      allOf:
-        -
-          $ref: '#/components/schemas/FactoryFullDto'
-        -
-          properties:
-            stored:
-              description: 'Total size of materials in storage'
-              type: integer
-              minimum: 0
-            outSize:
-              description: 'Total size of produces materials (minimum required space)'
-              type: integer
-              minimum: 0
-            hasAllMaterials:
-              description: 'If it has all required process inputs in storage'
-              type: boolean
-          type: object
     StorageDto:
       properties:
         material:
