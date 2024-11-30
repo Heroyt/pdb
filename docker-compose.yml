@@ -111,6 +111,8 @@ services:
   neo4j:
     restart: unless-stopped
     image: neo4j:latest
+    environment:
+      - NEO4J_PLUGINS=["graph-data-science", "apoc"]
     env_file:
       - .env
     ports:

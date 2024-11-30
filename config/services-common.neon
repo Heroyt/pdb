@@ -40,6 +40,8 @@ services:
 	provider.factory: App\Services\Provider\FactoryProvider
 	provider.material: App\Services\Provider\MaterialProvider
 
+	pathfinder: App\Services\Provider\PathFinder
+
 decorator:
 	Lsr\Core\Controllers\Controller:
 		inject: true

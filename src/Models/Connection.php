@@ -33,7 +33,7 @@ class Connection extends Model
     public array $storage {
         get {
     if (!isset($this->storage)) {
-        $this->storage = ConnectionStorage::query()->where('id_factory = %i', $this->id)->get();
+        $this->storage = ConnectionStorage::query()->where('id_connection = %i', $this->id)->get();
     }
             return $this->storage;
         }
