@@ -176,18 +176,27 @@ switch ($env->getMode()) {
                     Helpers::improveException($e);
                     Debugger::log($e, ILogger::EXCEPTION);
 
-                    if (in_array('application/json', getAcceptTypes($request))) {
-                        $psr7->respond(
-                            new Response(
+                    try {
+                        if (in_array('application/json', getAcceptTypes($request))) {
+                            $psr7->respond(
+                              new Response(
                                 500,
                                 ['Content-Type' => 'application/json'],
                                 json_encode(
-                                    new ErrorResponse('Something Went wrong!', detail: $e->getMessage(), exception: $e, values: [$e::class]),
-                                    JSON_THROW_ON_ERROR
+                                  new ErrorResponse(
+                                               'Something Went wrong!',
+                                    detail   : $e->getMessage(),
+                                    exception: $e,
+                                    values   : [$e::class]
+                                  ),
+                                  JSON_THROW_ON_ERROR
                                 )
-                            )
-                        );
-                        continue;
+                              )
+                            );
+                            continue;
+                        }
+                    } catch (JsonException) {
+                        
                     }
 
                     if (!$app->isProduction()) {
