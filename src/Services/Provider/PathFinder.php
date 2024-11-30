@@ -11,6 +11,7 @@ use Laudis\Neo4j\Bolt\BoltResult;
 use Laudis\Neo4j\Contracts\ClientInterface;
 use Laudis\Neo4j\Contracts\TransactionInterface;
 use Laudis\Neo4j\Databags\SummarizedResult;
+use Laudis\Neo4j\Types\CypherList;
 use Laudis\Neo4j\Types\CypherMap;
 use Lsr\Core\Exceptions\ModelNotFoundException;
 use Lsr\Core\Exceptions\ValidationException;
@@ -61,7 +62,7 @@ readonly class PathFinder
                   source,
                   target,
                   {
-                    relationshipProperties: r { .id, .speed, .storage, cost: (\$multiplier * round(r.storage / r.speed)) + r.id }
+                    relationshipProperties: r { .id, .speed, .storage, cost: (\$multiplier * round(r.speed / r.storage)) + r.id }
                   }
                 )
                 CYPHER,
@@ -89,7 +90,7 @@ readonly class PathFinder
      * @param  Factory  $from
      * @param  Factory  $to
      * @param  int  $minCapacity
-     * @param  int  $k How many paths to find
+     * @param  int<1,max>  $k How many paths to find
      * @return ConnectionPath[]
      * @throws ModelNotFoundException
      * @throws ValidationException
@@ -100,7 +101,11 @@ readonly class PathFinder
           static function (TransactionInterface $tsx) use ($projectionName, $minCapacity) {
               $result = $tsx->run("CALL gds.graph.drop('\$name', false) YIELD graphName", ['name' => $projectionName]);
               // Results are yielded → must get the first result to actually drop the graph.
-              $result->getResults()->first();
+              /** @var CypherList $results */
+              $results = $result->getResults();
+              if ($results->count() > 0) {
+                  $results->first();
+              }
               $result = $tsx->run(
                 <<<CYPHER
                 MATCH (source:Factory)-[r:Connection]->(target:Factory)
@@ -110,7 +115,7 @@ readonly class PathFinder
                   source,
                   target,
                   {
-                    relationshipProperties: r { .id, .speed, .storage, cost: (\$multiplier * round(r.storage / r.speed)) + r.id }
+                    relationshipProperties: r { .id, .speed, .storage, cost: (\$multiplier * r.speed) + r.id }
                   }
                 )
                 CYPHER,
@@ -128,6 +133,7 @@ readonly class PathFinder
     }
 
     /**
+     * @param int<1,max> $k
      * @return ConnectionPath[]
      * @throws ModelNotFoundException
      * @throws ValidationException
@@ -196,7 +202,7 @@ readonly class PathFinder
     /**
      * @param  Factory  $from
      * @param  Factory  $to
-     * @param  int  $k How many paths to find
+     * @param  int<1,max>  $k How many paths to find
      * @return ConnectionPath[]
      * @throws ModelNotFoundException
      * @throws ValidationException

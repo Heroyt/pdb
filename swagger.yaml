@@ -502,8 +502,110 @@ paths:
                   $ref: '#/components/schemas/StoppedFactoryDto'
         '404':
           $ref: '#/components/schemas/ErrorResponse'
+  /query/path:
+    get:
+      tags:
+        - query
+        - path
+      description: 'Find paths between 2 factories based on their speed and capacity.'
+      operationId: findShortestPath
+      parameters:
+        -
+          name: from
+          in: query
+          description: 'Start factory ID'
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+        -
+          name: to
+          in: query
+          description: 'End factory ID'
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+        -
+          name: count
+          in: query
+          description: 'How many paths should be found'
+          required: false
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+        -
+          name: capacity
+          in: query
+          description: 'If set, filters out all connections with storage capacity less than specified.'
+          required: false
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+      responses:
+        '200':
+          description: 'List of found paths'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ConnectionPath'
 components:
   schemas:
+    ConnectionPath:
+      properties:
+        start:
+          $ref: '#/components/schemas/Factory'
+        end:
+          $ref: '#/components/schemas/Factory'
+        totalCost:
+          type: number
+          format: float
+        path:
+          type: array
+          items:
+            $ref: '#/components/schemas/FactoryConnectionWithCost'
+      type: object
+    StoppedFactory:
+      properties:
+        id_factory:
+          type: integer
+        name:
+          type: string
+        storage_capacity:
+          type: integer
+        stored:
+          type: number
+          format: float
+        out_size:
+          type: number
+          format: float
+        has_all_materials:
+          type: integer
+      type: object
+    FactoryConnection:
+      properties:
+        start:
+          $ref: '#/components/schemas/Factory'
+        connection:
+          $ref: '#/components/schemas/Connection'
+        end:
+          $ref: '#/components/schemas/Factory'
+      type: object
+    FactoryConnectionWithCost:
+      type: object
+      allOf:
+        -
+          $ref: '#/components/schemas/FactoryConnection'
+        -
+          properties:
+            cost:
+              type: number
+              format: float
+          type: object
     FactoryFullDto:
       properties:
         id:
@@ -537,6 +639,15 @@ components:
         material:
           $ref: '#/components/schemas/Material'
         quantity:
+          type: integer
+      type: object
+    SimpleFactory:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        storageCapacity:
           type: integer
       type: object
     StoppedFactoryDto:
@@ -850,3 +961,6 @@ tags:
   -
     name: query
     description: query
+  -
+    name: path
+    description: path
