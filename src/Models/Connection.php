@@ -32,9 +32,9 @@ class Connection extends Model
     ]
     public array $storage {
         get {
-    if (!isset($this->storage)) {
-        $this->storage = ConnectionStorage::query()->where('id_connection = %i', $this->id)->get();
-    }
+            if (!isset($this->storage)) {
+                $this->storage = ConnectionStorage::query()->where('id_connection = %i', $this->id)->get();
+            }
             return $this->storage;
         }
         /**
@@ -43,11 +43,29 @@ class Connection extends Model
         set(array $value) => $this->storage = $value;
     }
 
-    public function getRemainingStorageCapacity(): int {
-        $filled = 0;
-        foreach ($this->storage as $storage) {
-            $filled += $storage->material->size * $storage->quantity;
+    public function getFilledStorageCapacity(): int {
+        return array_reduce(
+          $this->storage,
+          static fn(int $value, ConnectionStorage $storage) => $value + ($storage->quantity * $storage->material->size),
+          0
+        );
+    }
+
+    public function getRemainingStorageCapacity() : int {
+        return $this->storageCapacity - $this->getFilledStorageCapacity();
+    }
+
+    public function getOrCreateStorageForMaterial(Material $material) : ConnectionStorage {
+        $storage = array_find(
+          $this->storage,
+          static fn(ConnectionStorage $storage) => $storage->material->id === $material->id
+        );
+        if ($storage !== null) {
+            return $storage;
         }
-        return $this->storageCapacity - $filled;
+        $storage = new ConnectionStorage();
+        $storage->connection = $this;
+        $storage->material = $material;
+        return $storage;
     }
 }

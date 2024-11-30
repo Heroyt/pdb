@@ -4,9 +4,14 @@ declare(strict_types=1);
 
 namespace App\Tasks\Factory;
 
+use App\Exceptions\ModelCreationException;
+use App\Exceptions\ModelDeleteException;
 use App\Request\Factory\UpdateStorageRequest;
 use App\Services\Provider\FactoryProvider;
 use App\Tasks\TaskDispatcherInterface;
+use Dibi\DriverException;
+use Lsr\Core\Exceptions\ModelNotFoundException;
+use Lsr\Core\Exceptions\ValidationException;
 use Spiral\RoadRunner\Jobs\Task\ReceivedTaskInterface;
 
 /**
@@ -30,7 +35,12 @@ final readonly class UpdateFactoryStorage implements TaskDispatcherInterface
         $payload = igbinary_unserialize($task->getPayload());
         assert($payload instanceof UpdateStorageRequest);
 
-        $this->factoryProvider->updateStorage($payload);
+        var_dump($payload->material->name, $payload->quantity);
+        try {
+            $this->factoryProvider->updateStorage($payload);
+        } catch (ModelCreationException | ModelDeleteException | DriverException | ModelNotFoundException | ValidationException $e) {
+            $task->nack($e, true);
+        }
 
         $task->ack();
     }

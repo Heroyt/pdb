@@ -101,7 +101,7 @@ readonly class PathFinder
           static function (TransactionInterface $tsx) use ($projectionName, $minCapacity) {
               $result = $tsx->run("CALL gds.graph.drop('\$name', false) YIELD graphName", ['name' => $projectionName]);
               // Results are yielded → must get the first result to actually drop the graph.
-              /** @var CypherList $results */
+              /** @var CypherList<string> $results */
               $results = $result->getResults();
               if ($results->count() > 0) {
                   $results->first();

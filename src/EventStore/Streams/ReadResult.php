@@ -14,6 +14,9 @@ use GRPC\EventStore\Streams\ReadResp;
 use Grpc\ServerStreamingCall;
 use Symfony\Component\Serializer\Serializer;
 
+/**
+ * @template E of Event
+ */
 readonly class ReadResult
 {
     public function __construct(
@@ -23,7 +26,7 @@ readonly class ReadResult
     }
 
     /**
-     * @return Generator<EventWrapper>
+     * @return Generator<EventWrapper<E>>
      */
     public function get(): Generator {
         foreach ($this->call->responses() as $response) {
@@ -35,7 +38,7 @@ readonly class ReadResult
                     continue;
                 }
                 $meta = $event->getMetadata();
-                /** @var class-string<Event> $type */
+                /** @var class-string<E> $type */
                 $type = $meta['type'];
                 $data = $event->getData();
                 if (class_exists($type)) {

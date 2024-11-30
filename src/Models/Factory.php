@@ -27,9 +27,9 @@ class Factory extends Model
     ]
     public array $storage {
         get {
-    if (!isset($this->storage)) {
-        $this->storage = FactoryStorage::query()->where('id_factory = %i', $this->id)->get();
-    }
+            if (!isset($this->storage)) {
+                $this->storage = FactoryStorage::query()->where('id_factory = %i', $this->id)->get();
+            }
             return $this->storage;
         }
         /**
@@ -45,9 +45,9 @@ class Factory extends Model
     ]
     public array $processes {
         get {
-    if (!isset($this->processes)) {
-        $this->processes = Process::query()->where('id_factory = %i', $this->id)->get();
-    }
+            if (!isset($this->processes)) {
+                $this->processes = Process::query()->where('id_factory = %i', $this->id)->get();
+            }
             return $this->processes;
         }
         /**
@@ -56,11 +56,33 @@ class Factory extends Model
         set(array $value) => $this->processes = $value;
     }
 
-    public function getRemainingStorageCapacity(): int {
-        $filled = 0;
-        foreach ($this->storage as $storage) {
-            $filled += $storage->material->size * $storage->quantity;
+    public function getFilledStorageCapacity(): int {
+        return array_reduce(
+          $this->storage,
+          static fn(int $value, FactoryStorage $storage) => $value + ($storage->quantity * $storage->material->size),
+          0
+        );
+    }
+
+    public function getRemainingStorageCapacity() : int {
+        return $this->storageCapacity - $this->getFilledStorageCapacity();
+    }
+
+    public function getOrCreateStorageForMaterial(Material $material) : FactoryStorage {
+        $storage = $this->getStorageForMaterial($material);
+        if ($storage !== null) {
+            return $storage;
         }
-        return $this->storageCapacity - $filled;
+        $storage = new FactoryStorage();
+        $storage->facility = $this;
+        $storage->material = $material;
+        return $storage;
+    }
+
+    public function getStorageForMaterial(Material $material) : ?FactoryStorage {
+        return array_find(
+          $this->storage,
+          static fn(FactoryStorage $storage) => $storage->material->id === $material->id
+        );
     }
 }

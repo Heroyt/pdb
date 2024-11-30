@@ -12,13 +12,16 @@ use GRPC\EventStore\Shared\StreamIdentifier;
 use GRPC\EventStore\Streams\ReadReq;
 use GRPC\EventStore\Streams\ReadReq\Options;
 
+/**
+ * @template E of Event
+ */
 class ReadQuery
 {
     public const int DEFAULT_LIMIT = 100;
     public const int DEFAULT_WINDOW_SIZE = 30;
     public const int DEFAULT_CHECKPOINT_INTERVAL_MULTIPLIER = 6;
 
-    /** @var class-string<Event>|null */
+    /** @var class-string<E>|null */
     private ?string $eventType = null;
     private ?StreamIdentifier $stream = null;
     private bool $backwards = false;
@@ -34,7 +37,7 @@ class ReadQuery
     }
 
     /**
-     * @param  class-string<Event>  $eventType
+     * @param  class-string<E>  $eventType
      * @warning Cannot combine with ReadQuery::stream() filter
      * @return $this
      */
@@ -94,6 +97,9 @@ class ReadQuery
         return $this;
     }
 
+    /**
+     * @return ReadResult<E>
+     */
     public function send(): ReadResult {
         $request = new ReadReq([
           'options' => $this->buildOptions(),

@@ -286,6 +286,35 @@ readonly class ConnectionProvider
         }
     }
 
+    public function getFactoryConnectionForConnection(Connection $connection): ?FactoryConnection {
+        $result = $this->client->run(
+          'MATCH (s:Factory)-[r:Connection {id: $id}]->(e:Factory) RETURN s, r, e',
+          [
+            'id' => $connection->id,
+          ]
+        );
+
+        foreach ($result->getResults() as $record) {
+            $startData = $record->get('s');
+            assert($startData instanceof Node);
+            $startId = $startData->getProperty('id');
+            assert(is_int($startId));
+            $endData = $record->get('e');
+            assert($endData instanceof Node);
+            $endId = $endData->getProperty('id');
+            assert(is_int($endId));
+
+            try {
+                $startFactory = Factory::get($startId);
+                $endFactory = Factory::get($endId);
+
+                return new FactoryConnection($startFactory, $connection, $endFactory);
+            } catch (ModelNotFoundException | ValidationException) {
+            }
+        }
+        return null;
+    }
+
 
     /**
      * @throws DriverException

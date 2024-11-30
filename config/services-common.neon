@@ -42,6 +42,9 @@ services:
 
 	pathfinder: App\Services\Provider\PathFinder
 
+	simulator.connection: App\Services\Simulator\ConnectionSimulator
+	simulator.factory: App\Services\Simulator\FactorySimulator
+
 decorator:
 	Lsr\Core\Controllers\Controller:
 		inject: true

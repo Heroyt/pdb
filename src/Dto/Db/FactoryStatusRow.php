@@ -7,7 +7,7 @@ namespace App\Dto\Db;
 use OpenApi\Attributes as OA;
 
 #[OA\Schema]
-class StoppedFactory
+class FactoryStatusRow
 {
     #[OA\Property]
     public int $id_factory;
