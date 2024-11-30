@@ -519,6 +519,47 @@ paths:
                   $ref: '#/components/schemas/FactoryWithStatusDto'
         '404':
           $ref: '#/components/schemas/ErrorResponse'
+  /query/material:
+    get:
+      tags:
+        - query
+        - material
+      operationId: 'Find materials'
+      parameters:
+        -
+          name: name
+          in: query
+          description: 'Filter materials by name'
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 'List of materials'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Material'
+  '/query/material/{id}':
+    get:
+      tags:
+        - query
+        - material
+      operationId: 'Get material'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Material ID'
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '200':
+          $ref: '#/components/schemas/Material'
   /query/path:
     get:
       tags:

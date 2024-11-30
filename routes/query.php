@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Controllers\Query\FactoryController;
+use App\Controllers\Query\MaterialController;
 use App\Controllers\Query\PathController;
 use Lsr\Core\Routing\Route;
 
@@ -17,3 +18,9 @@ $factory->get('running', [FactoryController::class, 'runningFactories']);
 $factoryId->get('', [FactoryController::class, 'show']);
 
 $query->get('path', [PathController::class, 'findShortestPaths']);
+
+$material = $query->group('material');
+$materialId = $material->group('{id}');
+
+$material->get('', [MaterialController::class, 'find']);
+$materialId->get('', [MaterialController::class, 'show']);
