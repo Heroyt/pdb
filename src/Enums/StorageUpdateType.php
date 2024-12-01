@@ -8,6 +8,7 @@ enum StorageUpdateType
 
     case PRODUCTION;
     case CONSUMPTION;
+    case SELL;
     case LOADING;
     case UNLOADING;
     case OTHER;

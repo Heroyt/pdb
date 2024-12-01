@@ -18,6 +18,18 @@ metrics:
       labels:
         - material_name
         - material_id
+    sold_materials:
+      type: counter
+      help: Number of materials sold by wildcard factories
+      labels:
+        - material_name
+        - material_id
+    transported_materials:
+      type: gauge
+      help: Number of materials currently in transport
+      labels:
+        - material_name
+        - material_id
     loaded_materials:
       type: counter
       help: Number of materials loaded by connections from factories

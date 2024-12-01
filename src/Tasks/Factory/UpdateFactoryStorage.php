@@ -58,6 +58,26 @@ final readonly class UpdateFactoryStorage implements TaskDispatcherInterface
               ]
             );
         }
+        if ($payload->type === StorageUpdateType::LOADING) {
+            $this->metrics->add(
+              'transported_materials',
+              abs($payload->quantity),
+              [
+                $payload->material->name,
+                (string) $payload->material->id,
+              ]
+            );
+        }
+        else if ($payload->type === StorageUpdateType::UNLOADING) {
+            $this->metrics->sub(
+              'transported_materials',
+              abs($payload->quantity),
+              [
+                $payload->material->name,
+                (string) $payload->material->id,
+              ]
+            );
+        }
 
         $task->ack();
     }

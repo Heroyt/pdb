@@ -53,7 +53,7 @@ class FactorySimulator implements Simulator
                 $request->material = $storage->material;
                 // Inputs decrease the stored quantity, outputs increase quantity
                 $request->quantity = -$storage->quantity;
-                $request->type = StorageUpdateType::CONSUMPTION;
+                $request->type = StorageUpdateType::SELL;
                 $output->writeln('Factory material '.$factory->name.' ('.$factory->id.') '.$request->quantity.' ('.$request->material->name.')', OutputInterface::VERBOSITY_VERBOSE);
                 $this->taskProducer->plan(
                   UpdateFactoryStorage::class,
