@@ -13,7 +13,9 @@ class FactoryWithStatus extends FactoryFull
 {
     #[OA\Property(description: 'Total size of materials in storage', minimum: 0)]
     public int $stored;
-    #[OA\Property(description: 'Total size of produces materials (minimum required space)', minimum: 0)]
+    #[OA\Property(description: 'Total size of consumed materials', minimum: 0)]
+    public int $inSize;
+    #[OA\Property(description: 'Total size of produced materials (minimum required space)', minimum: 0)]
     public int $outSize;
     #[OA\Property(description: 'If it has all required process inputs in storage')]
     public bool $hasAllMaterials;

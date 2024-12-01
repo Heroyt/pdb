@@ -20,5 +20,7 @@ class FactoryStatusRow
     #[OA\Property]
     public float $out_size;
     #[OA\Property]
+    public float $in_size;
+    #[OA\Property]
     public int $has_all_materials;
 }
