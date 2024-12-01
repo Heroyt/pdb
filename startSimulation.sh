@@ -2,5 +2,5 @@
 
 while true; do
   ./bin/console simulator:simulate
-  sleep 5
+  sleep 2
 done
