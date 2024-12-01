@@ -34,10 +34,10 @@ $connectionId->put('', [ConnectionController::class, 'update']);
 $connectionId->delete('', [ConnectionController::class, 'delete']);
 $connectionId->put('storage', [ConnectionController::class, 'updateStorage']);
 $connectionId->put('storage-max', [ConnectionController::class, 'updateStorageMax']);
-$connection->post('assign', [ConnectionController::class, 'assign']);
-$connection->post('unassign', [ConnectionController::class, 'unassign']);
-$connection->post('activate', [ConnectionController::class, 'activate']);
-$connection->post('deactivate', [ConnectionController::class, 'deactivate']);
+$connectionId->post('assign', [ConnectionController::class, 'assign']);
+$connectionId->post('unassign', [ConnectionController::class, 'unassign']);
+$connectionId->post('activate', [ConnectionController::class, 'activate']);
+$connectionId->post('deactivate', [ConnectionController::class, 'deactivate']);
 
 $process = $command->group('process');
 $processId = $process->group('{id}');

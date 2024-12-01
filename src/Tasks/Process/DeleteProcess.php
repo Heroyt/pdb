@@ -9,6 +9,7 @@ use App\Request\Process\DeleteRequest;
 use App\Services\Provider\ProcessProvider;
 use App\Tasks\TaskDispatcherInterface;
 use Spiral\RoadRunner\Jobs\Task\ReceivedTaskInterface;
+use Throwable;
 
 /**
  * @implements TaskDispatcherInterface<DeleteRequest>
@@ -16,23 +17,27 @@ use Spiral\RoadRunner\Jobs\Task\ReceivedTaskInterface;
 final readonly class DeleteProcess implements TaskDispatcherInterface
 {
     public function __construct(
-        private ProcessProvider $materialProvider,
-    ) {
-    }
+      private ProcessProvider $materialProvider,
+    ) {}
 
     /**
      * @inheritDoc
      */
-    public static function getDiName(): string {
+    public static function getDiName() : string {
         return 'task.process.delete';
     }
 
-    public function process(ReceivedTaskInterface $task): void {
+    public function process(ReceivedTaskInterface $task) : void {
         $payload = igbinary_unserialize($task->getPayload());
         assert($payload instanceof DeleteRequest);
 
-        $process = Process::get($payload->id);
-        $this->materialProvider->deleteProcess($process);
+        try {
+            $process = Process::get($payload->id);
+            $this->materialProvider->deleteProcess($process);
+        } catch (Throwable $e) {
+            $task->nack($e->getMessage());
+            return;
+        }
         $task->ack();
     }
 }

@@ -137,7 +137,7 @@ readonly class ConnectionProvider
         Connection           $connection
     ): void {
         $result = $tsx->run(
-            'MATCH ()-(r:Connection {id: $id})->() SET r.assigned = $assigned, r.active = $active, r.speed = $speed, r.storage = $capacity RETURN r',
+            'MATCH (s:Factory)-[r:Connection {id: $id}]->(e:Factory) SET r.assigned = $assigned, r.active = $active, r.speed = $speed, r.storage = $capacity RETURN r',
             [
             'id'       => $connection->id,
             'assigned' => $connection->assigned,

@@ -10,6 +10,7 @@ use App\Services\Provider\ConnectionProvider;
 use App\Tasks\TaskDispatcherInterface;
 use Spiral\RoadRunner\Jobs\Task\ReceivedTaskInterface;
 use Spiral\RoadRunner\Metrics\Metrics;
+use Throwable;
 
 /**
  * @implements TaskDispatcherInterface<ActivateRequest>
@@ -34,7 +35,12 @@ final readonly class ActivateConnection implements TaskDispatcherInterface
 
         $connection = Connection::get($payload->id);
         $wasActive = $connection->active;
-        $this->connectionProvider->setActive($connection, true);
+        try {
+            $this->connectionProvider->setActive($connection, true);
+        } catch (Throwable $e) {
+            $task->nack($e->getMessage());
+            return;
+        }
         if (!$wasActive) {
             $this->metrics->add('active_connections', 1);
         }

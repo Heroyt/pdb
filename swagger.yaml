@@ -143,7 +143,7 @@ paths:
               properties:
                 materials:
                   type: array
-                  items: { $ref: '#/components/schemas/ConnectionUpdateMaxStorageRequest' }
+                  items: { required: [id, maxQuantity], properties: { id: { description: 'Material ID', type: integer }, maxQuantity: { description: 'Maximum storage quantity for material', type: integer, minimum: 1 } }, type: object }
               type: object
       responses:
         '200':

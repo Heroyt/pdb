@@ -10,6 +10,7 @@ use App\Services\Provider\ConnectionProvider;
 use App\Tasks\TaskDispatcherInterface;
 use Spiral\RoadRunner\Jobs\Task\ReceivedTaskInterface;
 use Spiral\RoadRunner\Metrics\Metrics;
+use Throwable;
 
 /**
  * @implements TaskDispatcherInterface<AssignRequest>
@@ -34,7 +35,12 @@ final readonly class AssignConnection implements TaskDispatcherInterface
 
         $connection = Connection::get($payload->id);
         $wasAssigned = $connection->assigned;
-        $this->connectionProvider->setAssigned($connection, true);
+        try {
+            $this->connectionProvider->setAssigned($connection, true);
+        } catch (Throwable $e) {
+            $task->nack($e->getMessage());
+            return;
+        }
         if (!$wasAssigned) {
             $this->metrics->add('assigned_connections', 1);
         }

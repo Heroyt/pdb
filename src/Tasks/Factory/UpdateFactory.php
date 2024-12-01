@@ -8,6 +8,7 @@ use App\Request\Factory\UpdateRequest;
 use App\Services\Provider\FactoryProvider;
 use App\Tasks\TaskDispatcherInterface;
 use Spiral\RoadRunner\Jobs\Task\ReceivedTaskInterface;
+use Throwable;
 
 /**
  * @implements TaskDispatcherInterface<UpdateRequest>
@@ -15,25 +16,29 @@ use Spiral\RoadRunner\Jobs\Task\ReceivedTaskInterface;
 final readonly class UpdateFactory implements TaskDispatcherInterface
 {
     public function __construct(
-        private FactoryProvider $factoryProvider,
-    ) {
-    }
+      private FactoryProvider $factoryProvider,
+    ) {}
 
     /**
      * @inheritDoc
      */
-    public static function getDiName(): string {
+    public static function getDiName() : string {
         return 'task.factory.update';
     }
 
-    public function process(ReceivedTaskInterface $task): void {
+    public function process(ReceivedTaskInterface $task) : void {
         $payload = igbinary_unserialize($task->getPayload());
         assert($payload instanceof UpdateRequest);
 
-        // Update the current state of entity
-        $payload->entity->fetch(true);
+        try {
+            // Update the current state of entity
+            $payload->entity->fetch(true);
 
-        $this->factoryProvider->updateFactory($payload);
+            $this->factoryProvider->updateFactory($payload);
+        } catch (Throwable $e) {
+            $task->nack($e->getMessage());
+            return;
+        }
         $task->ack();
     }
 }

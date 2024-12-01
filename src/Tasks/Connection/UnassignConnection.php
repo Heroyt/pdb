@@ -10,6 +10,7 @@ use App\Services\Provider\ConnectionProvider;
 use App\Tasks\TaskDispatcherInterface;
 use Spiral\RoadRunner\Jobs\Task\ReceivedTaskInterface;
 use Spiral\RoadRunner\Metrics\Metrics;
+use Throwable;
 
 /**
  * @implements TaskDispatcherInterface<UnassignRequest>
@@ -32,9 +33,14 @@ final readonly class UnassignConnection implements TaskDispatcherInterface
         $payload = igbinary_unserialize($task->getPayload());
         assert($payload instanceof UnassignRequest);
 
-        $connection = Connection::get($payload->id);
-        $wasAssigned = $connection->assigned;
-        $this->connectionProvider->setAssigned($connection, false);
+        try {
+            $connection = Connection::get($payload->id);
+            $wasAssigned = $connection->assigned;
+            $this->connectionProvider->setAssigned($connection, false);
+        } catch (Throwable $e) {
+            $task->nack($e->getMessage());
+            return;
+        }
         if (!$wasAssigned) {
             $this->metrics->sub('assigned_connections', 1);
         }

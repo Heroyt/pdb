@@ -8,6 +8,7 @@ use App\Request\Connection\UpdateMaxStorageRequest;
 use App\Services\Provider\ConnectionProvider;
 use App\Tasks\TaskDispatcherInterface;
 use Spiral\RoadRunner\Jobs\Task\ReceivedTaskInterface;
+use Throwable;
 
 /**
  * @implements TaskDispatcherInterface<UpdateMaxStorageRequest>
@@ -15,22 +16,26 @@ use Spiral\RoadRunner\Jobs\Task\ReceivedTaskInterface;
 final readonly class UpdateConnectionMaxStorage implements TaskDispatcherInterface
 {
     public function __construct(
-        private ConnectionProvider $connectionProvider,
-    ) {
-    }
+      private ConnectionProvider $connectionProvider,
+    ) {}
 
     /**
      * @inheritDoc
      */
-    public static function getDiName(): string {
+    public static function getDiName() : string {
         return 'task.connection.storage.max';
     }
 
-    public function process(ReceivedTaskInterface $task): void {
+    public function process(ReceivedTaskInterface $task) : void {
         $payload = igbinary_unserialize($task->getPayload());
         assert($payload instanceof UpdateMaxStorageRequest);
 
-        $this->connectionProvider->updateMaxStorage($payload);
+        try {
+            $this->connectionProvider->updateMaxStorage($payload);
+        } catch (Throwable $e) {
+            $task->nack($e->getMessage());
+            return;
+        }
 
         $task->ack();
     }

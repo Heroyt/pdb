@@ -181,7 +181,7 @@ readonly class FactoryProvider
         if ($newQuantity < 0) {
             $quantityDiff = -$storage->quantity; // Set quantity to 0
         }
-        else if ($newQuantity > $factory->storageCapacity) {
+        elseif ($newQuantity > $factory->storageCapacity) {
             // Cannot go over storage capacity
             $quantityDiff -= $newQuantity - $factory->storageCapacity;
         }
@@ -228,6 +228,9 @@ readonly class FactoryProvider
                    ->cacheTags(
                         'models',
                         Factory::TABLE,
+                        FactoryStorage::TABLE,
+                        Material::TABLE,
+                        Process::TABLE,
                         Factory::TABLE.'/query',
                      ...Factory::CACHE_TAGS
                    )
@@ -272,6 +275,9 @@ readonly class FactoryProvider
         )
                    ->cacheTags(
                         'models',
+                        FactoryStorage::TABLE,
+                        Material::TABLE,
+                        Process::TABLE,
                         Factory::TABLE,
                         Factory::TABLE.'/query',
                      ...Factory::CACHE_TAGS
@@ -298,6 +304,7 @@ readonly class FactoryProvider
      */
     public function findWildcardInputFactories() : array {
         $query = Factory::query()
+                        ->cacheTags(FactoryStorage::TABLE, Material::TABLE)
                         ->join(Process::TABLE, 'p')
                         ->on('(p.id_factory = a.id_factory AND p.type = %s)', Direction::IN->value)
                         ->join(Material::TABLE, 'm')

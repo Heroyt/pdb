@@ -356,7 +356,23 @@ class ConnectionController extends Controller
                                    new OA\Property(
                                             'materials',
                                      type : 'array',
-                                     items: new OA\Items(ref: '#/components/schemas/ConnectionUpdateMaxStorageRequest'),
+                                     items: new OA\Items(
+                                              required  : ['id', 'maxQuantity'],
+                                              properties: [
+                                                new OA\Property(
+                                                  property   : 'id',
+                                                  description: 'Material ID',
+                                                  type       : 'integer',
+                                                ),
+                                                new OA\Property(
+                                                  property   : 'maxQuantity',
+                                                  description: 'Maximum storage quantity for material',
+                                                  type       : 'integer',
+                                                  minimum    : 1,
+                                                )
+                                             ],
+                                              type      : 'object'
+                                            ),
                                    ),
                                  ],
                      type      : 'object',

@@ -9,6 +9,7 @@ use App\Request\Process\CreateRequest;
 use App\Services\Provider\ProcessProvider;
 use App\Tasks\TaskDispatcherInterface;
 use Spiral\RoadRunner\Jobs\Task\ReceivedTaskInterface;
+use Throwable;
 
 /**
  * @implements TaskDispatcherInterface<CreateRequest>
@@ -16,23 +17,27 @@ use Spiral\RoadRunner\Jobs\Task\ReceivedTaskInterface;
 final readonly class CreateProcess implements TaskDispatcherInterface
 {
     public function __construct(
-        private ProcessProvider $processProvider,
-    ) {
-    }
+      private ProcessProvider $processProvider,
+    ) {}
 
     /**
      * @inheritDoc
      */
-    public static function getDiName(): string {
+    public static function getDiName() : string {
         return 'task.process.create';
     }
 
-    public function process(ReceivedTaskInterface $task): void {
+    public function process(ReceivedTaskInterface $task) : void {
         $payload = igbinary_unserialize($task->getPayload());
         assert($payload instanceof CreateRequest);
 
-        $material = Material::get($payload->material);
-        $process = $this->processProvider->createProcess($payload->factory, $payload->type, $material, $payload->quantity);
+        try {
+            $material = Material::get($payload->material);
+            $this->processProvider->createProcess($payload->factory, $payload->type, $material, $payload->quantity);
+        } catch (Throwable $e) {
+            $task->nack($e->getMessage());
+            return;
+        }
         $task->ack();
     }
 }
