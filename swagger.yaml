@@ -571,6 +571,23 @@ paths:
                   $ref: '#/components/schemas/FactoryWithStatusDto'
         '404':
           $ref: '#/components/schemas/ErrorResponse'
+  /query/factory/wildcard:
+    get:
+      tags:
+        - query
+        - factory
+      operationId: 'Get wildcard factories'
+      responses:
+        '200':
+          description: 'List of wildcard factories (accepting any input)'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Factory'
+        '404':
+          $ref: '#/components/schemas/ErrorResponse'
   /query/material:
     get:
       tags:

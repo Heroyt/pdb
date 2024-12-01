@@ -39,10 +39,9 @@ readonly class FactoryProvider
      * @param  ClientInterface<SummarizedResult<BoltResult>>  $client
      */
     public function __construct(
-        private ClientInterface $client,
-        private Streams         $streams,
-    ) {
-    }
+      private ClientInterface $client,
+      private Streams         $streams,
+    ) {}
 
     /**
      * @throws ModelCreationException
@@ -50,13 +49,13 @@ readonly class FactoryProvider
      * @throws DriverException
      * @throws Throwable
      */
-    public function createFactory(string $name, int $capacity = 50): Factory {
+    public function createFactory(string $name, int $capacity = 50) : Factory {
         $factory = new Factory();
         $factory->name = $name;
         $factory->storageCapacity = $capacity;
         DB::getConnection()->begin();
         $this->writeFactory($factory);
-        $result = $this->streams->appendEvent(CreateEvent::fromFactory($factory), $factory::TABLE . '_' . $factory->id);
+        $result = $this->streams->appendEvent(CreateEvent::fromFactory($factory), $factory::TABLE.'_'.$factory->id);
         if (!$result->success) {
             DB::getConnection()->rollback();
             throw new ModelCreationException($result->status->details);
@@ -71,7 +70,7 @@ readonly class FactoryProvider
      * @throws Throwable
      * @throws ValidationException
      */
-    private function writeFactory(Factory $factory): void {
+    private function writeFactory(Factory $factory) : void {
         if (!$factory->save()) {
             DB::getConnection()->rollback();
             throw new ModelCreationException('Failed to create factory');
@@ -87,10 +86,10 @@ readonly class FactoryProvider
     /**
      * @param  TransactionInterface<SummarizedResult<BoltResult>>  $tsx
      */
-    public function createFactoryNode(TransactionInterface $tsx, Factory $factory): void {
+    public function createFactoryNode(TransactionInterface $tsx, Factory $factory) : void {
         $result = $tsx->run(
-            'MERGE (f:Factory {id: $id}) SET f.name = $name return f',
-            ['id' => $factory->id, 'name' => $factory->name]
+          'MERGE (f:Factory {id: $id}) SET f.name = $name return f',
+          ['id' => $factory->id, 'name' => $factory->name]
         );
         new Logger(LOG_DIR, 'neo4j')->debug('Result:', $result->jsonSerialize());
     }
@@ -101,7 +100,7 @@ readonly class FactoryProvider
      * @throws Throwable
      * @throws ValidationException
      */
-    public function updateFactory(UpdateRequest $request): Factory {
+    public function updateFactory(UpdateRequest $request) : Factory {
         $changes = $request->getChanges();
         if (empty($changes)) {
             return $request->entity; // Nothing changed
@@ -113,7 +112,7 @@ readonly class FactoryProvider
         }
         $factory = $request->apply();
         $this->writeFactory($factory);
-        $result = $this->streams->appendEvent($event, $factory::TABLE . '_' . $factory->id);
+        $result = $this->streams->appendEvent($event, $factory::TABLE.'_'.$factory->id);
         if (!$result->success) {
             DB::getConnection()->rollback();
             throw new ModelCreationException($result->status->details);
@@ -127,12 +126,12 @@ readonly class FactoryProvider
      * @throws ModelDeleteException
      * @throws Throwable
      */
-    public function deleteFactory(Factory $factory): void {
+    public function deleteFactory(Factory $factory) : void {
         DB::getConnection()->begin();
         // TODO: Delete storage and connections
         if (!$factory->delete()) {
             DB::getConnection()->rollback();
-            throw new ModelDeleteException('Failed to delete factory: ' . $factory->name);
+            throw new ModelDeleteException('Failed to delete factory: '.$factory->name);
         }
         try {
             $this->client->writeTransaction(fn(TransactionInterface $tsx) => $this->deleteFactoryNode($tsx, $factory));
@@ -140,7 +139,7 @@ readonly class FactoryProvider
             DB::getConnection()->rollback();
             throw $e;
         }
-        $result = $this->streams->appendEvent(DeleteEvent::fromFactory($factory), $factory::TABLE . '_' . $factory->id);
+        $result = $this->streams->appendEvent(DeleteEvent::fromFactory($factory), $factory::TABLE.'_'.$factory->id);
         if (!$result->success) {
             DB::getConnection()->rollback();
             throw new ModelDeleteException($result->status->details);
@@ -151,7 +150,7 @@ readonly class FactoryProvider
     /**
      * @param  TransactionInterface<SummarizedResult<BoltResult>>  $tsx
      */
-    public function deleteFactoryNode(TransactionInterface $tsx, Factory $factory): void {
+    public function deleteFactoryNode(TransactionInterface $tsx, Factory $factory) : void {
         $result = $tsx->run('MATCH (f:Factory {id: $id}) DETACH DELETE f', ['id' => $factory->id]);
         new Logger(LOG_DIR, 'neo4j')->debug('Result:', $result->jsonSerialize());
     }
@@ -163,7 +162,7 @@ readonly class FactoryProvider
      * @throws ValidationException
      * @throws ModelNotFoundException
      */
-    public function updateStorage(UpdateStorageRequest $request): void {
+    public function updateStorage(UpdateStorageRequest $request) : void {
         DB::getConnection()->begin();
         $storage = $request->entity;
         $factory = $storage->facility;
@@ -171,7 +170,8 @@ readonly class FactoryProvider
         if (isset($storage->id)) {
             // Fetch current data
             $storage->fetch(true);
-        } else { // New entity
+        }
+        else { // New entity
             // Reset quantity -> will be calculated later
             $storage->quantity = 0;
         }
@@ -180,7 +180,8 @@ readonly class FactoryProvider
         $newQuantity = $storage->quantity + $quantityDiff;
         if ($newQuantity < 0) {
             $quantityDiff = -$storage->quantity; // Set quantity to 0
-        } elseif ($newQuantity > $factory->storageCapacity) {
+        }
+        else if ($newQuantity > $factory->storageCapacity) {
             // Cannot go over storage capacity
             $quantityDiff -= $newQuantity - $factory->storageCapacity;
         }
@@ -193,7 +194,7 @@ readonly class FactoryProvider
             DB::getConnection()->rollback();
             throw new ModelCreationException('Failed to update factory storage');
         }
-        $result = $this->streams->appendEvent($event, $factory::TABLE . '_' . $factory->id);
+        $result = $this->streams->appendEvent($event, $factory::TABLE.'_'.$factory->id);
         if (!$result->success) {
             DB::getConnection()->rollback();
             throw new ModelCreationException($result->status->details);
@@ -205,10 +206,10 @@ readonly class FactoryProvider
      * @return Generator<FactoryWithStatus>
      * @throws Exception
      */
-    public function findStoppedFactories(): Generator {
+    public function findStoppedFactories() : Generator {
         $query = DB::select(
-            [Factory::TABLE, 'f'],
-            <<<SQL
+          [Factory::TABLE, 'f'],
+          <<<SQL
             f.*, 
             COALESCE(SUM(s.quantity * m.size),0) as [stored],
             %sql as [out_size],
@@ -218,17 +219,17 @@ readonly class FactoryProvider
                 ELSE 0 
             END AS has_all_materials
             SQL,
-            DB::select([Process::TABLE, 'po'], 'COALESCE(SUM(po.quantity * pm.size), 0)')
+          DB::select([Process::TABLE, 'po'], 'COALESCE(SUM(po.quantity * pm.size), 0)')
             ->join(Material::TABLE, 'pm')
             ->on('po.id_material = pm.id_material')
             ->where('po.id_factory = f.id_factory AND po.type = %s', Direction::OUT->value)
             ->fluent
         )
                    ->cacheTags(
-                       'models',
-                       Factory::TABLE,
-                       Factory::TABLE . '/query',
-                       ...Factory::CACHE_TAGS
+                        'models',
+                        Factory::TABLE,
+                        Factory::TABLE.'/query',
+                     ...Factory::CACHE_TAGS
                    )
                    ->leftJoin(FactoryStorage::TABLE, 's')
                    ->on('f.id_factory = s.id_factory')
@@ -250,10 +251,10 @@ readonly class FactoryProvider
      * @return Generator<FactoryWithStatus>
      * @throws Exception
      */
-    public function findRunningFactories(): Generator {
+    public function findRunningFactories() : Generator {
         $query = DB::select(
-            [Factory::TABLE, 'f'],
-            <<<SQL
+          [Factory::TABLE, 'f'],
+          <<<SQL
             f.*, 
             COALESCE(SUM(s.quantity * m.size),0) as [stored],
             %sql as [out_size],
@@ -263,17 +264,17 @@ readonly class FactoryProvider
                 ELSE 0 
             END AS has_all_materials
             SQL,
-            DB::select([Process::TABLE, 'po'], 'COALESCE(SUM(po.quantity * pm.size), 0)')
+          DB::select([Process::TABLE, 'po'], 'COALESCE(SUM(po.quantity * pm.size), 0)')
             ->join(Material::TABLE, 'pm')
             ->on('po.id_material = pm.id_material')
             ->where('po.id_factory = f.id_factory AND po.type = %s', Direction::OUT->value)
             ->fluent
         )
                    ->cacheTags(
-                       'models',
-                       Factory::TABLE,
-                       Factory::TABLE . '/query',
-                       ...Factory::CACHE_TAGS
+                        'models',
+                        Factory::TABLE,
+                        Factory::TABLE.'/query',
+                     ...Factory::CACHE_TAGS
                    )
                    ->leftJoin(FactoryStorage::TABLE, 's')
                    ->on('f.id_factory = s.id_factory')
@@ -289,5 +290,20 @@ readonly class FactoryProvider
         foreach ($query->fetchIteratorDto(FactoryStatusRow::class) as $row) {
             yield FactoryWithStatus::fromFactoryStatusRow($row);
         }
+    }
+
+    /**
+     * @return Factory[]
+     * @throws ValidationException
+     */
+    public function findWildcardInputFactories() : array {
+        $query = Factory::query()
+                        ->join(Process::TABLE, 'p')
+                        ->on('(p.id_factory = a.id_factory AND p.type = %s)', Direction::IN->value)
+                        ->join(Material::TABLE, 'm')
+                        ->on('(p.id_material = m.id_material)')
+                        ->where('m.wildcard = 1');
+
+        return $query->get();
     }
 }

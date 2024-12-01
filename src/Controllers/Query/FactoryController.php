@@ -206,4 +206,30 @@ class FactoryController extends Controller
         $factories = $this->factoryProvider->findRunningFactories();
         return $this->respond(iterator_to_array($factories));
     }
+
+    #[
+      OA\Get(
+          path       : '/query/factory/wildcard',
+          operationId: 'Get wildcard factories',
+          tags       : ['query', 'factory'],
+      ),
+      OA\Response(
+          response: 200,
+          description: 'List of wildcard factories (accepting any input)',
+          content    : new OA\JsonContent(
+              type : 'array',
+              items: new OA\Items(
+                  ref: '#/components/schemas/Factory'
+              )
+          )
+      ),
+      OA\Response(
+          ref        : '#/components/schemas/ErrorResponse',
+          response   : 404,
+          description: 'Factory not found'
+      )
+    ]
+    public function wildcardFactories(): ResponseInterface {
+        return $this->respond(array_values($this->factoryProvider->findWildcardInputFactories()));
+    }
 }
