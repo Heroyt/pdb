@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Request;
 
+use BackedEnum;
 use Lsr\Core\Exceptions\ValidationException;
 use ReflectionNamedType;
 use ReflectionProperty;
@@ -27,6 +28,15 @@ trait RequestPropertySet
                 $this->$propertyName = null;
             }
             return; // Value not set
+        }
+
+        // Convert type to backed enum if necessary
+        if (!$type->isBuiltin()) {
+            $typeName = $type->getName();
+            $implements = class_implements($typeName);
+            if (!($value instanceof $typeName) && in_array(BackedEnum::class, $implements, true)) {
+                $value = $typeName::tryFrom($value);
+            }
         }
 
         static::validateProperty($property, $value);

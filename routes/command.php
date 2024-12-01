@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Controllers\Command\ConnectionController;
 use App\Controllers\Command\FactoryController;
 use App\Controllers\Command\MaterialController;
+use App\Controllers\Command\ProcessController;
 use Lsr\Core\Routing\Route;
 
 $command = Route::group('command');
@@ -16,6 +17,7 @@ $factory->post('', [FactoryController::class, 'create']);
 $factoryId->put('', [FactoryController::class, 'update']);
 $factoryId->delete('', [FactoryController::class, 'delete']);
 $factoryId->put('storage', [FactoryController::class, 'updateStorage']);
+$factoryId->post('process', [ProcessController::class, 'create']);
 
 $material = $command->group('material');
 $materialId = $material->group('{id}');
@@ -36,3 +38,8 @@ $connection->post('assign', [ConnectionController::class, 'assign']);
 $connection->post('unassign', [ConnectionController::class, 'unassign']);
 $connection->post('activate', [ConnectionController::class, 'activate']);
 $connection->post('deactivate', [ConnectionController::class, 'deactivate']);
+
+$process = $command->group('process');
+$processId = $process->group('{id}');
+
+$process->delete('', [ProcessController::class, 'delete']);

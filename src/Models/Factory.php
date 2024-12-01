@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enums\Direction;
 use Lsr\Core\Models\Attributes\OneToMany;
 use Lsr\Core\Models\Attributes\PrimaryKey;
 use Lsr\Core\Models\LoadingType;
@@ -56,16 +57,16 @@ class Factory extends Model
         set(array $value) => $this->processes = $value;
     }
 
-    public function getFilledStorageCapacity(): int {
+    public function getRemainingStorageCapacity() : int {
+        return $this->storageCapacity - $this->getFilledStorageCapacity();
+    }
+
+    public function getFilledStorageCapacity() : int {
         return array_reduce(
           $this->storage,
           static fn(int $value, FactoryStorage $storage) => $value + ($storage->quantity * $storage->material->size),
           0
         );
-    }
-
-    public function getRemainingStorageCapacity() : int {
-        return $this->storageCapacity - $this->getFilledStorageCapacity();
     }
 
     public function getOrCreateStorageForMaterial(Material $material) : FactoryStorage {
@@ -83,6 +84,26 @@ class Factory extends Model
         return array_find(
           $this->storage,
           static fn(FactoryStorage $storage) => $storage->material->id === $material->id
+        );
+    }
+
+    public function getOrCreateProcessForMaterial(Material $material, Direction $type) : Process {
+        $process = $this->getProcessForMaterial($material, $type);
+        if ($process !== null) {
+            return $process;
+        }
+        $process = new Process();
+        $process->processFactory = $this;
+        $process->type = $type;
+        $process->material = $material;
+        $process->quantity = 0;
+        return $process;
+    }
+
+    public function getProcessForMaterial(Material $material, Direction $type) : ?Process {
+        return array_find(
+          $this->processes,
+          static fn(Process $process) => $process->material->id === $material->id && $process->type === $type,
         );
     }
 }

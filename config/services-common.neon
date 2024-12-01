@@ -39,6 +39,7 @@ services:
 	provider.connection: App\Services\Provider\ConnectionProvider
 	provider.factory: App\Services\Provider\FactoryProvider
 	provider.material: App\Services\Provider\MaterialProvider
+	provider.process: App\Services\Provider\ProcessProvider
 
 	pathfinder: App\Services\Provider\PathFinder
 

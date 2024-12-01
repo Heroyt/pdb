@@ -423,6 +423,58 @@ paths:
           $ref: '#/components/schemas/ErrorResponse'
         '500':
           $ref: '#/components/schemas/ErrorResponse'
+  '/command/factory/{id}/process':
+    post:
+      tags:
+        - command
+        - process
+        - factory
+      description: 'Create a new process.'
+      operationId: 'Create process'
+      parameters:
+        -
+          parameter: id
+          name: id
+          in: path
+          description: 'Factory ID'
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProcessCreateRequest'
+      responses:
+        '201':
+          $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          $ref: '#/components/schemas/ErrorResponse'
+  '/command/process/{id}':
+    delete:
+      tags:
+        - command
+        - process
+      description: 'Delete a process.'
+      operationId: deleteProcess
+      parameters:
+        -
+          parameter: id
+          name: id
+          in: path
+          description: 'Process ID'
+          schema:
+            type: integer
+      responses:
+        '200':
+          $ref: '#/components/schemas/SuccessResponse'
+        '404':
+          $ref: '#/components/schemas/ErrorResponse'
+        '412':
+          $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          $ref: '#/components/schemas/ErrorResponse'
   /query/factory:
     get:
       tags:
@@ -797,6 +849,7 @@ components:
     Material:
       properties:
         name:
+          description: ''
           type: string
         size:
           type: integer
@@ -941,6 +994,23 @@ components:
           type: boolean
           nullable: true
       type: object
+    ProcessCreateRequest:
+      properties:
+        material:
+          description: 'Material ID'
+          type: integer
+          minimum: 1
+        quantity:
+          type: integer
+          minimum: 1
+        type:
+          $ref: '#/components/schemas/Direction'
+      type: object
+    ProcessDeleteRequest:
+      properties:
+        id:
+          type: integer
+      type: object
     ErrorResponse:
       properties:
         title:
@@ -1016,6 +1086,9 @@ tags:
   -
     name: material
     description: material
+  -
+    name: process
+    description: process
   -
     name: query
     description: query

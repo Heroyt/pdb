@@ -12,6 +12,9 @@ services:
 	task.factory.delete: App\Tasks\Factory\DeleteFactory
 	task.factory.storage.update: App\Tasks\Factory\UpdateFactoryStorage
 
+	task.process.create: App\Tasks\Process\CreateProcess
+	task.process.delete: App\Tasks\Process\DeleteProcess
+
 	task.material.create: App\Tasks\Material\CreateMaterial
 	task.material.update: App\Tasks\Material\UpdateMaterial
 	task.material.delete: App\Tasks\Material\DeleteMaterial
