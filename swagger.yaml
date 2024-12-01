@@ -5,9 +5,6 @@ info:
   version: '1.0'
 servers:
   -
-    url: 'https://pdb.local'
-    description: Dev
-  -
     url: 'https://localhost'
     description: Local
 paths:
@@ -710,6 +707,9 @@ components:
         out_size:
           type: number
           format: float
+        in_size:
+          type: number
+          format: float
         has_all_materials:
           type: integer
       type: object
@@ -759,8 +759,12 @@ components:
               description: 'Total size of materials in storage'
               type: integer
               minimum: 0
+            inSize:
+              description: 'Total size of consumed materials'
+              type: integer
+              minimum: 0
             outSize:
-              description: 'Total size of produces materials (minimum required space)'
+              description: 'Total size of produced materials (minimum required space)'
               type: integer
               minimum: 0
             hasAllMaterials:
