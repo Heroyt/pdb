@@ -31,27 +31,27 @@ use Spiral\RoadRunner\Jobs\Exception\JobsException;
 class FactoryController extends Controller
 {
     public function __construct(
-        private readonly TaskProducer       $taskProducer,
-        private readonly ConnectionProvider $connectionProvider,
+      private readonly TaskProducer       $taskProducer,
+      private readonly ConnectionProvider $connectionProvider,
     ) {
         parent::__construct();
     }
 
     #[
       OA\Post(
-          path       : '/command/factory',
-          operationId: 'createFactory',
-          description: 'Create a new factory.',
-          requestBody: new OA\RequestBody(
-              content: new OA\JsonContent(ref: '#/components/schemas/FactoryCreateRequest',),
-          ),
-          tags       : ['command', 'factory'],
+        path       : '/command/factory',
+        operationId: 'createFactory',
+        description: 'Create a new factory.',
+        requestBody: new OA\RequestBody(
+          content: new OA\JsonContent(ref: '#/components/schemas/FactoryCreateRequest',),
+        ),
+        tags       : ['command', 'factory'],
       ),
       OA\Response(ref: '#/components/schemas/SuccessResponse', response: 201),
       OA\Response(ref: '#/components/schemas/ErrorResponse', response: 400, description: 'Bad request.'),
       OA\Response(ref: '#/components/schemas/ErrorResponse', response: 500, description: 'Internal server error.'),
     ]
-    public function create(Request $request): ResponseInterface {
+    public function create(Request $request) : ResponseInterface {
         try {
             $createRequest = CreateRequest::fromRequest($request);
         } catch (ValidationException $e) {
@@ -65,37 +65,37 @@ class FactoryController extends Controller
         }
 
         return $this->respond(
-            new SuccessResponse(
-                'Factory creation was queued',
-                values: ['pipeline' => $task->getPipeline(), 'id' => $task->getId(), 'name' => $task->getName()],
-            ),
-            201
+          new SuccessResponse(
+                    'Factory creation was queued',
+            values: ['pipeline' => $task->getPipeline(), 'id' => $task->getId(), 'name' => $task->getName()],
+          ),
+          201
         );
     }
 
     #[
       OA\Put(
-          path       : '/command/factory/{id}',
-          operationId: 'updateFactory',
-          description: 'Update a factory.',
-          requestBody: new OA\RequestBody(
-              content: new OA\JsonContent(ref: '#/components/schemas/FactoryUpdateRequest'),
-          ),
-          tags       : ['command', 'factory'],
+        path       : '/command/factory/{id}',
+        operationId: 'updateFactory',
+        description: 'Update a factory.',
+        requestBody: new OA\RequestBody(
+          content: new OA\JsonContent(ref: '#/components/schemas/FactoryUpdateRequest'),
+        ),
+        tags       : ['command', 'factory'],
       ),
       OA\PathParameter(
-          parameter  : 'id',
-          name       : 'id',
-          description: 'Factory ID',
-          in         : 'path',
-          schema     : new OA\Schema(type: 'integer'),
+        name       : 'id',
+        description: 'Factory ID',
+        in         : 'path',
+        required   : true,
+        schema     : new OA\Schema(type: 'integer'),
       ),
       OA\Response(ref: '#/components/schemas/SuccessResponse', response: 200),
       OA\Response(ref: '#/components/schemas/ErrorResponse', response: 404, description: 'Factory not found.'),
       OA\Response(ref: '#/components/schemas/ErrorResponse', response: 400, description: 'Bad request.'),
       OA\Response(ref: '#/components/schemas/ErrorResponse', response: 500, description: 'Internal server error.'),
     ]
-    public function update(Factory $factory, Request $request): ResponseInterface {
+    public function update(Factory $factory, Request $request) : ResponseInterface {
         try {
             $updateRequest = UpdateRequest::fromRequest($request, $factory);
         } catch (ValidationException $e) {
@@ -109,38 +109,38 @@ class FactoryController extends Controller
         }
 
         return $this->respond(
-            new SuccessResponse(
-                'Factory update was queued',
-                values: [
+          new SuccessResponse(
+                    'Factory update was queued',
+            values: [
                       'changes'  => $updateRequest->getChanges(),
                       'pipeline' => $task->getPipeline(),
                       'id'       => $task->getId(),
                       'name'     => $task->getName(),
                     ],
-            )
+          )
         );
     }
 
     #[
       OA\Delete(
-          path       : '/command/factory/{id}',
-          operationId: 'deleteFactory',
-          description: 'Delete a factory.',
-          tags       : ['command', 'factory'],
+        path       : '/command/factory/{id}',
+        operationId: 'deleteFactory',
+        description: 'Delete a factory.',
+        tags       : ['command', 'factory'],
       ),
       OA\PathParameter(
-          parameter  : 'id',
-          name       : 'id',
-          description: 'Factory ID',
-          in         : 'path',
-          schema     : new OA\Schema(type: 'integer'),
+        name       : 'id',
+        description: 'Factory ID',
+        in         : 'path',
+        required   : true,
+        schema     : new OA\Schema(type: 'integer'),
       ),
       OA\Response(ref: '#/components/schemas/SuccessResponse', response: 200),
       OA\Response(ref: '#/components/schemas/ErrorResponse', response: 404, description: 'Factory not found.'),
       OA\Response(ref: '#/components/schemas/ErrorResponse', response: 412, description: 'Cannot delete factory.'),
       OA\Response(ref: '#/components/schemas/ErrorResponse', response: 500, description: 'Internal server error.'),
     ]
-    public function delete(Factory $factory): ResponseInterface {
+    public function delete(Factory $factory) : ResponseInterface {
         // Validate that no connections to the factory exist
         $connections = $this->connectionProvider->findConnectionsStartingAt($factory);
         $foundConnections = [];
@@ -161,15 +161,15 @@ class FactoryController extends Controller
         }
         if (!empty($foundConnections)) {
             return $this->respond(
-                new ErrorResponse(
-                    'Found at least one connection for the given factory.',
-                    ErrorType::VALIDATION,
-                    'Make sure to delete all connections before deleting the factory.',
-                    values: [
+              new ErrorResponse(
+                        'Found at least one connection for the given factory.',
+                        ErrorType::VALIDATION,
+                        'Make sure to delete all connections before deleting the factory.',
+                values: [
                           'connections' => $foundConnections,
                         ],
-                ),
-                412
+              ),
+              412
             );
         }
 
@@ -180,58 +180,58 @@ class FactoryController extends Controller
         }
 
         return $this->respond(
-            new SuccessResponse(
-                'Factory delete was queued',
-                values: [
+          new SuccessResponse(
+                    'Factory delete was queued',
+            values: [
                       'pipeline' => $task->getPipeline(),
                       'id'       => $task->getId(),
                       'name'     => $task->getName(),
                     ],
-            )
+          )
         );
     }
 
     #[
       OA\Put(
-          path       : '/command/factory/{id}/storage',
-          operationId: 'updateFactoryStorage',
-          description: 'Update a factory storage.',
-          requestBody: new OA\RequestBody(
-              content: new OA\JsonContent(
-                  required  : ['materials'],
-                  properties: [
+        path       : '/command/factory/{id}/storage',
+        operationId: 'updateFactoryStorage',
+        description: 'Update a factory storage.',
+        requestBody: new OA\RequestBody(
+          content: new OA\JsonContent(
+                     required  : ['materials'],
+                     properties: [
                                    new OA\Property(
-                                       'materials',
-                                       type : 'array',
-                                       items: new OA\Items(
-                                           required  : ['id', 'quantity'],
-                                           properties: [
+                                            'materials',
+                                     type : 'array',
+                                     items: new OA\Items(
+                                              required  : ['id', 'quantity'],
+                                              properties: [
                                                             new OA\Property(
-                                                                'id',
-                                                                description: 'Material ID.',
-                                                                type       : 'integer',
+                                                                           'id',
+                                                              description: 'Material ID.',
+                                                              type       : 'integer',
                                                             ),
                                                             new OA\Property(
-                                                                'quantity',
-                                                                description: 'Quantity difference (positive for adding stock, negative for removing).',
-                                                                type       : 'integer',
+                                                                           'quantity',
+                                                              description: 'Quantity difference (positive for adding stock, negative for removing).',
+                                                              type       : 'integer',
                                                             ),
                                                           ],
-                                           type      : 'object'
-                                       ),
+                                              type      : 'object'
+                                            ),
                                    ),
                                  ],
-                  type      : 'object',
-              ),
-          ),
-          tags       : ['command', 'factory'],
+                     type      : 'object',
+                   ),
+        ),
+        tags       : ['command', 'factory'],
       ),
       OA\PathParameter(
-          parameter  : 'id',
-          name       : 'id',
-          description: 'Factory ID',
-          in         : 'path',
-          schema     : new OA\Schema(type: 'integer'),
+        name       : 'id',
+        description: 'Factory ID',
+        in         : 'path',
+        required   : true,
+        schema     : new OA\Schema(type: 'integer'),
       ),
       OA\Response(ref: '#/components/schemas/SuccessResponse', response: 200),
       OA\Response(ref: '#/components/schemas/ErrorResponse', response: 404, description: 'Factory or material not found.'),
@@ -239,16 +239,16 @@ class FactoryController extends Controller
       OA\Response(ref: '#/components/schemas/ErrorResponse', response: 412, description: 'Storage related error.'),
       OA\Response(ref: '#/components/schemas/ErrorResponse', response: 500, description: 'Internal server error.'),
     ]
-    public function updateStorage(Factory $factory, Request $request): ResponseInterface {
+    public function updateStorage(Factory $factory, Request $request) : ResponseInterface {
         $materials = $request->getPost('materials', []);
         if (!is_array($materials)) {
             return $this->respond(
-                new ErrorResponse(
-                    'Invalid input',
-                    ErrorType::VALIDATION,
-                    'materials must be an array of objects'
-                ),
-                400
+              new ErrorResponse(
+                'Invalid input',
+                ErrorType::VALIDATION,
+                'materials must be an array of objects'
+              ),
+              400
             );
         }
 
@@ -261,51 +261,51 @@ class FactoryController extends Controller
         foreach ($materials as $key => $material) {
             if (!is_array($material)) {
                 return $this->respond(
-                    new ErrorResponse(
-                        'Invalid input',
-                        ErrorType::VALIDATION,
-                        'materials[' . $key . '] must be an objects'
-                    ),
-                    400
+                  new ErrorResponse(
+                    'Invalid input',
+                    ErrorType::VALIDATION,
+                    'materials['.$key.'] must be an objects'
+                  ),
+                  400
                 );
             }
             if (
-                !isset($material['id'])
-                || !is_numeric($material['id'])
+              !isset($material['id'])
+              || !is_numeric($material['id'])
             ) {
                 return $this->respond(
-                    new ErrorResponse(
-                        'Invalid input',
-                        ErrorType::VALIDATION,
-                        'materials[' . $key . '].id must be an integer'
-                    ),
-                    400
+                  new ErrorResponse(
+                    'Invalid input',
+                    ErrorType::VALIDATION,
+                    'materials['.$key.'].id must be an integer'
+                  ),
+                  400
                 );
             }
             try {
                 $materialObj = Material::get((int) $material['id']);
             } catch (ModelNotFoundException) {
                 return $this->respond(
-                    new ErrorResponse(
-                        'Material not found',
-                        ErrorType::NOT_FOUND,
-                        values: [
+                  new ErrorResponse(
+                            'Material not found',
+                            ErrorType::NOT_FOUND,
+                    values: [
                               'key' => $key,
                               'id'  => (int) $material['id'],
                             ]
-                    ),
-                    404
+                  ),
+                  404
                 );
             }
 
             if (!isset($material['quantity']) || !is_numeric($material['quantity'])) {
                 return $this->respond(
-                    new ErrorResponse(
-                        'Invalid input',
-                        ErrorType::VALIDATION,
-                        'materials[' . $key . '].quantity must be an integer'
-                    ),
-                    400
+                  new ErrorResponse(
+                    'Invalid input',
+                    ErrorType::VALIDATION,
+                    'materials['.$key.'].quantity must be an integer'
+                  ),
+                  400
                 );
             }
 
@@ -329,16 +329,16 @@ class FactoryController extends Controller
             $storage->quantity += $quantity;
             if ($storage->quantity < 0) {
                 return $this->respond(
-                    new ErrorResponse(
-                        'Overall storage quantity cannot be negative',
-                        ErrorType::VALIDATION,
-                        values: [
+                  new ErrorResponse(
+                            'Overall storage quantity cannot be negative',
+                            ErrorType::VALIDATION,
+                    values: [
                               'finalQuantity' => $storage->quantity,
                               'diff'          => $quantity,
                               'key'           => $key,
                             ]
-                    ),
-                    412
+                  ),
+                  412
                 );
             }
 
@@ -349,15 +349,15 @@ class FactoryController extends Controller
 
         if ($remainingStorage < $sizeSum) {
             return $this->respond(
-                new ErrorResponse(
-                    'Factory does not have enough storage space',
-                    ErrorType::VALIDATION,
-                    values: [
+              new ErrorResponse(
+                        'Factory does not have enough storage space',
+                        ErrorType::VALIDATION,
+                values: [
                           'remainingStorage' => $remainingStorage,
                           'totalSize'        => $sizeSum,
                         ],
-                ),
-                412
+              ),
+              412
             );
         }
 
@@ -368,14 +368,14 @@ class FactoryController extends Controller
         }
 
         return $this->respond(
-            new SuccessResponse(
-                'Factory storage update was queued',
-                values: [
-                'totalSize' => $sizeSum,
-                'factoryCapacity' => $factory->storageCapacity,
-                'remainingStorage' => $remainingStorage - $sizeSum,
-                ],
-            )
+          new SuccessResponse(
+                    'Factory storage update was queued',
+            values: [
+                      'totalSize'        => $sizeSum,
+                      'factoryCapacity'  => $factory->storageCapacity,
+                      'remainingStorage' => $remainingStorage - $sizeSum,
+                    ],
+          )
         );
     }
 }

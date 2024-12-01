@@ -39,10 +39,10 @@ paths:
       operationId: updateConnection
       parameters:
         -
-          parameter: id
           name: id
           in: path
           description: 'Connection ID'
+          required: true
           schema:
             type: integer
       requestBody:
@@ -67,10 +67,10 @@ paths:
       operationId: deleteConnection
       parameters:
         -
-          parameter: id
           name: id
           in: path
           description: 'Connection ID'
+          required: true
           schema:
             type: integer
       responses:
@@ -91,10 +91,10 @@ paths:
       operationId: updateConnectionStorage
       parameters:
         -
-          parameter: id
           name: id
           in: path
           description: 'Connection ID'
+          required: true
           schema:
             type: integer
       requestBody:
@@ -128,10 +128,10 @@ paths:
       operationId: updateConnectionMaxStorage
       parameters:
         -
-          parameter: id
           name: id
           in: path
           description: 'Connection ID'
+          required: true
           schema:
             type: integer
       requestBody:
@@ -165,10 +165,10 @@ paths:
       operationId: assignConnection
       parameters:
         -
-          parameter: id
           name: id
           in: path
           description: 'Connection ID'
+          required: true
           schema:
             type: integer
       responses:
@@ -187,10 +187,10 @@ paths:
       operationId: unassignConnection
       parameters:
         -
-          parameter: id
           name: id
           in: path
           description: 'Connection ID'
+          required: true
           schema:
             type: integer
       responses:
@@ -209,10 +209,10 @@ paths:
       operationId: activateConnection
       parameters:
         -
-          parameter: id
           name: id
           in: path
           description: 'Connection ID'
+          required: true
           schema:
             type: integer
       responses:
@@ -231,10 +231,10 @@ paths:
       operationId: deactivateConnection
       parameters:
         -
-          parameter: id
           name: id
           in: path
           description: 'Connection ID'
+          required: true
           schema:
             type: integer
       responses:
@@ -272,10 +272,10 @@ paths:
       operationId: updateFactory
       parameters:
         -
-          parameter: id
           name: id
           in: path
           description: 'Factory ID'
+          required: true
           schema:
             type: integer
       requestBody:
@@ -300,10 +300,10 @@ paths:
       operationId: deleteFactory
       parameters:
         -
-          parameter: id
           name: id
           in: path
           description: 'Factory ID'
+          required: true
           schema:
             type: integer
       responses:
@@ -324,10 +324,10 @@ paths:
       operationId: updateFactoryStorage
       parameters:
         -
-          parameter: id
           name: id
           in: path
           description: 'Factory ID'
+          required: true
           schema:
             type: integer
       requestBody:
@@ -380,10 +380,10 @@ paths:
       operationId: updateMaterial
       parameters:
         -
-          parameter: id
           name: id
           in: path
           description: 'Material ID'
+          required: true
           schema:
             type: integer
       requestBody:
@@ -408,10 +408,10 @@ paths:
       operationId: deleteMaterial
       parameters:
         -
-          parameter: id
           name: id
           in: path
           description: 'Material ID'
+          required: true
           schema:
             type: integer
       responses:
@@ -433,10 +433,10 @@ paths:
       operationId: 'Create process'
       parameters:
         -
-          parameter: id
           name: id
           in: path
           description: 'Factory ID'
+          required: true
           schema:
             type: integer
       requestBody:
@@ -460,10 +460,10 @@ paths:
       operationId: deleteProcess
       parameters:
         -
-          parameter: id
           name: id
           in: path
           description: 'Process ID'
+          required: true
           schema:
             type: integer
       responses:

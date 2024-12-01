@@ -44,10 +44,10 @@ class ProcessController extends Controller
         tags       : ['command', 'process', 'factory'],
       ),
       OA\PathParameter(
-        parameter  : 'id',
         name       : 'id',
         description: 'Factory ID',
         in         : 'path',
+        required   : true,
         schema     : new OA\Schema(type: 'integer'),
       ),
       OA\Response(ref: '#/components/schemas/SuccessResponse', response: 201),
@@ -116,10 +116,10 @@ class ProcessController extends Controller
         tags       : ['command', 'process'],
       ),
       OA\PathParameter(
-        parameter  : 'id',
         name       : 'id',
         description: 'Process ID',
         in         : 'path',
+        required   : true,
         schema     : new OA\Schema(type: 'integer'),
       ),
       OA\Response(ref: '#/components/schemas/SuccessResponse', response: 200),
