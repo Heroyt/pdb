@@ -101,7 +101,7 @@ class ProcessController extends Controller
 
         return $this->respond(
           new SuccessResponse(
-                    'Material creation was queued',
+                    'Process creation was queued',
             values: ['pipeline' => $task->getPipeline(), 'id' => $task->getId(), 'name' => $task->getName()],
           ),
           201
