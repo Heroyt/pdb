@@ -9,6 +9,7 @@ use App\Request\Connection\AssignRequest;
 use App\Services\Provider\ConnectionProvider;
 use App\Tasks\TaskDispatcherInterface;
 use Spiral\RoadRunner\Jobs\Task\ReceivedTaskInterface;
+use Spiral\RoadRunner\Metrics\Metrics;
 
 /**
  * @implements TaskDispatcherInterface<AssignRequest>
@@ -16,23 +17,27 @@ use Spiral\RoadRunner\Jobs\Task\ReceivedTaskInterface;
 final readonly class AssignConnection implements TaskDispatcherInterface
 {
     public function __construct(
-        private ConnectionProvider $connectionProvider,
-    ) {
-    }
+      private ConnectionProvider $connectionProvider,
+      private Metrics            $metrics,
+    ) {}
 
     /**
      * @inheritDoc
      */
-    public static function getDiName(): string {
+    public static function getDiName() : string {
         return 'task.connection.assign';
     }
 
-    public function process(ReceivedTaskInterface $task): void {
+    public function process(ReceivedTaskInterface $task) : void {
         $payload = igbinary_unserialize($task->getPayload());
         assert($payload instanceof AssignRequest);
 
         $connection = Connection::get($payload->id);
+        $wasAssigned = $connection->assigned;
         $this->connectionProvider->setAssigned($connection, true);
+        if (!$wasAssigned) {
+            $this->metrics->add('assigned_connections', 1);
+        }
         $task->ack();
     }
 }

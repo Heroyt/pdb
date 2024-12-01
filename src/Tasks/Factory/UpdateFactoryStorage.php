@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tasks\Factory;
 
+use App\Enums\StorageUpdateType;
 use App\Exceptions\ModelCreationException;
 use App\Exceptions\ModelDeleteException;
 use App\Request\Factory\UpdateStorageRequest;
@@ -13,6 +14,7 @@ use Dibi\DriverException;
 use Lsr\Core\Exceptions\ModelNotFoundException;
 use Lsr\Core\Exceptions\ValidationException;
 use Spiral\RoadRunner\Jobs\Task\ReceivedTaskInterface;
+use Spiral\RoadRunner\Metrics\MetricsInterface;
 
 /**
  * @implements TaskDispatcherInterface<UpdateStorageRequest>
@@ -21,6 +23,7 @@ final readonly class UpdateFactoryStorage implements TaskDispatcherInterface
 {
     public function __construct(
         private FactoryProvider $factoryProvider,
+      private MetricsInterface $metrics,
     ) {
     }
 
@@ -35,11 +38,28 @@ final readonly class UpdateFactoryStorage implements TaskDispatcherInterface
         $payload = igbinary_unserialize($task->getPayload());
         assert($payload instanceof UpdateStorageRequest);
 
-        var_dump($payload->material->name, $payload->quantity);
         try {
             $this->factoryProvider->updateStorage($payload);
         } catch (ModelCreationException | ModelDeleteException | DriverException | ModelNotFoundException | ValidationException $e) {
             $task->nack($e, true);
+        }
+
+        $metric = match($payload->type) {
+            StorageUpdateType::PRODUCTION  => 'produced_materials',
+            StorageUpdateType::CONSUMPTION => 'consumed_materials',
+            StorageUpdateType::LOADING     => 'loaded_materials',
+            StorageUpdateType::UNLOADING   => 'unloaded_materials',
+            StorageUpdateType::OTHER       => null,
+        };
+        if ($metric !== null) {
+            $this->metrics->add(
+              $metric,
+              abs($payload->quantity),
+              [
+                $payload->material->name,
+                (string) $payload->material->id,
+              ]
+            );
         }
 
         $task->ack();

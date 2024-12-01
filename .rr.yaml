@@ -5,6 +5,37 @@ server:
   relay: pipes
 metrics:
   address: 0.0.0.0:2112
+  collect:
+    produced_materials:
+      type: counter
+      help: Number of materials produced by factories
+      labels:
+        - material_name
+        - material_id
+    consumed_materials:
+      type: counter
+      help: Number of materials consumed by factories
+      labels:
+        - material_name
+        - material_id
+    loaded_materials:
+      type: counter
+      help: Number of materials loaded by connections from factories
+      labels:
+        - material_name
+        - material_id
+    unloaded_materials:
+      type: counter
+      help: Number of materials unloaded by connections at factories
+      labels:
+        - material_name
+        - material_id
+    active_connections:
+      type: gauge
+      help: Currently running connections
+    assigned_connections:
+      type: gauge
+      help: Currently running connections
 rpc:
   listen: tcp://0.0.0.0:6001
 http:

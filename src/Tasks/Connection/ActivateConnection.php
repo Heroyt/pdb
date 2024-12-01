@@ -9,6 +9,7 @@ use App\Request\Connection\ActivateRequest;
 use App\Services\Provider\ConnectionProvider;
 use App\Tasks\TaskDispatcherInterface;
 use Spiral\RoadRunner\Jobs\Task\ReceivedTaskInterface;
+use Spiral\RoadRunner\Metrics\Metrics;
 
 /**
  * @implements TaskDispatcherInterface<ActivateRequest>
@@ -16,23 +17,27 @@ use Spiral\RoadRunner\Jobs\Task\ReceivedTaskInterface;
 final readonly class ActivateConnection implements TaskDispatcherInterface
 {
     public function __construct(
-        private ConnectionProvider $connectionProvider,
-    ) {
-    }
+      private ConnectionProvider $connectionProvider,
+      private Metrics            $metrics,
+    ) {}
 
     /**
      * @inheritDoc
      */
-    public static function getDiName(): string {
+    public static function getDiName() : string {
         return 'task.connection.activate';
     }
 
-    public function process(ReceivedTaskInterface $task): void {
+    public function process(ReceivedTaskInterface $task) : void {
         $payload = igbinary_unserialize($task->getPayload());
         assert($payload instanceof ActivateRequest);
 
         $connection = Connection::get($payload->id);
+        $wasActive = $connection->active;
         $this->connectionProvider->setActive($connection, true);
+        if (!$wasActive) {
+            $this->metrics->add('active_connections', 1);
+        }
         $task->ack();
     }
 }

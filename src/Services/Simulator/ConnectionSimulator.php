@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Services\Simulator;
 
+use App\Enums\StorageUpdateType;
 use App\EventStore\Event;
 use App\EventStore\Events\Connection\ActivateEvent;
 use App\EventStore\Events\SimulationEvent;
@@ -109,6 +110,7 @@ class ConnectionSimulator implements Simulator
                 $request = new UpdateStorageRequest($factoryStorage);
                 $request->material = $storage->material;
                 $request->quantity = $quantity;
+                $request->type = StorageUpdateType::UNLOADING;
                 $this->taskProducer->plan(UpdateFactoryStorage::class, $request);
             }
 
@@ -182,6 +184,7 @@ class ConnectionSimulator implements Simulator
                 $request = new UpdateStorageRequest($factoryStorage);
                 $request->material = $storage->material;
                 $request->quantity = -$quantity;
+                $request->type = StorageUpdateType::LOADING;
                 $this->taskProducer->plan(UpdateFactoryStorage::class, $request);
             }
 
@@ -189,7 +192,7 @@ class ConnectionSimulator implements Simulator
                 // Don't activate connection if it has nothing stored
                 continue;
             }
-            
+
             $output->writeln(
               sprintf(
                 'Loaded and activated connection (id: %d) at %s (%d) - size: %d',

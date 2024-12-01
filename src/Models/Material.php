@@ -13,6 +13,7 @@ class Material extends Model
 {
     public const string TABLE = 'materials';
 
+    /** @var non-empty-string  */
     #[OA\Property]
     public string $name;
     #[OA\Property]

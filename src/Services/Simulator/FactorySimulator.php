@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Services\Simulator;
 
 use App\Enums\Direction;
+use App\Enums\StorageUpdateType;
 use App\Request\Factory\UpdateStorageRequest;
 use App\Services\Provider\FactoryProvider;
 use App\Services\TaskProducer;
@@ -31,6 +32,7 @@ class FactorySimulator implements Simulator
                 $request->material = $process->material;
                 // Inputs decrease the stored quantity, outputs increase quantity
                 $request->quantity = $process->type === Direction::IN ? -$process->quantity : $process->quantity;
+                $request->type = $process->type === Direction::IN ? StorageUpdateType::CONSUMPTION : StorageUpdateType::PRODUCTION;
                 $output->writeln('Factory material '.$factory->name.' ('.$factory->id.') '.$request->quantity.' ('.$request->material->name.')', OutputInterface::VERBOSITY_VERBOSE);
                 $this->taskProducer->plan(
                   UpdateFactoryStorage::class,
