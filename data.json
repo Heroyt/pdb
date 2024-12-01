@@ -1,0 +1,533 @@
+{
+  "materials": [
+    {
+      "name": "Any",
+      "size": 1,
+      "wildcard": true
+    },
+    {
+      "name": "Waste",
+      "size": 1
+    },
+    {
+      "name": "Wood",
+      "size": 4
+    },
+    {
+      "name": "Coal",
+      "size": 2
+    },
+    {
+      "name": "Iron ore",
+      "size": 1
+    },
+    {
+      "name": "Copper ore",
+      "size": 1
+    },
+    {
+      "name": "Stone",
+      "size": 2
+    },
+    {
+      "name": "Stick",
+      "size": 1
+    },
+    {
+      "name": "Iron",
+      "size": 1
+    },
+    {
+      "name": "Copper",
+      "size": 1
+    },
+    {
+      "name": "Copper wire",
+      "size": 1
+    },
+    {
+      "name": "Nails",
+      "size": 1
+    },
+    {
+      "name": "Iron sword",
+      "size": 1
+    },
+    {
+      "name": "Brick",
+      "size": 4
+    }
+  ],
+  "factories": [
+    {
+      "name": "Woodcutter",
+      "capacity": 30
+    },
+    {
+      "name": "Iron mine 1",
+      "capacity": 100
+    },
+    {
+      "name": "Iron mine 2",
+      "capacity": 100
+    },
+    {
+      "name": "Iron mine 3",
+      "capacity": 80
+    },
+    {
+      "name": "Coal mine 1",
+      "capacity": 100
+    },
+    {
+      "name": "Coal mine 2",
+      "capacity": 200
+    },
+    {
+      "name": "Coal mine 3",
+      "capacity": 150
+    },
+    {
+      "name": "Coal mine 4",
+      "capacity": 150
+    },
+    {
+      "name": "Copper mine 1",
+      "capacity": 60
+    },
+    {
+      "name": "Copper mine 2",
+      "capacity": 90
+    },
+    {
+      "name": "Quarry",
+      "capacity": 150
+    },
+    {
+      "name": "Smelter 1",
+      "capacity": 200
+    },
+    {
+      "name": "Smelter 2",
+      "capacity": 200
+    },
+    {
+      "name": "Smelter 3",
+      "capacity": 200
+    },
+    {
+      "name": "Smelter 4",
+      "capacity": 200
+    },
+    {
+      "name": "Copper wire factory",
+      "capacity": 100
+    },
+    {
+      "name": "Brick factory",
+      "capacity": 100
+    },
+    {
+      "name": "Blacksmith 1",
+      "capacity": 50
+    },
+    {
+      "name": "Blacksmith 2",
+      "capacity": 50
+    },
+    {
+      "name": "Market",
+      "capacity": 1000
+    },
+    {
+      "name": "Waste disposal",
+      "capacity": 1000
+    },
+    {
+      "name": "Stick maker",
+      "capacity": 100
+    }
+  ],
+  "processes": [
+    {
+      "factory": 1,
+      "data": [
+        {
+          "material": 3,
+          "quantity": 1,
+          "type": "out"
+        }
+      ]
+    },
+    {
+      "factory": 2,
+      "data": [
+        {
+          "material": 5,
+          "quantity": 1,
+          "type": "out"
+        }
+      ]
+    },
+    {
+      "factory": 3,
+      "data": [
+        {
+          "material": 5,
+          "quantity": 1,
+          "type": "out"
+        }
+      ]
+    },
+    {
+      "factory": 4,
+      "data": [
+        {
+          "material": 5,
+          "quantity": 1,
+          "type": "out"
+        }
+      ]
+    },
+    {
+      "factory": 5,
+      "data": [
+        {
+          "material": 4,
+          "quantity": 1,
+          "type": "out"
+        }
+      ]
+    },
+    {
+      "factory": 6,
+      "data": [
+        {
+          "material": 4,
+          "quantity": 1,
+          "type": "out"
+        }
+      ]
+    },
+    {
+      "factory": 7,
+      "data": [
+        {
+          "material": 4,
+          "quantity": 1,
+          "type": "out"
+        }
+      ]
+    },
+    {
+      "factory": 8,
+      "data": [
+        {
+          "material": 4,
+          "quantity": 1,
+          "type": "out"
+        }
+      ]
+    },
+    {
+      "factory": 9,
+      "data": [
+        {
+          "material": 6,
+          "quantity": 1,
+          "type": "out"
+        }
+      ]
+    },
+    {
+      "factory": 10,
+      "data": [
+        {
+          "material": 6,
+          "quantity": 1,
+          "type": "out"
+        }
+      ]
+    },
+    {
+      "factory": 11,
+      "data": [
+        {
+          "material": 7,
+          "quantity": 1,
+          "type": "out"
+        }
+      ]
+    },
+    {
+      "factory": 12,
+      "data": [
+        {
+          "material": 5,
+          "quantity": 4,
+          "type": "in"
+        },
+        {
+          "material": 4,
+          "quantity": 2,
+          "type": "in"
+        },
+        {
+          "material": 2,
+          "quantity": 1,
+          "type": "out"
+        },
+        {
+          "material": 9,
+          "quantity": 1,
+          "type": "out"
+        }
+      ]
+    },
+    {
+      "factory": 13,
+      "data": [
+        {
+          "material": 5,
+          "quantity": 4,
+          "type": "in"
+        },
+        {
+          "material": 4,
+          "quantity": 2,
+          "type": "in"
+        },
+        {
+          "material": 2,
+          "quantity": 1,
+          "type": "out"
+        },
+        {
+          "material": 9,
+          "quantity": 1,
+          "type": "out"
+        }
+      ]
+    },
+    {
+      "factory": 14,
+      "data": [
+        {
+          "material": 5,
+          "quantity": 4,
+          "type": "in"
+        },
+        {
+          "material": 4,
+          "quantity": 2,
+          "type": "in"
+        },
+        {
+          "material": 2,
+          "quantity": 1,
+          "type": "out"
+        },
+        {
+          "material": 9,
+          "quantity": 1,
+          "type": "out"
+        }
+      ]
+    },
+    {
+      "factory": 15,
+      "data": [
+        {
+          "material": 6,
+          "quantity": 3,
+          "type": "in"
+        },
+        {
+          "material": 4,
+          "quantity": 2,
+          "type": "in"
+        },
+        {
+          "material": 2,
+          "quantity": 1,
+          "type": "out"
+        },
+        {
+          "material": 10,
+          "quantity": 1,
+          "type": "out"
+        }
+      ]
+    },
+    {
+      "factory": 16,
+      "data": [
+        {
+          "material": 10,
+          "quantity": 1,
+          "type": "in"
+        },
+        {
+          "material": 11,
+          "quantity": 4,
+          "type": "out"
+        }
+      ]
+    },
+    {
+      "factory": 17,
+      "data": [
+        {
+          "material": 7,
+          "quantity": 4,
+          "type": "in"
+        },
+        {
+          "material": 14,
+          "quantity": 1,
+          "type": "out"
+        }
+      ]
+    },
+    {
+      "factory": 18,
+      "data": [
+        {
+          "material": 4,
+          "quantity": 1,
+          "type": "in"
+        },
+        {
+          "material": 9,
+          "quantity": 1,
+          "type": "in"
+        },
+        {
+          "material": 12,
+          "quantity": 5,
+          "type": "out"
+        }
+      ]
+    },
+    {
+      "factory": 19,
+      "data": [
+        {
+          "material": 4,
+          "quantity": 1,
+          "type": "in"
+        },
+        {
+          "material": 9,
+          "quantity": 2,
+          "type": "in"
+        },
+        {
+          "material": 8,
+          "quantity": 1,
+          "type": "in"
+        },
+        {
+          "material": 13,
+          "quantity": 5,
+          "type": "out"
+        }
+      ]
+    },
+    {
+      "factory": 20,
+      "data": [
+        {
+          "material": 1,
+          "quantity": 1,
+          "type": "in"
+        }
+      ]
+    },
+    {
+      "factory": 21,
+      "data": [
+        {
+          "material": 2,
+          "quantity": 10,
+          "type": "in"
+        }
+      ]
+    },
+    {
+      "factory": 22,
+      "data": [
+        {
+          "material": 3,
+          "quantity": 1,
+          "type": "in"
+        },
+        {
+          "material": 10,
+          "quantity": 4,
+          "type": "out"
+        }
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "startId": 1,
+      "endId": 22,
+      "speed": 3,
+      "capacity": 30
+    },
+    {
+      "startId": 22,
+      "endId": 19,
+      "speed": 1,
+      "capacity": 10
+    },
+    {
+      "startId": 22,
+      "endId": 20,
+      "speed": 5,
+      "capacity": 50
+    }
+  ],
+  "maxStorage": [
+    {
+      "id": 1,
+      "data": {
+        "materials": [
+          {
+            "id": 3,
+            "maxQuantity": 30
+          }
+        ]
+      }
+    },
+    {
+      "id": 2,
+      "data": {
+        "materials": [
+          {
+            "id": 10,
+            "maxQuantity": 10
+          }
+        ]
+      }
+    },
+    {
+      "id": 3,
+      "data": {
+        "materials": [
+          {
+            "id": 10,
+            "maxQuantity": 20
+          }
+        ]
+      }
+    }
+  ],
+  "assign": [
+    1,
+    2,
+    3
+  ]
+}
