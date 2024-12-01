@@ -13,7 +13,8 @@
     "phpcbf": "./vendor/bin/phpcbf --parallel=4 -p",
     "phpcs": "./vendor/bin/phpcs --parallel=4 -p",
     "protoc-old": "protoc --proto_path=./proto --plugin=protoc-gen-php-grpc --php_out=./generated --php-grpc_out=./generated proto/*",
-    "protoc": "protoc --proto_path=./proto --plugin=protoc-gen-grpc=./grpc_php_plugin --php_out=./generated --grpc_out=./generated proto/*"
+    "protoc": "protoc --proto_path=./proto --plugin=protoc-gen-grpc=./grpc_php_plugin --php_out=./generated --grpc_out=./generated proto/*",
+    "pack": "git archive --format=zip -o xvojik00.zip HEAD README.md navrh.pdf && git archive --format=zip --prefix=app/ -o app.zip HEAD && zip -g xvojik00.zip -u app.zip && rm app.zip"
   },
   "require": {
     "php": "^8.4",

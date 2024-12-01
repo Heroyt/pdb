@@ -2,6 +2,7 @@
 
 echo "Entry: $SHELL $0"
 
+composer install
 composer dump-autoload
 
 # Clear DI, model and info cache

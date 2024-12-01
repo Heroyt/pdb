@@ -8,6 +8,12 @@
 
 ---
 
+## ZIP files
+
+- `README.md`: This file (installation and usage instructions)
+- `app.zip`: Application source code &rarr; unzip it and do the installation and setup inside the app
+- `navrh.pdf`: Result of project's first part with some modifications based on changes made during development
+
 ## Installation
 
 ### Configure
