@@ -19,7 +19,7 @@ jq -c '.factories[]' "$DATA_FILE" | while read -r factory; do
  echo ""
 done
 
-sleep 10
+sleep 15
 
 jq -c '.processes[]' "$DATA_FILE" | while read -r process; do
   id=$(echo "$process" | jq -r '.factory')
